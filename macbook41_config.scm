@@ -13,7 +13,7 @@
                 (bootloader grub-efi-bootloader)
                 (target "/boot/efi")))
 
-  (kernel-arguments '("zswap.enabled=1" "zram.max_pool_percent=50"))
+  (kernel-arguments '("zswap.enabled=1"))
 
   (file-systems (cons* (file-system
                          (device "my-root")
@@ -39,7 +39,7 @@
                 (name "efraim")
                 (comment "Efraim")
                 (group "users")
-                (supplementary-groups '("wheel" "netdev"
+                (supplementary-groups '("wheel" "netdev" "kvm"
                                         "audio" "video"))
                 (home-directory "/home/efraim"))
                %base-user-accounts))
