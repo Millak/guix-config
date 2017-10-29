@@ -21,7 +21,7 @@
         "mutt"
         "myrepos"
         "ncdu"
-        "newsbeuter"
+        "newsboat"
         "nmap"
         "nss-certs"
         "offlineimap"

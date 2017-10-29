@@ -19,14 +19,14 @@
                          (device "my-root")
                          (mount-point "/")
                          (type "btrfs")
-			 (title 'label)
-			 (options "autodefrag,compress=lzo"))
-		       (file-system
-			 (device "none")
-			 (mount-point "/var/guix/temproots")
-			 (title 'device)
-			 (type "tmpfs")
-			 (check? #f))
+                         (title 'label)
+                         (options "autodefrag,compress=lzo"))
+                       (file-system
+                         (device "none")
+                         (mount-point "/var/guix/temproots")
+                         (title 'device)
+                         (type "tmpfs")
+                         (check? #f))
                        %base-file-systems))
 
   (swap-devices '("/dev/sda1" "/dev/sdb1" "/dev/sdc1"))
@@ -38,27 +38,27 @@
                  (supplementary-groups '("wheel" "netdev"
                                          "audio" "video"))
                  (home-directory "/home/efraim"))
-	        (user-account
-		 (name "rivka")
-		 (comment "Rivka")
-		 (group "users")
-		 (supplementary-groups `("netdev"
-					 "audio" "video"))
-		 (home-directory "/home/rivka"))
-	        (user-account
-		 (name "kids")
-		 (comment "both kids")
-		 (group "users")
-		 (supplementary-groups '("netdev"
-					 "audio" "video"))
-		 (home-directory "/home/kids"))
+                (user-account
+                 (name "rivka")
+                 (comment "Rivka")
+                 (group "users")
+                 (supplementary-groups `("netdev"
+                                         "audio" "video"))
+                 (home-directory "/home/rivka"))
+                (user-account
+                 (name "kids")
+                 (comment "both kids")
+                 (group "users")
+                 (supplementary-groups '("netdev"
+                                         "audio" "video"))
+                 (home-directory "/home/kids"))
                 %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
                    gvfs              ;for user mounts
-		   btrfs-progs pavucontrol
-		   icecat ;libreoffice
+                   btrfs-progs pavucontrol
+                   icecat ;libreoffice
                    %base-packages))
 
   ;; Add GNOME and/or Xfce---we can choose at the log-in
@@ -66,29 +66,29 @@
   ;; include the X11 log-in service, networking with Wicd,
   ;; and more.
   (services (cons* (xfce-desktop-service)
-		   (service guix-publish-service-type
-			    (guix-publish-configuration
-			      (port 3000)))
-		   (service openssh-service-type
-			    (openssh-configuration
-			      (port-number 22)
-			      (allow-empty-passwords? #f)
-			      (password-authentication? #t)))
-		   (tor-service)
+                   (service guix-publish-service-type
+                            (guix-publish-configuration
+                              (port 3000)))
+                   (service openssh-service-type
+                            (openssh-configuration
+                              (port-number 22)
+                              (allow-empty-passwords? #f)
+                              (password-authentication? #t)))
+                   (tor-service)
                    (modify-services %desktop-services
-		     (guix-service-type config =>
-					(guix-configuration
-					  (inherit config)
-					  (substitute-urls
-					    (cons* "https://bayfront.guixsd.org"
-						   "https://berlin.guixsd.org"
-						   "http://192.168.1.143:8181" ; odroid-c2
-						   "http://192.168.1.209:8181" ; macbook42
-						   %default-substitute-urls))))
-		     (ntp-service-type config =>
-				       (ntp-configuration
-					 (inherit config)
-					 (allow-large-adjustment? #t))))))
+                     (guix-service-type config =>
+                                        (guix-configuration
+                                          (inherit config)
+                                          (substitute-urls
+                                            (cons* "https://bayfront.guixsd.org"
+                                                   "https://berlin.guixsd.org"
+                                                   "http://192.168.1.143:8181" ; odroid-c2
+                                                   "http://192.168.1.209:8181" ; macbook42
+                                                   %default-substitute-urls))))
+                     (ntp-service-type config =>
+                                       (ntp-configuration
+                                         (inherit config)
+                                         (allow-large-adjustment? #t))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
