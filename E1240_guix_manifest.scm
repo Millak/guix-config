@@ -4,6 +4,7 @@
         "aria2"
         "bash-completion"
         "ffmpeg"
+        "file"
         "font-dejavu"
         "font-terminus"
         "git"

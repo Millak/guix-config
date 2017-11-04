@@ -6,6 +6,7 @@
         "borg"
         "btrfs-progs"
         "ffmpeg"
+        "file"
         "font-dejavu"
         "font-terminus"
         "git"
