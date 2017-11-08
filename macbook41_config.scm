@@ -1,5 +1,5 @@
 (use-modules (guix store) (gnu) (gnu system nss))
-(use-service-modules desktop networking ssh)
+(use-service-modules desktop networking pm ssh)
 (use-package-modules bootloaders certs gnome libreoffice linux)
 
 (operating-system
@@ -64,6 +64,7 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
                    (tor-service)
+                   (service tlp-service-type)
                    (modify-services %desktop-services
                      (guix-service-type config =>
                                         (guix-configuration
