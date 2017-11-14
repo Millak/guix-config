@@ -1,6 +1,6 @@
 (use-modules (guix store) (gnu) (gnu system nss))
 (use-service-modules desktop networking ssh)
-(use-package-modules certs gnome gnuzilla libreoffice linux pulseaudio)
+(use-package-modules certs fonts gnome gnuzilla libreoffice linux pulseaudio)
 
 (operating-system
   (host-name "E1240")
@@ -58,6 +58,7 @@
   (packages (cons* nss-certs         ;for HTTPS access
                    gvfs              ;for user mounts
                    btrfs-progs pavucontrol
+                   font-terminus font-dejavu
                    icecat ;libreoffice
                    %base-packages))
 
