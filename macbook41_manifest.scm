@@ -18,6 +18,7 @@
         "khal"
         "khard"
         "libhdate"
+        "libreoffice"
         "links"
         "mosh"
         "mpv"
