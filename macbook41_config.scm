@@ -1,6 +1,10 @@
 (use-modules (guix store) (gnu) (gnu system nss))
-(use-service-modules desktop networking pm ssh)
+(use-service-modules desktop mcron networking pm ssh)
 (use-package-modules bootloaders certs gnome libreoffice linux)
+
+(define %btrfs-scrub
+  #~(job '(next-hour '(3))
+         (string-append #:btrfs-progs-static "/bin/btrfs scrub start /")))
 
 (operating-system
   (host-name "macbook41")
@@ -65,6 +69,10 @@
                               (password-authentication? #t)))
                    (tor-service)
                    (service tlp-service-type)
+                   (service mcron-service-type
+                            (mcron-configuration
+                             (jobs (list %btrfs-scrub))))
+
                    (modify-services %desktop-services
                      (guix-service-type config =>
                                         (guix-configuration
