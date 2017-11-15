@@ -68,7 +68,10 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
                    (tor-service)
+
                    (service tlp-service-type)
+                   (service thermald-service-type)
+
                    (service mcron-service-type
                             (mcron-configuration
                              (jobs (list %btrfs-scrub))))
