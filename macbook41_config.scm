@@ -1,6 +1,6 @@
 (use-modules (guix store) (gnu) (gnu system nss))
-(use-service-modules desktop mcron networking pm ssh)
-(use-package-modules bootloaders certs gnome libreoffice linux)
+(use-service-modules cups desktop mcron networking pm ssh)
+(use-package-modules bootloaders certs cups gnome libreoffice linux)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -44,6 +44,7 @@
                 (comment "Efraim")
                 (group "users")
                 (supplementary-groups '("wheel" "netdev" "kvm"
+                                        "lp" "lpadmin"
                                         "audio" "video"))
                 (home-directory "/home/efraim"))
                %base-user-accounts))
@@ -68,6 +69,12 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
                    (tor-service)
+                   
+                   (service cups-service-type
+                            (cups-configuration
+                              (server-name "192.168.1.71")
+                              (extensions
+                                (list cups-filters hplip))))
 
                    (service tlp-service-type)
                    (service thermald-service-type)
