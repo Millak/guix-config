@@ -17,7 +17,7 @@
                 (bootloader grub-efi-bootloader)
                 (target "/boot/efi")))
 
-  (kernel-arguments '("zswap.enabled=1"))
+  (kernel-arguments '("zswap.enabled=1" "modprobe.blacklist=appletouch"))
 
   (file-systems (cons* (file-system
                          (device "my-root")
