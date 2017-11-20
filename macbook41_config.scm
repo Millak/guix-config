@@ -52,6 +52,7 @@
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
                    gvfs              ;for user mounts
+                   cups
                    btrfs-progs
                    %base-packages))
 
@@ -72,6 +73,7 @@
                    
                    (service cups-service-type
                             (cups-configuration
+                              (web-interface? #t)
                               (server-name "192.168.1.71")
                               (extensions
                                 (list cups-filters hplip))))
