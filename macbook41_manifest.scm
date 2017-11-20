@@ -2,6 +2,9 @@
  (map (compose list specification->package+output)
        '("abiword"
         "aria2"
+        "aspell"
+        "aspell-dict-en"
+        "aspell-dict-he"
         "bash-completion"
         "borg"
         "btrfs-progs"
