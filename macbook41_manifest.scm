@@ -23,6 +23,7 @@
         "libhdate"
         "libreoffice"
         "links"
+        "mcron"
         "mosh"
         "mpv"
         "msmtp"
