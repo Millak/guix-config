@@ -70,15 +70,17 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
                    (tor-service)
-                   
+
                    (service cups-service-type
                             (cups-configuration
                               (web-interface? #t)
-                              (server-name "192.168.1.71")
+                              ;(server-name "192.168.1.71")
                               (extensions
                                 (list cups-filters hplip))))
 
-                   (service tlp-service-type)
+                   (service tlp-service-type
+                            (tlp-configuration
+                              (disks-devices "sda")))
                    (service thermald-service-type)
 
                    (service mcron-service-type
