@@ -4,7 +4,7 @@
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
-         (string-append #:btrfs-progs-static "/bin/btrfs scrub start /")))
+         (string-append #$btrfs-progs "/bin/btrfs scrub start /")))
 
 (operating-system
   (host-name "macbook41")
