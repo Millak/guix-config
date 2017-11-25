@@ -1,5 +1,5 @@
 (use-modules (guix store) (gnu) (gnu system nss))
-(use-service-modules cups desktop mcron networking pm ssh)
+(use-service-modules admin cups desktop mcron networking pm ssh)
 (use-package-modules bootloaders certs cups gnome libreoffice linux)
 
 (define %btrfs-scrub
@@ -83,6 +83,7 @@
                               (disks-devices "sda")))
                    (service thermald-service-type)
 
+                   (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
                              (jobs (list %btrfs-scrub))))
