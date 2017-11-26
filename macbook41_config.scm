@@ -78,9 +78,7 @@
                               (extensions
                                 (list cups-filters hplip))))
 
-                   (service tlp-service-type
-                            (tlp-configuration
-                              (disks-devices "sda")))
+                   (service tlp-service-type)
                    (service thermald-service-type)
 
                    (service rottlog-service-type)
