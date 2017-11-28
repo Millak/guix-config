@@ -27,6 +27,8 @@
         "tree"
         "vifm"
         "vim"
+        "vim-airline"
+        "vim-fugitive"
         "wcalc"
         "weechat"
         "wget"
