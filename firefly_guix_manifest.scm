@@ -15,6 +15,7 @@
         "ncdu"
         "nmap"
         "nss-certs"
+        "openssh"
         "parallel"
         "pinentry-tty"
         "qrencode"
