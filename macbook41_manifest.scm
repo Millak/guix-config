@@ -42,6 +42,7 @@
         "pinentry-gtk2"
         "qrencode"
         "quassel"
+        "rsync"
         "screen"
         "speedtest-cli"
         "sshfs-fuse"

@@ -19,6 +19,7 @@
         "parallel"
         "pinentry-tty"
         "qrencode"
+        "rsync"
         "screen"
         "speedtest-cli"
         "sshfs-fuse"
