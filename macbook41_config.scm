@@ -1,5 +1,5 @@
 (use-modules (guix store) (gnu) (gnu system nss))
-(use-service-modules admin cups desktop mcron networking pm ssh)
+(use-service-modules admin cups desktop mcron networking pm ssh xorg)
 (use-package-modules bootloaders certs cups gnome libreoffice linux)
 
 (define %btrfs-scrub
@@ -17,7 +17,7 @@
                 (bootloader grub-efi-bootloader)
                 (target "/boot/efi")))
 
-  (kernel-arguments '("zswap.enabled=1"))
+  (kernel-arguments '("zswap.enabled=1" "modprobe.blacklist=usbkbd"))
 
   (file-systems (cons* (file-system
                          (device "my-root")
@@ -79,7 +79,6 @@
                                 (list cups-filters hplip))))
 
                    (service tlp-service-type)
-                   (service thermald-service-type)
 
                    (service rottlog-service-type)
                    (service mcron-service-type
@@ -98,6 +97,18 @@
                                                    %default-substitute-urls))
                                           (extra-options
                                             '("--cores=1")))) ; we're on a laptop
+
+                     ;(xorg-configuration-file config =>
+                     ;                         (xorg-configuration
+                     ;                           (inherit config)
+                     ;                           (modules "xf86-video-fbdev"
+                     ;                                    "xf86-video-intel"
+                     ;                                    "xf86-input-libinput"
+                     ;                                    "xf86-input-evdev"
+                     ;                                    ;"xf86-input-keyboard"
+                     ;                                    ;"xf86-input-mouse"
+                     ;                                    )))
+
                      (ntp-service-type config =>
                                        (ntp-configuration
                                          (inherit config)
