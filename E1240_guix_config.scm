@@ -1,6 +1,10 @@
 (use-modules (guix store) (gnu) (gnu system nss))
-(use-service-modules desktop networking ssh)
+(use-service-modules admin desktop mcron networking ssh)
 (use-package-modules certs fonts gnome gnuzilla libreoffice linux pulseaudio)
+
+(define %btrfs-scrub
+  #~(job '(next-hour '(3))
+         (string-append #$btrfs-progs "/bin/btrfs scrub start /")))
 
 (operating-system
   (host-name "E1240")
@@ -76,6 +80,11 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
                    (tor-service)
+                   (service rottlog-service-type)
+                   (service mcron-service-type
+                            (mcron-configuration
+                             (jobs (list %btrfs-scrub))))
+
                    (modify-services %desktop-services
                      (guix-service-type config =>
                                         (guix-configuration
