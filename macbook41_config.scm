@@ -1,6 +1,6 @@
 (use-modules (guix store) (gnu) (gnu system nss))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules bootloaders certs cups gnome libreoffice linux)
+(use-package-modules bootloaders certs cups gnome linux video)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -24,7 +24,7 @@
                          (mount-point "/")
                          (type "btrfs")
                          (title 'label)
-                         (options "autodefrag,compress=lzo"))
+                         (options "autodefrag,compress=lzo,discard,ssd_spread"))
                        (file-system
                          (device "none")
                          (mount-point "/var/guix/temproots")
@@ -54,6 +54,7 @@
                    gvfs              ;for user mounts
                    cups
                    btrfs-progs
+                   libvdpau-va-gl    ;intel graphics vdpau
                    %base-packages))
 
   ;; Add GNOME and/or Xfce---we can choose at the log-in
