@@ -17,7 +17,11 @@
                 (bootloader grub-efi-bootloader)
                 (target "/boot/efi")))
 
-  (kernel-arguments '("zswap.enabled=1"))
+  (kernel-arguments '("zswap.enabled=1"
+                      "hid_apple.fnmode=2" "appletouch.threshold=3"
+                      ;; Required to run X32 software and VMs
+                      ;; https://wiki.debian.org/X32Port
+                      "syscall.x32=y"))
 
   (file-systems (cons* (file-system
                          (device "my-root")
@@ -75,7 +79,6 @@
                    (service cups-service-type
                             (cups-configuration
                               (web-interface? #t)
-                              ;(server-name "192.168.1.71")
                               (extensions
                                 (list cups-filters hplip))))
 
@@ -98,17 +101,6 @@
                                                    %default-substitute-urls))
                                           (extra-options
                                             '("--cores=1")))) ; we're on a laptop
-
-                     ;(xorg-configuration-file config =>
-                     ;                         (xorg-configuration
-                     ;                           (inherit config)
-                     ;                           (modules "xf86-video-fbdev"
-                     ;                                    "xf86-video-intel"
-                     ;                                    "xf86-input-libinput"
-                     ;                                    "xf86-input-evdev"
-                     ;                                    ;"xf86-input-keyboard"
-                     ;                                    ;"xf86-input-mouse"
-                     ;                                    )))
 
                      (ntp-service-type config =>
                                        (ntp-configuration

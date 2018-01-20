@@ -17,7 +17,10 @@
                 (bootloader grub-bootloader)
                 (target "/dev/sdb")))
 
-  (kernel-arguments '("zswap.enabled=1" "zram.max_pool_percent=50"))
+  (kernel-arguments '("zswap.enabled=1" "zram.max_pool_percent=50"
+                      ;; Required to run X32 software and VMs
+                      ;; https://wiki.debian.org/X32Port
+                      "syscall.x32=y"))
 
   (file-systems (cons* (file-system
                          (device "my-root")
