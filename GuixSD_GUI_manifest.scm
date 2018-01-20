@@ -12,6 +12,7 @@
         "file"
         "font-dejavu"
         "font-gnu-freefont-ttf"
+        "font-gnu-unifont"
         "font-terminus"
         "git"
         "git:send-email"

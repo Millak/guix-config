@@ -2,6 +2,7 @@
  (map (compose list specification->package+output)
        '("aria2"
         "bash-completion"
+        "file"
         "git"
         "git:send-email"
         "glibc-utf8-locales"
