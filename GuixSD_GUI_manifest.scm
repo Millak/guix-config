@@ -51,6 +51,7 @@
         "speedtest-cli"
         "sshfs-fuse"
         "stow"
+        "streamlink"
         "surfraw"
         "syncthing"
         "terminology"
