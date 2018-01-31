@@ -94,7 +94,7 @@
                                         (guix-configuration
                                           (inherit config)
                                           (substitute-urls
-                                            (cons* "https://bayfront.guixsd.org"
+                                            (cons* ;"https://bayfront.guixsd.org"
                                                    "https://berlin.guixsd.org"
                                                    "http://192.168.1.134:8181" ; odroid-c2
                                                    "http://192.168.1.183" ; E1240
