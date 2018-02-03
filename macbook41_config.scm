@@ -24,9 +24,6 @@
                       ;; https://wiki.debian.org/X32Port
                       "syscall.x32=y"))
 
-  ;; b43-open fails to load on the linux-libre kernel :(
-  ;(firmware '("openfwwf-firmware"))
-
   (file-systems (cons* (file-system
                          (device "my-root")
                          (mount-point "/")
