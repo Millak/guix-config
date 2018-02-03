@@ -1,6 +1,6 @@
 (use-modules (guix store) (gnu) (gnu system nss))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules bootloaders certs cups gnome linux video)
+(use-package-modules bootloaders certs cups firmware gnome linux video)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -18,10 +18,14 @@
                 (target "/boot/efi")))
 
   (kernel-arguments '("zswap.enabled=1"
+                      ;; This doesn't seem to make a difference in the touchpad issue.
                       "hid_apple.fnmode=2" "appletouch.threshold=3"
                       ;; Required to run X32 software and VMs
                       ;; https://wiki.debian.org/X32Port
                       "syscall.x32=y"))
+
+  ;; b43-open fails to load on the linux-libre kernel :(
+  ;(firmware '("openfwwf-firmware"))
 
   (file-systems (cons* (file-system
                          (device "my-root")
@@ -94,7 +98,7 @@
                                         (guix-configuration
                                           (inherit config)
                                           (substitute-urls
-                                            (cons* ;"https://bayfront.guixsd.org"
+                                            (cons* ;"https://bayfront.guixsd.org" ; currently offline
                                                    "https://berlin.guixsd.org"
                                                    "http://192.168.1.134:8181" ; odroid-c2
                                                    "http://192.168.1.183" ; E1240
