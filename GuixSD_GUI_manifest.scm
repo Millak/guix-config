@@ -8,6 +8,7 @@
         "bash-completion"
         "borg"
         "btrfs-progs"
+        "culmus"
         "ffmpeg"
         "file"
         "font-dejavu"
