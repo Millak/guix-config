@@ -1,6 +1,6 @@
-(use-modules (guix store) (gnu) (gnu system nss))
+(use-modules (guix store) (gnu) (gnu system nss) (gnu system locale))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules bootloaders certs cups firmware gnome linux video)
+(use-package-modules bootloaders certs cups gnome ibus linux video)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -10,6 +10,11 @@
   (host-name "macbook41")
   (timezone "Asia/Jerusalem")
   (locale "en_US.utf8")
+  (locale-definitions
+    (list (locale-definition (source "en_US")
+                             (name "en_US.utf8"))
+          (locale-definition (source "he_IL")
+                             (name "he_IL.utf8"))))
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.
@@ -18,8 +23,6 @@
                 (target "/boot/efi")))
 
   (kernel-arguments '("zswap.enabled=1"
-                      ;; This doesn't seem to make a difference in the touchpad issue.
-                      "hid_apple.fnmode=2" "appletouch.threshold=3"
                       ;; Required to run X32 software and VMs
                       ;; https://wiki.debian.org/X32Port
                       "syscall.x32=y"))
@@ -37,7 +40,8 @@
                          (type "tmpfs")
                          (check? #f))
                        (file-system
-                         (device "/dev/sda1")
+                         (device (uuid "F010-1913" 'fat))
+                         (title 'uuid)
                          (mount-point "/boot/efi")
                          (type "vfat"))
                        %base-file-systems))
@@ -59,14 +63,11 @@
                    gvfs              ;for user mounts
                    cups
                    btrfs-progs
+                   ibus
                    libvdpau-va-gl    ;intel graphics vdpau
                    %base-packages))
 
-  ;; Add GNOME and/or Xfce---we can choose at the log-in
-  ;; screen with F1.  Use the "desktop" services, which
-  ;; include the X11 log-in service, networking with Wicd,
-  ;; and more.
-  (services (cons* (xfce-desktop-service)
+  (services (cons* (enlightenment-desktop-service)
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (port 3000)))
