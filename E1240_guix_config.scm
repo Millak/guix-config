@@ -1,6 +1,6 @@
 (use-modules (guix store) (gnu) (gnu system nss))
 (use-service-modules admin desktop mcron networking ssh)
-(use-package-modules certs fonts gnome gnuzilla libreoffice linux pulseaudio)
+(use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -66,6 +66,8 @@
                    gvfs              ;for user mounts
                    btrfs-progs pavucontrol
                    font-terminus font-dejavu
+                   gcompris
+                   kodi
                    icecat ;libreoffice
                    %base-packages))
 
@@ -93,10 +95,10 @@
                                         (guix-configuration
                                           (inherit config)
                                           (substitute-urls
-                                            (cons* "https://bayfront.guixsd.org"
+                                            (cons* ;"https://bayfront.guixsd.org"
                                                    "https://berlin.guixsd.org"
                                                    "http://192.168.1.134:8181" ; odroid-c2
-                                                   "http://192.168.1.209:8181" ; macbook42
+                                                   "http://192.168.1.209:8181" ; macbook41
                                                    %default-substitute-urls))))
                      (ntp-service-type config =>
                                        (ntp-configuration
