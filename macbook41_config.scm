@@ -1,6 +1,6 @@
 (use-modules (guix store) (gnu) (gnu system nss) (gnu system locale))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules bootloaders certs cups gnome ibus linux video)
+(use-package-modules bootloaders certs cups gnome linux video)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -63,11 +63,11 @@
                    gvfs              ;for user mounts
                    cups
                    btrfs-progs
-                   ibus
                    libvdpau-va-gl    ;intel graphics vdpau
                    %base-packages))
 
   (services (cons* (enlightenment-desktop-service)
+                   (console-keymap-service "he")
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (port 3000)))
