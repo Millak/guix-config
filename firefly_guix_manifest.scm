@@ -24,7 +24,6 @@
         "screen"
         "speedtest-cli"
         "sshfs-fuse"
-        "surfraw"
         "tig"
         "translate-shell"
         "tree"

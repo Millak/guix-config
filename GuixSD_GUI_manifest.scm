@@ -53,7 +53,6 @@
         "sshfs-fuse"
         "stow"
         "streamlink"
-        "surfraw"
         "syncthing"
         "terminology"
         "tig"
