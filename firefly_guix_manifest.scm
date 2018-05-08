@@ -24,6 +24,7 @@
         "screen"
         "speedtest-cli"
         "sshfs-fuse"
+        "stow"
         "tig"
         "translate-shell"
         "tree"
