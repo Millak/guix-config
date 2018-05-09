@@ -67,6 +67,7 @@
                    btrfs-progs pavucontrol
                    font-terminus font-dejavu
                    gcompris
+                   gcompris-qt
                    kodi
                    icecat ;libreoffice
                    %base-packages))
@@ -97,7 +98,7 @@
                                           (substitute-urls
                                             (cons* ;"https://bayfront.guixsd.org"
                                                    "https://berlin.guixsd.org"
-                                                   "http://192.168.1.134:8181" ; odroid-c2
+                                                   ;"http://192.168.1.134:8181" ; odroid-c2
                                                    "http://192.168.1.209:8181" ; macbook41
                                                    %default-substitute-urls))))
                      (ntp-service-type config =>
