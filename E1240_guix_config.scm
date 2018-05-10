@@ -4,7 +4,7 @@
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
-         (string-append #$btrfs-progs "/bin/btrfs scrub start /")))
+         (string-append #$btrfs-progs "/bin/btrfs scrub -c 3 start /")))
 
 (operating-system
   (host-name "E1240")
@@ -77,6 +77,7 @@
   ;; include the X11 log-in service, networking with Wicd,
   ;; and more.
   (services (cons* (xfce-desktop-service)
+                   (console-keymap-service "il-heb")
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (port 3000)))

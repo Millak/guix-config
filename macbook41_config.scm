@@ -4,7 +4,7 @@
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
-         (string-append #$btrfs-progs "/bin/btrfs scrub start /")))
+         (string-append #$btrfs-progs "/bin/btrfs scrub -c 3 start /")))
 
 (operating-system
   (host-name "macbook41")
@@ -67,7 +67,7 @@
                    %base-packages))
 
   (services (cons* (enlightenment-desktop-service)
-                   (console-keymap-service "he")
+                   (console-keymap-service "il-heb")
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (port 3000)))
@@ -98,7 +98,7 @@
                                           (substitute-urls
                                             (cons* ;"https://bayfront.guixsd.org" ; currently offline
                                                    "https://berlin.guixsd.org"
-                                                   "http://192.168.1.134:8181" ; odroid-c2
+                                                   ;"http://192.168.1.134:8181" ; odroid-c2
                                                    "http://192.168.1.183" ; E1240
                                                    %default-substitute-urls))
                                           (extra-options
