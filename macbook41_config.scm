@@ -6,6 +6,10 @@
   #~(job '(next-hour '(3))
          (string-append #$btrfs-progs "/bin/btrfs scrub -c 3 start /")))
 
+(define %btrfs-balance
+  #~(job '(next-hour '(5))
+         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage 50 -musage 70 /")))
+
 (operating-system
   (host-name "macbook41")
   (timezone "Asia/Jerusalem")
@@ -66,7 +70,7 @@
                    libvdpau-va-gl    ;intel graphics vdpau
                    %base-packages))
 
-  (services (cons* (enlightenment-desktop-service)
+  (services (cons* (service enlightenment-desktop-service-type)
                    (console-keymap-service "il-heb")
                    (service guix-publish-service-type
                             (guix-publish-configuration
@@ -89,7 +93,8 @@
                    (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
-                             (jobs (list %btrfs-scrub))))
+                             (jobs (list %btrfs-scrub
+                                         %btrfs-balance))))
 
                    (modify-services %desktop-services
                      (guix-service-type config =>

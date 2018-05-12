@@ -6,6 +6,10 @@
   #~(job '(next-hour '(3))
          (string-append #$btrfs-progs "/bin/btrfs scrub -c 3 start /")))
 
+(define %btrfs-balance
+  #~(job '(next-hour '(5))
+         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage 50 -musage 70 /")))
+
 (operating-system
   (host-name "E1240")
   (timezone "Asia/Jerusalem")
