@@ -8,7 +8,7 @@
 
 (define %btrfs-balance
   #~(job '(next-hour '(5))
-         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage 50 -musage 70 /")))
+         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
 
 (operating-system
   (host-name "macbook41")
