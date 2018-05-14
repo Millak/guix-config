@@ -1,4 +1,8 @@
-(use-modules (guix store) (gnu) (gnu system nss) (gnu system locale))
+(use-modules (guix store)
+             (gnu)
+             (gnu system nss)
+             (gnu system locale)
+             (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
 (use-package-modules bootloaders certs cups gnome linux video)
 
@@ -9,6 +13,21 @@
 (define %btrfs-balance
   #~(job '(next-hour '(5))
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
+
+(define my-xorg-modules
+  ;; Only the modules on this laptop
+  (fold delete %default-xorg-modules
+        '("xf86-video-ati"
+          "xf86-video-cirrus"
+          "xf86-video-mach64"
+          "xf86-video-nouveau"
+          "xf86-video-nv"
+          "xf86-video-sis"
+          ;"xf86-input-evdev"
+          ;"xf86-input-keyboard"
+          ;"xf86-input-mouse"
+          ;"xf86-input-synaptics"
+          )))
 
 (operating-system
   (host-name "macbook41")
@@ -80,7 +99,10 @@
                               (port-number 22)
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
+
                    (tor-service)
+                   (tor-hidden-service "http"
+                                       '((22 "127.0.0.1:22")))
 
                    (service cups-service-type
                             (cups-configuration
@@ -96,7 +118,20 @@
                              (jobs (list %btrfs-scrub
                                          %btrfs-balance))))
 
-                   (modify-services %desktop-services
+                   (service openntpd-service-type
+                            (openntpd-configuration
+                              (listen-on '("127.0.0.1" "::1"))
+                              (constraint-from '("www.gnu.org"))
+                              (allow-large-adjustment? #t)))
+
+                   (modify-services (delete (ntp-service) %desktop-services)
+                   ;(modify-services (fold delete %desktop-services
+                   ;                       '(
+                   ;                         (screen-locker-service slock)
+                   ;                         (screen-locker-service xlockmore "xlock")
+                   ;                         (ntp-service)
+                   ;                         )
+                   ;                       )
                      (guix-service-type config =>
                                         (guix-configuration
                                           (inherit config)
@@ -109,10 +144,11 @@
                                           (extra-options
                                             '("--cores=1")))) ; we're on a laptop
 
-                     (ntp-service-type config =>
-                                       (ntp-configuration
-                                         (inherit config)
-                                         (allow-large-adjustment? #t))))))
+                     (slim-service-type config =>
+                                        (slim-configuration
+                                          (inherit config)
+                                          (startx (xorg-start-command
+                                                    #:modules my-xorg-modules)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
