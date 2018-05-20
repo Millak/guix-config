@@ -4,7 +4,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules bootloaders certs cups gnome linux video)
+(use-package-modules bootloaders certs cups gnome linux ntp video)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -23,11 +23,17 @@
           "xf86-video-nouveau"
           "xf86-video-nv"
           "xf86-video-sis"
-          ;"xf86-input-evdev"
-          ;"xf86-input-keyboard"
-          ;"xf86-input-mouse"
-          ;"xf86-input-synaptics"
-          )))
+          "xf86-input-evdev"
+          "xf86-input-keyboard"
+          "xf86-input-mouse"
+          "xf86-input-synaptics")))
+
+(define (remove-services types services)
+  (remove (lambda (service)
+            (any (lambda (type)
+                   (eq? (service-kind service) type))
+                 types))
+          services))
 
 (operating-system
   (host-name "macbook41")
@@ -46,8 +52,11 @@
                 (target "/boot/efi")))
 
   (kernel-arguments '("zswap.enabled=1"
+                      ;; My local network and ISP don't have IPv6
+                      "ipv6.disable=1"
                       ;; Required to run X32 software and VMs
                       ;; https://wiki.debian.org/X32Port
+                      ;; Still untested on GuixSD.
                       "syscall.x32=y"))
 
   (file-systems (cons* (file-system
@@ -67,6 +76,14 @@
                          (title 'uuid)
                          (mount-point "/boot/efi")
                          (type "vfat"))
+                       ;; This should help with switching
+                       ;; between ntp and openntpd.
+                       (file-system
+                         (device "none")
+                         (mount-point "/var/empty")
+                         (title 'device)
+                         (type "tmpfs")
+                         (check? #f))
                        %base-file-systems))
 
   (swap-devices '("/dev/sda2"))
@@ -101,7 +118,7 @@
                               (password-authentication? #t)))
 
                    (tor-service)
-                   (tor-hidden-service "http"
+                   (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
 
                    (service cups-service-type
@@ -121,17 +138,16 @@
                    (service openntpd-service-type
                             (openntpd-configuration
                               (listen-on '("127.0.0.1" "::1"))
-                              (constraint-from '("www.gnu.org"))
                               (allow-large-adjustment? #t)))
 
-                   (modify-services (delete (ntp-service) %desktop-services)
-                   ;(modify-services (fold delete %desktop-services
-                   ;                       '(
-                   ;                         (screen-locker-service slock)
-                   ;                         (screen-locker-service xlockmore "xlock")
-                   ;                         (ntp-service)
-                   ;                         )
-                   ;                       )
+                   (service connman-service-type)
+
+                   (modify-services (remove-services
+                                      (list
+                                        ntp-service-type
+                                        screen-locker-service-type
+                                        network-manager-service-type)
+                                      %desktop-services)
                      (guix-service-type config =>
                                         (guix-configuration
                                           (inherit config)
