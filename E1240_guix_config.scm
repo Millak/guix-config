@@ -4,7 +4,7 @@
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
-         (string-append #$btrfs-progs "/bin/btrfs scrub -c 3 start /")))
+         (string-append #$btrfs-progs "/bin/btrfs scrub start -c 3 /")))
 
 (define %btrfs-balance
   #~(job '(next-hour '(5))
@@ -94,7 +94,8 @@
                    (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
-                             (jobs (list %btrfs-scrub))))
+                             (jobs (list %btrfs-scrub
+                                         %btrfs-balance))))
 
                    (modify-services %desktop-services
                      (guix-service-type config =>
