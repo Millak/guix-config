@@ -8,7 +8,7 @@
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
-         (string-append #$btrfs-progs "/bin/btrfs scrub -c 3 start /")))
+         (string-append #$btrfs-progs "/bin/btrfs scrub start -c 3 /")))
 
 (define %btrfs-balance
   #~(job '(next-hour '(5))
