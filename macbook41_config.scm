@@ -1,10 +1,9 @@
 (use-modules (guix store)
              (gnu)
-             (gnu system nss)
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules bootloaders certs cups gnome linux ntp video)
+(use-package-modules certs cups gnome linux video)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
