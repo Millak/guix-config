@@ -52,8 +52,6 @@
                 (target "/boot/efi")))
 
   (kernel-arguments '("zswap.enabled=1"
-                      ;; My local network and ISP don't have IPv6
-                      "ipv6.disable=1"
                       ;; Required to run X32 software and VMs
                       ;; https://wiki.debian.org/X32Port
                       ;; Still untested on GuixSD.
@@ -76,14 +74,6 @@
                          (title 'uuid)
                          (mount-point "/boot/efi")
                          (type "vfat"))
-                       ;; This should help with switching
-                       ;; between ntp and openntpd.
-                       (file-system
-                         (device "none")
-                         (mount-point "/var/empty")
-                         (title 'device)
-                         (type "tmpfs")
-                         (check? #f))
                        %base-file-systems))
 
   (swap-devices '("/dev/sda2"))
