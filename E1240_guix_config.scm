@@ -27,15 +27,13 @@
                       "syscall.x32=y"))
 
   (file-systems (cons* (file-system
-                         (device "my-root")
+                         (device (file-system-label "my-root"))
                          (mount-point "/")
                          (type "btrfs")
-                         (title 'label)
                          (options "autodefrag,compress=lzo"))
                        (file-system
                          (device "none")
                          (mount-point "/var/guix/temproots")
-                         (title 'device)
                          (type "tmpfs")
                          (check? #f))
                        %base-file-systems))
