@@ -35,5 +35,5 @@
         "wcalc"
         "weechat"
         "wget"
-        "wgetpaste"
+        "my-wgetpaste"
         "xclip")))

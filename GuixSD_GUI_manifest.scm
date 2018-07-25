@@ -29,7 +29,7 @@
         "links"
         "mcron"
         "mosh"
-        "mpv"
+        "my-mpv"
         "msmtp"
         "mupdf"
         "mutt"
@@ -68,6 +68,6 @@
         "wcalc"
         "weechat"
         "wget"
-        "wgetpaste"
+        "my-wgetpaste"
         "xclip"
         "youtube-dl")))
