@@ -111,7 +111,7 @@
                             (cups-configuration
                               (web-interface? #t)
                               (extensions
-                                (list cups-filters hplip))))
+                                (list cups-filters hplip-minimal))))
 
                    (service tlp-service-type)
 
