@@ -82,6 +82,7 @@
                    (console-keymap-service "il-heb")
                    (service guix-publish-service-type
                             (guix-publish-configuration
+                              (host "0.0.0.0")
                               (port 3000)))
                    (service openssh-service-type
                             (openssh-configuration
@@ -89,6 +90,8 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
                    (tor-service)
+                   (tor-hidden-service "ssh"
+                                       '((22 "127.0.0.1:22")))
                    (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
