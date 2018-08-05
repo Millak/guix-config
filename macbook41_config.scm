@@ -3,7 +3,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking pm ssh xorg)
-(use-package-modules certs cups gnome linux video)
+(use-package-modules certs cups linux video xorg)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -26,6 +26,25 @@
           "xf86-input-keyboard"
           "xf86-input-mouse"
           "xf86-input-synaptics")))
+
+(define my-xorg-keyboard
+  "Section \"InputClass\"
+      Identifier \"keyboard-all\"
+      Option \"XkbModel\" \"apple_laptop\"
+      Driver \"evdev\"
+      MatchIsKeyboard \"on\"
+      Option \"XkbLayout\" \"us,il\"
+      Option \"XkbOptions\" \"grp:lalt_lshift_toggle,lv3:rwin_switch,compose:caps,eurosign:e,eurosign:5,terminate:ctrl_alt_bksp\"
+   EndSection")
+
+;; This is untested!
+;; https://blog.jessfraz.com/post/linux-on-mac/
+(define my-macbook-touchpad
+  "Section \"InputClass\"
+      Identifier \"touchpad catchall\"
+      Driver \"synaptics\"
+      MatchIsTouchpad \"on\"
+  EndSection")
 
 (define (remove-services types services)
   (remove (lambda (service)
@@ -86,16 +105,17 @@
 
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
-                   gvfs              ;for user mounts
                    cups
+                   setxkbmap
                    btrfs-progs
                    libvdpau-va-gl    ;intel graphics vdpau
                    %base-packages))
 
   (services (cons* (service enlightenment-desktop-service-type)
-                   (console-keymap-service "il-heb")
+                   ;(console-keymap-service "il-heb")
                    (service guix-publish-service-type
                             (guix-publish-configuration
+                              (host "0.0.0.0")
                               (port 3000)))
                    (service openssh-service-type
                             (openssh-configuration
@@ -103,17 +123,19 @@
                               (allow-empty-passwords? #f)
                               (password-authentication? #t)))
 
-                   (tor-service)
+                   (service tor-service-type)
                    (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
 
                    (service cups-service-type
                             (cups-configuration
                               (web-interface? #t)
+                              (default-paper-size "A4")
                               (extensions
                                 (list cups-filters hplip-minimal))))
 
                    (service tlp-service-type)
+                   (service thermald-service-type)
 
                    (service rottlog-service-type)
                    (service mcron-service-type
@@ -150,7 +172,11 @@
                                         (slim-configuration
                                           (inherit config)
                                           (startx (xorg-start-command
-                                                    #:modules my-xorg-modules)))))))
+                                                    #:modules my-xorg-modules
+                                                    #:configuration-file
+                                                    (xorg-configuration-file
+                                                      #:extra-config
+                                                      (list my-xorg-keyboard)))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
