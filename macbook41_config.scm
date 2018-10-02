@@ -107,6 +107,7 @@
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
                    cups
+                   econnman
                    setxkbmap
                    btrfs-progs
                    virt-manager
@@ -128,6 +129,8 @@
                    (service tor-service-type)
                    (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
+                   (tor-hidden-service "guix-publish"
+                                       '((3000 "127.0.0.1:3000")))
 
                    (service cups-service-type
                             (cups-configuration
@@ -137,7 +140,6 @@
                                 (list cups-filters hplip-minimal))))
 
                    (service tlp-service-type)
-                   (service thermald-service-type)
 
                    (service rottlog-service-type)
                    (service mcron-service-type
@@ -182,6 +184,7 @@
                                                     #:modules my-xorg-modules
                                                     #:configuration-file
                                                     (xorg-configuration-file
+                                                      #:modules my-xorg-modules
                                                       #:extra-config
                                                       (list my-xorg-keyboard)))))))))
 

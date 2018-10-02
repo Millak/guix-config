@@ -1,4 +1,6 @@
-(use-modules (guix store) (gnu) (gnu system nss))
+(use-modules (guix store)
+             (gnu)
+             (gnu system nss))
 (use-service-modules admin desktop mcron networking ssh)
 (use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
 
