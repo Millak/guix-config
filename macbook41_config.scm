@@ -3,7 +3,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking pm ssh virtualization xorg)
-(use-package-modules certs connman cups linux video virtualization xorg)
+(use-package-modules certs connman cups linux video virtualization)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -26,16 +26,6 @@
           "xf86-input-keyboard"
           "xf86-input-mouse"
           "xf86-input-synaptics")))
-
-(define my-xorg-keyboard
-  "Section \"InputClass\"
-      Identifier \"keyboard-all\"
-      Option \"XkbModel\" \"apple_laptop\"
-      Driver \"evdev\"
-      MatchIsKeyboard \"on\"
-      Option \"XkbLayout\" \"us,il\"
-      Option \"XkbOptions\" \"grp:lalt_lshift_toggle,lv3:rwin_switch,compose:caps,eurosign:e,eurosign:5,terminate:ctrl_alt_bksp\"
-   EndSection")
 
 ;; This is untested!
 ;; https://blog.jessfraz.com/post/linux-on-mac/
@@ -108,7 +98,6 @@
   (packages (cons* nss-certs         ;for HTTPS access
                    cups
                    econnman
-                   setxkbmap
                    btrfs-progs
                    virt-manager
                    libvdpau-va-gl    ;intel graphics vdpau
@@ -184,9 +173,7 @@
                                                     #:modules my-xorg-modules
                                                     #:configuration-file
                                                     (xorg-configuration-file
-                                                      #:modules my-xorg-modules
-                                                      #:extra-config
-                                                      (list my-xorg-keyboard)))))))))
+                                                      #:modules my-xorg-modules))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
