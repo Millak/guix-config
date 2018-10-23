@@ -2,6 +2,8 @@
  (map (compose list specification->package+output)
        '("aria2"
         "bash-completion"
+        "borg"
+        "ddrescue"
         "file"
         "git"
         "git:send-email"
@@ -13,6 +15,7 @@
         "msmtp"
         "mutt"
         "myrepos"
+        "my-wgetpaste"
         "ncdu"
         "nmap"
         "nss-certs"
@@ -35,5 +38,4 @@
         "wcalc"
         "weechat"
         "wget"
-        "my-wgetpaste"
         "xclip")))
