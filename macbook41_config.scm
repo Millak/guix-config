@@ -158,10 +158,10 @@
                                         (guix-configuration
                                           (inherit config)
                                           (substitute-urls
-                                            (cons* ;"https://bayfront.guixsd.org" ; currently offline
-                                                   "https://berlin.guixsd.org"
+                                            (cons* "https://berlin.guixsd.org"
+                                                   "https://bayfront.guixsd.org"
                                                    ;"http://192.168.1.134:8181" ; odroid-c2
-                                                   "http://192.168.1.183" ; E1240
+                                                   "http://192.168.1.183:3000" ; E1240
                                                    %default-substitute-urls))
                                           (extra-options
                                             '("--cores=1")))) ; we're on a laptop

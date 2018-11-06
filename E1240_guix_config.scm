@@ -76,12 +76,8 @@
                    icecat ;libreoffice
                    %base-packages))
 
-  ;; Add GNOME and/or Xfce---we can choose at the log-in
-  ;; screen with F1.  Use the "desktop" services, which
-  ;; include the X11 log-in service, networking with Wicd,
-  ;; and more.
   (services (cons* (xfce-desktop-service)
-                   (console-keymap-service "il-heb")
+                   ;(console-keymap-service "il-heb")
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (host "0.0.0.0")
@@ -105,10 +101,10 @@
                                         (guix-configuration
                                           (inherit config)
                                           (substitute-urls
-                                            (cons* ;"https://bayfront.guixsd.org"
-                                                   "https://berlin.guixsd.org"
+                                            (cons* "https://berlin.guixsd.org"
+                                                   "https://bayfront.guixsd.org"
                                                    ;"http://192.168.1.134:8181" ; odroid-c2
-                                                   "http://192.168.1.209:8181" ; macbook41
+                                                   "http://192.168.1.209:3000" ; macbook41
                                                    %default-substitute-urls))))
                      (ntp-service-type config =>
                                        (ntp-configuration
