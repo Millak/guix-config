@@ -13,7 +13,7 @@
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
 
 (operating-system
-  (host-name "E1240")
+  (host-name "E2140")
   (timezone "Asia/Jerusalem")
   (locale "en_US.utf8")
 
