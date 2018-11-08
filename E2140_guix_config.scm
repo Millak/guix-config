@@ -81,7 +81,9 @@
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (host "0.0.0.0")
-                              (port 3000)))
+                              (port 3000)
+                              ;; Slower to compress than to just send
+                              (compression-level 0)))
                    (service openssh-service-type
                             (openssh-configuration
                               (port-number 22)
