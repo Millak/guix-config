@@ -16,6 +16,7 @@
   (host-name "E2140")
   (timezone "Asia/Jerusalem")
   (locale "en_US.utf8")
+  (locale-libcs (list glibc-2.27 (canonical-package glibc)))
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.

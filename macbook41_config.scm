@@ -52,6 +52,7 @@
                              (name "en_US.utf8"))
           (locale-definition (source "he_IL")
                              (name "he_IL.utf8"))))
+  (locale-libcs (list glibc-2.27 (canonical-package glibc)))
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.
@@ -173,7 +174,8 @@
                                                     #:modules my-xorg-modules
                                                     #:configuration-file
                                                     (xorg-configuration-file
-                                                      #:modules my-xorg-modules))))))))
+                                                      #:modules my-xorg-modules)
+                                                    )))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
