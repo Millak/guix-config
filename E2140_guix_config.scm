@@ -108,7 +108,7 @@
                                                   "https://bayfront.guixsd.org"
                                                   ;"http://192.168.1.134:8181" ; odroid-c2
                                                   "http://192.168.1.209:3000" ; macbook41
-                                                  "https://mirror.hydra.gnu.org"))
+                                                  "https://mirror.hydra.gnu.org"))))
                      (ntp-service-type config =>
                                        (ntp-configuration
                                          (inherit config)
