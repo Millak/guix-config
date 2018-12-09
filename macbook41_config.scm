@@ -159,10 +159,10 @@
                                         (guix-configuration
                                           (inherit config)
                                           (substitute-urls
-                                            (list "https://berlin.guixsd.org"
+                                            (list "http://192.168.1.183:3000" ; E2140
+                                                  "https://berlin.guixsd.org"
                                                   "https://bayfront.guixsd.org"
                                                   ;"http://192.168.1.134:8181" ; odroid-c2
-                                                  "http://192.168.1.183:3000" ; E2140
                                                   "https://mirror.hydra.gnu.org"))
                                           (extra-options
                                             '("--cores=1")))) ; we're on a laptop
