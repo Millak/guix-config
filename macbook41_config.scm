@@ -160,12 +160,19 @@
                                           (inherit config)
                                           (substitute-urls
                                             (list "http://192.168.1.183:3000" ; E2140
+                                                  "http://firefly.lan:8181"
                                                   "https://berlin.guixsd.org"
                                                   "https://bayfront.guixsd.org"
-                                                  ;"http://192.168.1.134:8181" ; odroid-c2
                                                   "https://mirror.hydra.gnu.org"))
+                                          (authorized-keys
+                                            (list (local-file "Extras/berlin.guixsd.org.pub")
+                                                  (local-file "Extras/hydra.gnu.org.pub")
+                                                  (local-file "Extras/firefly_publish.pub")
+                                                  (local-file "Extras/E2140_publish.pub")))
                                           (extra-options
-                                            '("--cores=1")))) ; we're on a laptop
+                                            (list "--gc-keep-derivations=yes"
+                                                  "--gc-keep-outputs=yes"
+                                                  "--cores=1")))) ; we're on a laptop
 
                      (slim-service-type config =>
                                         (slim-configuration

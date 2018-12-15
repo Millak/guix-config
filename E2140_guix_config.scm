@@ -105,10 +105,18 @@
                                           (inherit config)
                                           (substitute-urls
                                             (list "http://192.168.1.209:3000" ; macbook41
+                                                  "http://firefly.lan:8181"
                                                   "https://berlin.guixsd.org"
                                                   "https://bayfront.guixsd.org"
-                                                  ;"http://192.168.1.134:8181" ; odroid-c2
-                                                  "https://mirror.hydra.gnu.org"))))
+                                                  "https://mirror.hydra.gnu.org"))
+                                          (authorized-keys
+                                            (list (local-file "Extras/berlin.guixsd.org.pub")
+                                                  (local-file "Extras/hydra.gnu.org.pub")
+                                                  (local-file "Extras/firefly_publish.pub")
+                                                  (local-file "Extras/macbook41_publish.pub")))
+                                          (extra-options
+                                            (list "--gc-keep-derivations=yes"
+                                                  "--gc-keep-outputs=yes"))))
                      (ntp-service-type config =>
                                        (ntp-configuration
                                          (inherit config)
