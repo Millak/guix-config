@@ -161,11 +161,11 @@
                                           (substitute-urls
                                             (list "http://192.168.1.183:3000" ; E2140
                                                   "http://firefly.lan:8181"
-                                                  "https://berlin.guixsd.org"
+                                                  "https://ci.guixsd.org"
                                                   "https://bayfront.guixsd.org"
                                                   "https://mirror.hydra.gnu.org"))
                                           (authorized-keys
-                                            (list (local-file "Extras/berlin.guixsd.org.pub")
+                                            (list (local-file "Extras/ci.guix.info.pub")
                                                   (local-file "Extras/hydra.gnu.org.pub")
                                                   (local-file "Extras/firefly_publish.pub")
                                                   (local-file "Extras/E2140_publish.pub")))

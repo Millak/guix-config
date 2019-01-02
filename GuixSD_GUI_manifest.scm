@@ -6,6 +6,7 @@
         "aspell-dict-en"
         "aspell-dict-he"
         "bash-completion"
+        "bidiv"
         "borg"
         "btrfs-progs"
         "ddrescue"

@@ -14,8 +14,8 @@
         "mosh"
         "msmtp"
         "mutt"
-        "myrepos"
         "my-wgetpaste"
+        "myrepos"
         "ncdu"
         "nmap"
         "nss-certs"
@@ -31,6 +31,7 @@
         "tig"
         "translate-shell"
         "tree"
+        "urlscan"
         "vifm"
         "vim"
         "vim-airline"
@@ -38,4 +39,5 @@
         "wcalc"
         "weechat"
         "wget"
-        "xclip")))
+        "xclip"
+        "youtube-dl")))
