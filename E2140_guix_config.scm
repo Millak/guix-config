@@ -106,11 +106,11 @@
                                           (substitute-urls
                                             (list "http://192.168.1.209:3000" ; macbook41
                                                   "http://firefly.lan:8181"
-                                                  "https://ci.guixsd.org"
+                                                  "https://ci.guix.info"
                                                   "https://bayfront.guixsd.org"
                                                   "https://mirror.hydra.gnu.org"))
                                           (authorized-keys
-                                            (list (local-file "Extras/ci.guixsd.org.pub")
+                                            (list (local-file "Extras/ci.guix.info.pub")
                                                   (local-file "Extras/hydra.gnu.org.pub")
                                                   (local-file "Extras/firefly_publish.pub")
                                                   (local-file "Extras/macbook41_publish.pub")))

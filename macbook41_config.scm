@@ -2,7 +2,7 @@
              (gnu)
              (gnu system locale)
              (srfi srfi-1))
-(use-service-modules admin cups desktop mcron networking pm ssh virtualization xorg)
+(use-service-modules admin cups desktop mcron networking pm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups linux video virtualization)
 
 (define %btrfs-scrub
@@ -52,7 +52,6 @@
                              (name "en_US.utf8"))
           (locale-definition (source "he_IL")
                              (name "he_IL.utf8"))))
-  (locale-libcs (list glibc-2.27 (canonical-package glibc)))
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.
@@ -149,6 +148,8 @@
                               (unix-sock-group "libvirt")))
                    (service virtlog-service-type)
 
+                   (service pcscd-service-type)
+
                    (modify-services (remove-services
                                       (list
                                         ntp-service-type
@@ -161,7 +162,7 @@
                                           (substitute-urls
                                             (list "http://192.168.1.183:3000" ; E2140
                                                   "http://firefly.lan:8181"
-                                                  "https://ci.guixsd.org"
+                                                  "https://ci.guix.info"
                                                   "https://bayfront.guixsd.org"
                                                   "https://mirror.hydra.gnu.org"))
                                           (authorized-keys
