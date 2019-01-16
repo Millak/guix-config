@@ -60,7 +60,7 @@
         "rtv"
         "screen"
         "speedtest-cli"
-        "sshfs-fuse"
+        "sshfs"
         "stow"
         "streamlink"
         "syncthing"

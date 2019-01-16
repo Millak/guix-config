@@ -26,7 +26,7 @@
         "rsync"
         "screen"
         "speedtest-cli"
-        "sshfs-fuse"
+        "sshfs"
         "stow"
         "tig"
         "translate-shell"
