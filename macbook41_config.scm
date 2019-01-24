@@ -13,6 +13,17 @@
   #~(job '(next-hour '(5))
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
 
+(define %os-release-file
+  (plain-file "os-release"
+              (string-append
+                "NAME=\"GNU Guix\"\n"
+                "PRETTY_NAME=\"GNU Guix\"\n"
+                "VERSION=\""((@ (guix packages) package-version) ((@ (gnu packages package-management) guix))"\"\n"
+                "ID=guix\n"
+                "HOME_URL=\"https://www.gnu.org/software/guix/\"\n"
+                "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
+                "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
+
 (define my-xorg-modules
   ;; Only the modules on this laptop
   (fold delete %default-xorg-modules
@@ -105,6 +116,10 @@
 
   (services (cons* (service enlightenment-desktop-service-type)
                    ;(console-keymap-service "il-heb")
+
+                   (service special-files-service-type
+                            `(("/etc/os-release" ,%os-release-file)))
+
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (host "0.0.0.0")
