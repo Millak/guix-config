@@ -100,11 +100,11 @@
                               (port 3000)
                               ;; Slower to compress than to just send
                               (compression-level 0)))
+
                    (service openssh-service-type
                             (openssh-configuration
-                              (port-number 22)
-                              (allow-empty-passwords? #f)
-                              (password-authentication? #t)))
+                              (x11-forwarding? #t)))
+
                    (service tor-service-type)
                    (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
