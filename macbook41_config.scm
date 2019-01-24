@@ -18,7 +18,7 @@
               (string-append
                 "NAME=\"GNU Guix\"\n"
                 "PRETTY_NAME=\"GNU Guix\"\n"
-                "VERSION=\""((@ (guix packages) package-version) ((@ (gnu packages package-management) guix))"\"\n"
+                "VERSION=\""((@ (guix packages) package-version) (@ (gnu packages package-management) guix))"\"\n"
                 "ID=guix\n"
                 "HOME_URL=\"https://www.gnu.org/software/guix/\"\n"
                 "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"

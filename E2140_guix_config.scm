@@ -1,5 +1,6 @@
 (use-modules (guix store)
              (gnu)
+             (gnu system locale)
              (gnu system nss))
 (use-service-modules admin desktop mcron networking ssh)
 (use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
@@ -17,7 +18,7 @@
               (string-append
                 "NAME=\"GNU Guix\"\n"
                 "PRETTY_NAME=\"GNU Guix\"\n"
-                "VERSION=\""((@ (guix packages) package-version) ((@ (gnu packages package-management) guix))"\"\n"
+                "VERSION=\""((@ (guix packages) package-version) (@ (gnu packages package-management) guix))"\"\n"
                 "ID=guix\n"
                 "HOME_URL=\"https://www.gnu.org/software/guix/\"\n"
                 "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
@@ -27,7 +28,11 @@
   (host-name "E2140")
   (timezone "Asia/Jerusalem")
   (locale "en_US.utf8")
-  (locale-libcs (list glibc-2.27 (canonical-package glibc)))
+  (locale-definitions
+    (list (locale-definition (source "en_US")
+                             (name "en_US.utf8"))
+          (locale-definition (source "he_IL")
+                             (name "he_IL.utf8"))))
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.
@@ -88,7 +93,7 @@
                    icecat ;libreoffice
                    %base-packages))
 
-  (services (cons* (service xfce-desktop-service-type)
+  (services (cons* (xfce-desktop-service)
                    ;(console-keymap-service "il-heb")
 
                    (service special-files-service-type
