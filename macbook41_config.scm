@@ -134,6 +134,7 @@
                    (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
                    (tor-hidden-service "guix-publish"
+                                       ; ql3bdn6vkhhwdcj5.onion
                                        '((3000 "127.0.0.1:3000")))
 
                    (service cups-service-type

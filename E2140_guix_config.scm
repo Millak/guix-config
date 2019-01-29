@@ -113,6 +113,9 @@
                    (service tor-service-type)
                    (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
+                   (tor-hidden-service "guix-publish"
+                                       ; insert onion address here
+                                       '((3000 "127.0.0.1:3000")))
                    (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
