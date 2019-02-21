@@ -1,7 +1,6 @@
 (packages->manifest
  (map (compose list specification->package+output)
-       '("abiword"
-        "aria2"
+       '("aria2"
         "aspell"
         "aspell-dict-en"
         "aspell-dict-he"
@@ -59,7 +58,6 @@
         "rsync"
         "rtv"
         "screen"
-        "speedtest-cli"
         "sshfs"
         "stow"
         "streamlink"

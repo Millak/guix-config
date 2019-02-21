@@ -25,7 +25,6 @@
         "qrencode"
         "rsync"
         "screen"
-        "speedtest-cli"
         "sshfs"
         "stow"
         "tig"
