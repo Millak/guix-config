@@ -27,7 +27,8 @@
 (define my-xorg-modules
   ;; Only the modules on this laptop
   (fold delete %default-xorg-modules
-        '("xf86-video-ati"
+        '("xf86-video-amdgpu"
+          "xf86-video-ati"
           "xf86-video-cirrus"
           "xf86-video-mach64"
           "xf86-video-nouveau"
