@@ -9,6 +9,7 @@
         "borg"
         "btrfs-progs"
         "ddrescue"
+        "diffoscope"
         "emacs-debbugs"
         "emacs-geiser"
         "emacs-guix"

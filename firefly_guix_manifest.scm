@@ -4,6 +4,7 @@
         "bash-completion"
         "borg"
         "ddrescue"
+        "diffoscope"
         "file"
         "git"
         "git:send-email"
