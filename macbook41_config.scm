@@ -127,8 +127,6 @@
                               (port 3000)))
                    (service openssh-service-type
                             (openssh-configuration
-                              (port-number 22)
-                              (allow-empty-passwords? #f)
                               (password-authentication? #t)))
 
                    (service tor-service-type)

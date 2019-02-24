@@ -108,13 +108,14 @@
 
                    (service openssh-service-type
                             (openssh-configuration
-                              (x11-forwarding? #t)))
+                              (x11-forwarding? #t)
+                              (extra-content "StreamLocalBindUnlink yes")))
 
                    (service tor-service-type)
                    (tor-hidden-service "ssh"
                                        '((22 "127.0.0.1:22")))
                    (tor-hidden-service "guix-publish"
-                                       ; insert onion address here
+                                       ; fqq67aawbuqnxzng.onion
                                        '((3000 "127.0.0.1:3000")))
                    (service rottlog-service-type)
                    (service mcron-service-type
