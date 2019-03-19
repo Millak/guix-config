@@ -3,7 +3,7 @@
              (gnu system locale)
              (gnu system nss))
 (use-service-modules admin desktop mcron networking ssh)
-(use-package-modules admin certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
+(use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -12,12 +12,6 @@
 (define %btrfs-balance
   #~(job '(next-hour '(5))
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
-
-;; We seem to be affected by bug@30993.
-;; https://issues.guix.info/issue/30993
-(define %start-ssh-service
-  #~(job '(next-minute (range 0 60 15))
-         (string-append #$shepherd "/bin/herd" "start" "ssh-daemon")))
 
 (define %os-release-file
   (plain-file "os-release"
@@ -127,8 +121,7 @@
                    (service mcron-service-type
                             (mcron-configuration
                              (jobs (list %btrfs-scrub
-                                         %btrfs-balance
-                                         %start-ssh-service))))
+                                         %btrfs-balance))))
 
                    (modify-services %desktop-services
                      (guix-service-type config =>
