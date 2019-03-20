@@ -24,20 +24,13 @@
                 "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
                 "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
 
-(define my-xorg-modules
+(define %my-xorg-modules
   ;; Only the modules on this laptop
-  (fold delete %default-xorg-modules
-        '("xf86-video-amdgpu"
-          "xf86-video-ati"
-          "xf86-video-cirrus"
-          "xf86-video-mach64"
-          "xf86-video-nouveau"
-          "xf86-video-nv"
-          "xf86-video-sis"
-          "xf86-input-evdev"
-          "xf86-input-keyboard"
-          "xf86-input-mouse"
-          "xf86-input-synaptics")))
+  ;; It must be an explicit list, 'fold delete %default-xorg-modules' isn't enough.
+  '(xf86-video-vesa
+    xf86-video-fbdev
+    xf86-video-intel
+    xf86-imput-libinput))
 
 ;; This is untested!
 ;; https://blog.jessfraz.com/post/linux-on-mac/
@@ -194,11 +187,10 @@
                                         (slim-configuration
                                           (inherit config)
                                           (startx (xorg-start-command
-                                                    #:modules my-xorg-modules
+                                                    #:modules %my-xorg-modules
                                                     #:configuration-file
                                                     (xorg-configuration-file
-                                                      #:modules my-xorg-modules)
-                                                    )))))))
+                                                      #:modules %my-xorg-modules))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
