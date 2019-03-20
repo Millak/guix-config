@@ -3,7 +3,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking pm security-token ssh virtualization xorg)
-(use-package-modules certs connman cups linux video virtualization)
+(use-package-modules certs connman cups linux video virtualization xorg)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -27,10 +27,10 @@
 (define %my-xorg-modules
   ;; Only the modules on this laptop
   ;; It must be an explicit list, 'fold delete %default-xorg-modules' isn't enough.
-  '(xf86-video-vesa
-    xf86-video-fbdev
-    xf86-video-intel
-    xf86-imput-libinput))
+  (list xf86-video-vesa
+        xf86-video-fbdev
+        xf86-video-intel
+        xf86-input-libinput))
 
 ;; This is untested!
 ;; https://blog.jessfraz.com/post/linux-on-mac/
