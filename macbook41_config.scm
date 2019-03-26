@@ -109,7 +109,6 @@
                    %base-packages))
 
   (services (cons* (service enlightenment-desktop-service-type)
-                   ;(console-keymap-service "il-heb")
 
                    (service special-files-service-type
                             `(("/etc/os-release" ,%os-release-file)))
@@ -186,11 +185,9 @@
                      (slim-service-type config =>
                                         (slim-configuration
                                           (inherit config)
-                                          (startx (xorg-start-command
-                                                    #:modules %my-xorg-modules
-                                                    #:configuration-file
-                                                    (xorg-configuration-file
-                                                      #:modules %my-xorg-modules))))))))
+                                          (xorg-configuration
+                                            (xorg-configuration
+                                              (modules %my-xorg-modules))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))

@@ -94,7 +94,6 @@
                    %base-packages))
 
   (services (cons* (xfce-desktop-service)
-                   ;(console-keymap-service "il-heb")
 
                    (service special-files-service-type
                             `(("/etc/os-release" ,%os-release-file)))
