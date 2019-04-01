@@ -159,9 +159,10 @@
 
                    (modify-services (remove-services
                                       (list
+                                        gdm-service-type
+                                        network-manager-service-type
                                         ntp-service-type
-                                        screen-locker-service-type
-                                        network-manager-service-type)
+                                        screen-locker-service-type)
                                       %desktop-services)
                      (guix-service-type config =>
                                         (guix-configuration

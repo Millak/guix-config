@@ -93,7 +93,7 @@
                    icecat ;libreoffice
                    %base-packages))
 
-  (services (cons* (xfce-desktop-service)
+  (services (cons* (service xfce-desktop-service-type)
 
                    (service special-files-service-type
                             `(("/etc/os-release" ,%os-release-file)))
