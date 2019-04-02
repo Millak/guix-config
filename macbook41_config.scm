@@ -1,7 +1,8 @@
 (use-modules (guix store)
              (gnu)
              (gnu system locale)
-             (srfi srfi-1))
+             (srfi srfi-1)
+             (Extras kernel))
 (use-service-modules admin cups desktop mcron networking pm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups linux video virtualization xorg)
 
@@ -63,6 +64,9 @@
   (bootloader (bootloader-configuration
                 (bootloader grub-efi-bootloader)
                 (target "/boot/efi")))
+
+  (kernel linux-libre-macbook41)
+  (initrd-modules '("ahci" "btrfs" "hid-apple"))
 
   (kernel-arguments '("zswap.enabled=1"
                       ;; Required to run X32 software and VMs
