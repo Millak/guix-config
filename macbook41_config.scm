@@ -32,7 +32,12 @@
   (list xf86-video-vesa
         xf86-video-fbdev
         xf86-video-intel
-        xf86-input-libinput))
+        xf86-input-libinput
+        ;; one of these is needed for two-finger right-click on touchpad
+        ;xf86-input-evdev
+        ;xf86-input-keyboard
+        ;xf86-input-mouse
+        xf86-input-synaptics))
 
 ;; This is untested!
 ;; https://blog.jessfraz.com/post/linux-on-mac/
