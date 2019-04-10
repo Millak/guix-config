@@ -1,5 +1,7 @@
 (define-module (Extras kernel)
-  #:use-module (gnu packages linux))
+  #:use-module (gnu packages linux)
+  #:use-module (guix gexp)
+  #:use-module (guix packages))
 
 (define %macbook41-config-options
   `(("CONFIG_USB_NET_RNDIS_HOST" . m)
@@ -137,46 +139,48 @@
     ("CONFIG_BT_INTEL" . m)
 
     ;;filesystems
-    ("CONFIG_EXT4_FS" . #t)
-    ("CONFIG_EXT4_USE_FOR_EXT2" . #t)
-    ("CONFIG_XFS_FS" . m)
-    ("CONFIG_MSDOS_FS" . m)
-    ("CONFIG_VFAT_FS" . #t)
-    ("CONFIG_TMPFS" . #t)
-    ("CONFIG_DEVTMPFS" . #t)
-    ("CONFIG_DEVTMPFS_MOUNT" . #t)
-    ("CONFIG_PROC_FS" . #t)
-    ("CONFIG_MSDOS_PARTITION" . #t)
+    ;("CONFIG_EXT4_FS" . #t)
+    ;("CONFIG_EXT4_USE_FOR_EXT2" . #t)
+    ;("CONFIG_XFS_FS" . m)
+    ;("CONFIG_MSDOS_FS" . m)
+    ;("CONFIG_VFAT_FS" . #t)
+    ;("CONFIG_TMPFS" . #t)
+    ;("CONFIG_DEVTMPFS" . #t)
+    ;("CONFIG_DEVTMPFS_MOUNT" . #t)
+    ;("CONFIG_PROC_FS" . #t)
+    ;("CONFIG_MSDOS_PARTITION" . #t)
 
     ;;efi-support
-    ("CONFIG_EFI_PARTITION" . #t)
-    ("CONFIG_EFIVAR_FS" . #t)
-    ("CONFIG_EFI_MIXED" . #t)
+    ;("CONFIG_EFI_PARTITION" . #t)
+    ;("CONFIG_EFIVAR_FS" . #t)
+    ;("CONFIG_EFI_MIXED" . #t)
 
-    ("CONFIG_FW_LOADER" . #t)
-    ("CONFIG_FW_LOADER_USER_HELPER" . #t)
+    ;("CONFIG_FW_LOADER" . #t)
+    ;("CONFIG_FW_LOADER_USER_HELPER" . #t)
 
     ;;%emulation
-    ("CONFIG_IA32_EMULATION" . #t)
-    ("CONFIG_X86_X32" . #t)
+    ;("CONFIG_IA32_EMULATION" . #t)
+    ;("CONFIG_X86_X32" . #t)
 
     ;;default-extra-linux-options
-    ("CONFIG_DEVPTS_MULTIPLE_INSTANCES" . #t)
+    ;("CONFIG_DEVPTS_MULTIPLE_INSTANCES" . #t)
     ;; Modules required for initrd:
-    ("CONFIG_NET_9P" . m)
-    ("CONFIG_NET_9P_VIRTIO" . m)
-    ("CONFIG_VIRTIO_BLK" . m)
-    ("CONFIG_VIRTIO_NET" . m)
-    ("CONFIG_VIRTIO_PCI" . m)
-    ("CONFIG_VIRTIO_BALLOON" . m)
-    ("CONFIG_VIRTIO_MMIO" . m)
-    ("CONFIG_FUSE_FS" . m)
-    ("CONFIG_CIFS" . m)
-    ("CONFIG_9P_FS" . m)
+    ;("CONFIG_NET_9P" . m)
+    ;("CONFIG_NET_9P_VIRTIO" . m)
+    ;("CONFIG_VIRTIO_BLK" . m)
+    ;("CONFIG_VIRTIO_NET" . m)
+    ;("CONFIG_VIRTIO_PCI" . m)
+    ;("CONFIG_VIRTIO_BALLOON" . m)
+    ;("CONFIG_VIRTIO_MMIO" . m)
+    ;("CONFIG_FUSE_FS" . m)
+    ;("CONFIG_CIFS" . m)
+    ;("CONFIG_9P_FS" . m)
 
     ;;and some other forgotten ones
     ("CONFIG_CRYPTO_SERPENT" . m)
     ("CONFIG_SCSI_ISCI" . m) ; *86
+
+    ("CONFIG_SMP" . #t)
 
     ))
 
@@ -184,9 +188,10 @@
   `(
     ("CONFIG_EXT3_FS" . #t)
     ("CONFIG_EXT4_FS" . #t)
+    ("CONFIG_BTRFS_FS" . m)
     ("CONFIG_XFS_FS" . #t)
-    ("CONFIG_XFS_ONLINE_REPAIR" . #t)
-    ("CONFIG_XFS_ONLINE_SCRUB" . #t)
+    ;("CONFIG_XFS_ONLINE_REPAIR" . #t)
+    ;("CONFIG_XFS_ONLINE_SCRUB" . #t)
     ("CONFIG_MSDOS_FS" . #t)
     ("CONFIG_VFAT_FS" . #t)
     ("CONFIG_TMPFS" . #t)
@@ -194,6 +199,8 @@
     ("CONFIG_DEVTMPFS_MOUNT" . #t)
     ("CONFIG_PROC_FS" . #t)
     ("CONFIG_MSDOS_PARTITION" . #t)
+    ;; GPT support
+    ("CONFIG_PARTITION_ADVANCED" . #t)
     ))
 
 (define %efi-support
@@ -201,6 +208,7 @@
     ("CONFIG_EFI_PARTITION" . #t)
     ("CONFIG_EFIVAR_FS" . #t)
     ("CONFIG_EFI_MIXED" . #t)
+    ("CONFIG_EFI_VARS" . #t)
 
     ("CONFIG_FW_LOADER" . #t)
     ("CONFIG_FW_LOADER_USER_HELPER" . #t)
@@ -225,4 +233,18 @@
                     '("x86_64-linux")
                     #:extra-version "macbook41"
                     #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches)
-                    #:extra-options %macbook41-config-options))
+                    #:extra-options %macbook41-full-config))
+
+(define-public linux-libre-E2140
+  (let ((base
+          ((@@ (gnu packages linux) make-linux-libre)
+           (@@ (gnu packages linux) %linux-libre-version)
+           (@@ (gnu packages linux) %linux-libre-hash)
+           '("x86_64-linux")
+           #:extra-version "E2140"
+           #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
+    (package
+      (inherit base)
+      (native-inputs
+       `(("kconfig" ,(local-file "E2140.config"))
+         ,@(package-native-inputs base))))))

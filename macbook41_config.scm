@@ -32,20 +32,16 @@
   (list xf86-video-vesa
         xf86-video-fbdev
         xf86-video-intel
-        xf86-input-libinput
-        ;; one of these is needed for two-finger right-click on touchpad
-        ;xf86-input-evdev
-        ;xf86-input-keyboard
-        ;xf86-input-mouse
-        xf86-input-synaptics))
+        xf86-input-libinput))
 
 ;; This is untested!
 ;; https://blog.jessfraz.com/post/linux-on-mac/
-(define my-macbook-touchpad
+(define %my-macbook-touchpad
   "Section \"InputClass\"
       Identifier \"touchpad catchall\"
-      Driver \"synaptics\"
+      Driver \"libinput\"
       MatchIsTouchpad \"on\"
+      Option \"Tapping\" \"on\"
   EndSection")
 
 (define (remove-services types services)
@@ -198,6 +194,7 @@
                                           (inherit config)
                                           (xorg-configuration
                                             (xorg-configuration
+                                              (extra-config %my-macbook-touchpad)
                                               (modules %my-xorg-modules))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.

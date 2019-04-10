@@ -1,7 +1,8 @@
 (use-modules (guix store)
              (gnu)
              (gnu system locale)
-             (gnu system nss))
+             (gnu system nss)
+             (guix packages))
 (use-service-modules admin desktop mcron networking ssh)
 (use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
 
@@ -24,6 +25,22 @@
                 "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
                 "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
 
+(define linux-libre-E2140
+  (let ((base
+          ((@@ (gnu packages linux) make-linux-libre)
+           (@@ (gnu packages linux) %linux-libre-version)
+           (@@ (gnu packages linux) %linux-libre-hash)
+           '("x86_64-linux")
+           #:extra-version "E2140"
+           #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
+    (package
+      (inherit base)
+      (native-inputs
+       `(("kconfig" ,(local-file "Extras/E2140.config"))
+         ,@(package-native-inputs base))))))
+
+
+
 (operating-system
   (host-name "E2140")
   (timezone "Asia/Jerusalem")
@@ -39,6 +56,8 @@
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
                 (target "/dev/sdb")))
+
+  ;(kernel linux-libre-E2140)
 
   (kernel-arguments '("zswap.enabled=1"
                       ;; Required to run X32 software and VMs
