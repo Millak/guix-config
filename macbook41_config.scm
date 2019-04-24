@@ -167,7 +167,7 @@
                             (slim-configuration
                               (xorg-configuration
                                 (xorg-configuration
-                                  ;(extra-config %my-macbook-touchpad)
+                                  (extra-config (list %my-macbook-touchpad))
                                   (modules %my-xorg-modules)))))
 
                    (modify-services (remove-services
