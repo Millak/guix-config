@@ -163,6 +163,13 @@
 
                    (service pcscd-service-type)
 
+                   (service slim-service-type
+                            (slim-configuration
+                              (xorg-configuration
+                                (xorg-configuration
+                                  ;(extra-config %my-macbook-touchpad)
+                                  (modules %my-xorg-modules)))))
+
                    (modify-services (remove-services
                                       (list
                                         gdm-service-type
@@ -187,15 +194,7 @@
                                           (extra-options
                                             (list "--gc-keep-derivations=yes"
                                                   "--gc-keep-outputs=yes"
-                                                  "--cores=1")))) ; we're on a laptop
-
-                     (slim-service-type config =>
-                                        (slim-configuration
-                                          (inherit config)
-                                          (xorg-configuration
-                                            (xorg-configuration
-                                              (extra-config %my-macbook-touchpad)
-                                              (modules %my-xorg-modules))))))))
+                                                  "--cores=1"))))))) ; we're on a laptop
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
