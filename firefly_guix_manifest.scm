@@ -15,7 +15,6 @@
         "mosh"
         "msmtp"
         "mutt"
-        "my-wgetpaste"
         "myrepos"
         "ncdu"
         "nmap"
@@ -39,5 +38,6 @@
         "wcalc"
         "weechat"
         "wget"
+        "wgetpaste"
         "xclip"
         "youtube-dl")))

@@ -44,7 +44,6 @@
         "my-mpv"
         "my-mupdf"
         "my-pinentry-efl"
-        "my-wgetpaste"
         "myrepos"
         "ncdu"
         "newsboat"
@@ -79,5 +78,6 @@
         "wcalc"
         "weechat"
         "wget"
+        "wgetpaste"
         "xclip"
         "youtube-dl")))
