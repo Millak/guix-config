@@ -34,14 +34,13 @@
         xf86-video-intel
         xf86-input-libinput))
 
-;; This is untested!
-;; https://blog.jessfraz.com/post/linux-on-mac/
 (define %my-macbook-touchpad
   "Section \"InputClass\"
       Identifier \"touchpad catchall\"
       Driver \"libinput\"
       MatchIsTouchpad \"on\"
-      Option \"Tapping\" \"on\"
+      Option \"ClickMethod\" \"clickfinger\"
+      Option \"TappingButtonMap\" \"lrm\"
   EndSection")
 
 (define (remove-services types services)
