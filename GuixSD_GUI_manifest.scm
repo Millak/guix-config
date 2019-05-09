@@ -61,7 +61,6 @@
         "screen"
         "sshfs"
         "stow"
-        "streamlink"
         "syncthing"
         "terminology"
         "tig"
