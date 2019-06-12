@@ -25,19 +25,19 @@
                 "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
                 "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
 
-(define linux-libre-E2140
-  (let ((base
-          ((@@ (gnu packages linux) make-linux-libre)
-           (@@ (gnu packages linux) %linux-libre-version)
-           (@@ (gnu packages linux) %linux-libre-hash)
-           '("x86_64-linux")
-           #:extra-version "E2140"
-           #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
-    (package
-      (inherit base)
-      (native-inputs
-       `(("kconfig" ,(local-file "Extras/E2140.config"))
-         ,@(package-native-inputs base))))))
+;(define linux-libre-E2140
+  ;(let ((base
+          ;((@@ (gnu packages linux) make-linux-libre)
+           ;(@@ (gnu packages linux) %linux-libre-version)
+           ;(@@ (gnu packages linux) %linux-libre-hash)
+           ;'("x86_64-linux")
+           ;#:extra-version "E2140"
+           ;#:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
+    ;(package
+      ;(inherit base)
+      ;(native-inputs
+       ;`(("kconfig" ,(local-file "Extras/E2140.config"))
+         ;,@(package-native-inputs base))))))
 
 
 
@@ -121,8 +121,9 @@
                             (guix-publish-configuration
                               (host "0.0.0.0")
                               (port 3000)
-                              ;; Slower to compress than to just send
-                              (compression-level 0)))
+                              ;; This machine is slow;
+                              ;; support only minimal compression
+                              (compression '(("lzip" 1) ("gzip" 1)))))
 
                    (service openssh-service-type
                             (openssh-configuration
