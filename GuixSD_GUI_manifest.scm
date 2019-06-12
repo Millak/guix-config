@@ -24,6 +24,7 @@
         "font-terminus"
         "git"
         "git:send-email"
+        "git-annex"
         "glibc-utf8-locales"
         "gnupg"
         "gs-fonts"
