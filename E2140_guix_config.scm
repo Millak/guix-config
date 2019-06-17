@@ -114,8 +114,8 @@
 
   (services (cons* (service xfce-desktop-service-type)
 
-                   (service special-files-service-type
-                            `(("/etc/os-release" ,%os-release-file)))
+                   (simple-service 'os-release etc-service-type
+                                   `(("os-release" ,%os-release-file)))
 
                    (service guix-publish-service-type
                             (guix-publish-configuration
