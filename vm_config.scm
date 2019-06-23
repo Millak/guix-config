@@ -51,11 +51,11 @@
   (file-systems (cons* (file-system
                          (mount-point "/")
                          ;; lsblk --output MOUNTPOINT,UUID
-                         (device (uuid "FILL_ME_IN!"))
+                         (device (uuid "FILL_ME_IN"))
                          (type "ext4"))
                        ;; This is only necessary if you're using EFI.
                        ;(file-system
-                       ;  (device (uuid "FILL_ME_IN!" 'fat))
+                       ;  (device (uuid "FILL_ME_IN" 'fat))
                        ;  (mount-point "/boot/efi")
                        ;  (type "vfat"))
                        (file-system
@@ -97,8 +97,8 @@
 
                    ;; This can be removed after upgrading the kernel to 5.1.11+
                    ;; Fixes CVE-2019-11477, CVE-2019-11478, CVE-2019-11479.
-                   (service (@ gnu services sysctl) sysctl-service-type)
-                            ((@ gnu services sysctl) sysctl-configuration)
+                   (service (@ (gnu services sysctl) sysctl-service-type)
+                            ((@ (gnu services sysctl) sysctl-configuration)
                               (settings '(("net.ipv4.tcp_sack" . "0")))))
 
                    ;(service tor-service-type)
