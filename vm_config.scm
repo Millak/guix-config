@@ -24,9 +24,7 @@
               "(public-key
                  (ecc
                    (curve Ed25519)
-                   (q #8D156F295D24B0D9A86FA5741A840FF2D24F60F7B6C4134814AD55625971B394#)
-                   )
-                 )"))
+                   (q #8D156F295D24B0D9A86FA5741A840FF2D24F60F7B6C4134814AD55625971B394#)))"))
 
 (define this-file
   (local-file (basename (assoc-ref (current-source-location) 'filename))
@@ -37,11 +35,13 @@
   (timezone "Etc/UTC")
   (locale "en_US.utf8")
 
-  ;; Below we assume /dev/vda is the VM's hard disk.
-  ;; Adjust as needed.
+  ;; Choose either grub or grub-efi.
+  ;; Check 'lsblk' if grub for '/dev/vda' replacement.
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
                 (target "/dev/vda")
+                ;(bootloader grub-efi-bootloader)
+                ;(target "/boot/efi")
                 (terminal-outputs '(console))))
 
   (firmware '())
@@ -50,8 +50,14 @@
 
   (file-systems (cons* (file-system
                          (mount-point "/")
-                         (device "/dev/vda1")
+                         ;; lsblk --output MOUNTPOINT,UUID
+                         (device (uuid "FILL_ME_IN!"))
                          (type "ext4"))
+                       ;; This is only necessary if you're using EFI.
+                       ;(file-system
+                       ;  (device (uuid "FILL_ME_IN!" 'fat))
+                       ;  (mount-point "/boot/efi")
+                       ;  (type "vfat"))
                        (file-system
                          (device "none")
                          (mount-point "/var/guix/temproots")
@@ -59,6 +65,7 @@
                          (check? #f))
                        %base-file-systems))
 
+  ;; Be sure you create the swpfile first!
   ;(swap-devices '("/swapfile"))
 
   (users (cons (user-account
@@ -82,8 +89,17 @@
 
                    (service openssh-service-type
                             (openssh-configuration
+                              ;; Remove this after setting a password.
+                              (allow-empty-passwords? #t)
+                              (password-authentication? #f)
                               (authorized-keys
                                 `(("efraim" ,%efraim-ssh-key)))))
+
+                   ;; This can be removed after upgrading the kernel to 5.1.11+
+                   ;; Fixes CVE-2019-11477, CVE-2019-11478, CVE-2019-11479.
+                   (service (@ gnu services sysctl) sysctl-service-type)
+                            ((@ gnu services sysctl) sysctl-configuration)
+                              (settings '(("net.ipv4.tcp_sack" . "0")))))
 
                    ;(service tor-service-type)
                    ;(tor-hidden-service "ssh"
@@ -100,6 +116,7 @@
                    (service dhcp-client-service-type)
 
                    (modify-services %base-services
+                     ;; The default udev rules are not needed in a VM.
                      (udev-service-type config =>
                                         (udev-configuration
                                           (inherit config)
