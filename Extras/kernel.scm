@@ -163,7 +163,6 @@
     ;("CONFIG_X86_X32" . #t)
 
     ;;default-extra-linux-options
-    ;("CONFIG_DEVPTS_MULTIPLE_INSTANCES" . #t)
     ;; Modules required for initrd:
     ;("CONFIG_NET_9P" . m)
     ;("CONFIG_NET_9P_VIRTIO" . m)
@@ -247,4 +246,19 @@
       (inherit base)
       (native-inputs
        `(("kconfig" ,(local-file "E2140.config"))
+         ,@(package-native-inputs base))))))
+
+(define-public linux-libre-kvm
+  (let ((base
+          ((@@ (gnu packages linux) make-linux-libre)
+           (@@ (gnu packages linux) %linux-libre-version)
+           (@@ (gnu packages linux) %linux-libre-hash)
+           '("x86_64-linux")
+           #:extra-version "kvm"
+           #:defconfig "kvmconfig"
+           #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
+    (package
+      (inherit base)
+      (native-inputs
+       `(("kconfig" ,(local-file "5.x-defconfig.config"))
          ,@(package-native-inputs base))))))
