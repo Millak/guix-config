@@ -1,9 +1,8 @@
 (use-modules (guix store)
              (gnu)
              (gnu system locale)
-             (gnu system nss)
-             (guix packages))
-(use-service-modules admin desktop mcron networking ssh)
+             (srfi srfi-1))
+(use-service-modules admin desktop mcron networking ssh xorg)
 (use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
 
 (define %btrfs-scrub
@@ -25,21 +24,12 @@
                 "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
                 "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
 
-;(define linux-libre-E2140
-  ;(let ((base
-          ;((@@ (gnu packages linux) make-linux-libre)
-           ;(@@ (gnu packages linux) %linux-libre-version)
-           ;(@@ (gnu packages linux) %linux-libre-hash)
-           ;'("x86_64-linux")
-           ;#:extra-version "E2140"
-           ;#:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
-    ;(package
-      ;(inherit base)
-      ;(native-inputs
-       ;`(("kconfig" ,(local-file "Extras/E2140.config"))
-         ;,@(package-native-inputs base))))))
-
-
+(define (remove-services types services)
+  (remove (lambda (service)
+            (any (lambda (type)
+                   (eq? (service-kind service) type))
+                 types))
+          services))
 
 (operating-system
   (host-name "E2140")
@@ -56,8 +46,6 @@
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
                 (target "/dev/sdb")))
-
-  ;(kernel linux-libre-E2140)
 
   (kernel-arguments '("zswap.enabled=1"
                       "zswap.compressor=lz4"
@@ -144,7 +132,12 @@
                              (jobs (list %btrfs-scrub
                                          %btrfs-balance))))
 
-                   (modify-services %desktop-services
+                   (service slim-service-type)
+
+                   (modify-services (remove-services
+                                      (list
+                                        gdm-service-type)
+                                      %desktop-services)
                      (guix-service-type config =>
                                         (guix-configuration
                                           (inherit config)
