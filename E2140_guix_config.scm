@@ -60,6 +60,11 @@
                          (type "btrfs")
                          (options "autodefrag,compress=lzo"))
                        (file-system
+                         (device (file-system-label "data"))
+                         (mount-point "/data")
+                         (type "btrfs")
+                         (options "autodefrag,compress=lzo"))
+                       (file-system
                          (device "none")
                          (mount-point "/var/guix/temproots")
                          (type "tmpfs")
