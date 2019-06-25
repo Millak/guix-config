@@ -60,6 +60,8 @@
   ;(kernel linux-libre-E2140)
 
   (kernel-arguments '("zswap.enabled=1"
+                      "zswap.compressor=lz4"
+                      "zswap.zpool=z3fold"
                       ;; Required to run X32 software and VMs
                       ;; https://wiki.debian.org/X32Port
                       "syscall.x32=y"))

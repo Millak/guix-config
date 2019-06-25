@@ -70,6 +70,8 @@
   ;(initrd-modules '("ahci" "btrfs" "hid-apple"))
 
   (kernel-arguments '("zswap.enabled=1"
+                      "zswap.compressor=lz4"
+                      "zswap.zpool=z3fold"
                       ;; Required to run X32 software and VMs
                       ;; https://wiki.debian.org/X32Port
                       ;; Still untested on GuixSD.
