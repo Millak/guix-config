@@ -2,7 +2,7 @@
              (gnu)
              (gnu system locale)
              (srfi srfi-1))
-(use-service-modules admin cups desktop mcron networking pm security-token ssh virtualization xorg)
+(use-service-modules admin cups desktop mcron networking security-token ssh virtualization xorg)
 (use-package-modules certs connman cups linux video virtualization xorg)
 
 (define %btrfs-scrub
@@ -136,8 +136,6 @@
                               (default-paper-size "A4")
                               (extensions
                                 (list cups-filters hplip-minimal))))
-
-                   (service tlp-service-type)
 
                    (service rottlog-service-type)
                    (service mcron-service-type
