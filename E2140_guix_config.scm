@@ -3,7 +3,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin desktop mcron networking ssh xorg)
-(use-package-modules certs education fonts gnome gnuzilla kodi libreoffice linux pulseaudio)
+(use-package-modules certs fonts gnome linux pulseaudio)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -101,10 +101,6 @@
                    gvfs              ;for user mounts
                    btrfs-progs pavucontrol
                    font-terminus font-dejavu
-                   gcompris
-                   gcompris-qt
-                   kodi
-                   icecat ;libreoffice
                    %base-packages))
 
   (services (cons* (service xfce-desktop-service-type)
