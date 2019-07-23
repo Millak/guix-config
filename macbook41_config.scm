@@ -44,12 +44,7 @@
 (operating-system
   (host-name "macbook41")
   (timezone "Asia/Jerusalem")
-  (locale "en_US.utf8")
-  (locale-definitions
-    (list (locale-definition (source "en_US")
-                             (name "en_US.utf8"))
-          (locale-definition (source "he_IL")
-                             (name "he_IL.utf8"))))
+  (locale "en_IL.utf8")
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.
