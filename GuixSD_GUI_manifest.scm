@@ -8,6 +8,7 @@
         "bidiv"
         "borg"
         "btrfs-progs"
+        "catimg"
         "diffoscope"
         "emacs"
         "emacs-debbugs"

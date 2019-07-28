@@ -3,6 +3,7 @@
        '("aria2"
         "bash-completion"
         "borg"
+        "catimg"
         "diffoscope"
         "file"
         "git"
