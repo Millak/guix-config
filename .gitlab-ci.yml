@@ -1,14 +1,14 @@
 image: opensuse/tumbleweed:latest
 
-cache:
-    paths:
-        - /var/guix/*
-        - /gnu/store/*
-
-before_script:
-    - zypper install -y guix
-    - guix-daemon --build-users-group=guixbuild &
-    - guix pull
+install_guix:
+    stage: build
+        - zypper install -y guix
+        - guix-daemon --build-users-group=guixbuild &
+        - guix pull
+    artifacts:
+        paths:
+            - /var/guix/*
+            - /gnu/store/*
 
 macbook41:
     script:
