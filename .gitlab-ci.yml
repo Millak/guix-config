@@ -1,6 +1,6 @@
 image: opensuse/tumbleweed:latest
 
-build:installGuix:
+installGuix:
     stage: build
         - zypper install -y guix
         - guix-daemon --build-users-group=guixbuild &
