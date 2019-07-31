@@ -3,7 +3,7 @@ image: opensuse/tumbleweed:latest
 installGuix:
     stage: build
     script:
-        - zypper install -y guix
+        - zypper install -y guix-weekly
         - guix-daemon --build-users-group=guixbuild &
         - guix pull
 
