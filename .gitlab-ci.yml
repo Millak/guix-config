@@ -5,7 +5,7 @@ cache:
         - /var/guix/*
         - /gnu/store/*
 
-before-script:
+before_script:
     - zypper install -y guix
     - guix-daemon --build-users-group=guixbuild &
     - guix pull
