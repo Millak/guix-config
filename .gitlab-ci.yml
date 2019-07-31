@@ -1,19 +1,19 @@
 image: opensuse/tumbleweed:latest
 
-install_guix:
+build:install_guix:
     stage: build
         - zypper install -y guix
         - guix-daemon --build-users-group=guixbuild &
         - guix pull
-    artifacts:
-        paths:
-            - /var/guix/*
-            - /gnu/store/*
 
 macbook41:
     script:
         - guix system build macbook41_config.scm
+    dependencies:
+        build:install_guix
 
 E2140:
     script:
         - guix system build E2140_config.scm
+    dependencies:
+        build:install_guix
