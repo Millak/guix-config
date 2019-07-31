@@ -64,6 +64,13 @@
                          (mount-point "/data")
                          (type "btrfs")
                          (options "autodefrag,compress=lzo"))
+                       ;; This directory shouldn't exist
+                       (file-system
+                         (device "none")
+                         (mount-point "/var/cache/fontconfig")
+                         (type "tmpfs")
+                         (flags '("read-only"))
+                         (check? #f))
                        (file-system
                          (device "none")
                          (mount-point "/var/guix/temproots")

@@ -75,6 +75,13 @@
                          (mount-point "/var/guix/temproots")
                          (type "tmpfs")
                          (check? #f))
+                       ;; This directory shouldn't exist
+                       (file-system
+                         (device "none")
+                         (mount-point "/var/cache/fontconfig")
+                         (type "tmpfs")
+                         (flags '("read-only"))
+                         (check? #f))
                        (file-system
                          (device (uuid "F010-1913" 'fat))
                          (mount-point "/boot/efi")
