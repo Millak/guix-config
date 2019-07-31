@@ -11,10 +11,10 @@ macbook41:
     script:
         - guix system build macbook41_config.scm
     dependencies:
-        - build:installGuix
+        - installGuix
 
 E2140:
     script:
         - guix system build E2140_config.scm
     dependencies:
-        - build:installGuix
+        - installGuix
