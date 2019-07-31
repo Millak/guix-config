@@ -3,7 +3,8 @@ image: opensuse/tumbleweed:latest
 installGuix:
     stage: build
     script:
-        - zypper install -y guix-weekly
+        - zypper addrepo --no-gpgcheck https://download.opensuse.org/repositories/home:/jbrielmaier:/guix/openSUSE_Tumbleweed/home:jbrielmaier:guix.repo
+        - zypper install -y guix
         - guix-daemon --build-users-group=guixbuild &
         - guix pull
 
