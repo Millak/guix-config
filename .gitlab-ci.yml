@@ -6,16 +6,23 @@ installGuix:
         - zypper addrepo --no-gpgcheck https://download.opensuse.org/repositories/home:/jbrielmaier:/guix/openSUSE_Tumbleweed/home:jbrielmaier:guix.repo
         - zypper install -y guix
         - guix-daemon --build-users-group=guixbuild &
-        - guix pull
+    artifacts:
+        paths:
+            - /var/guix/*
+            - /gnu/store/*
 
 macbook41:
     script:
-        - /var/guix/profiles/per-user/root/current-guix/bin/guix system build macbook41_config.scm
+        - pwd
+        - echo $PATH
+        - whoami
+        - ls /var/guix/profiles/per-user/*/*
+        - guix system build macbook41_config.scm
     dependencies:
         - installGuix
 
 E2140:
     script:
-        - /var/guix/profiles/per-user/root/current-guix/bin/guix system build E2140_config.scm
+        - guix system build E2140_config.scm
     dependencies:
         - installGuix
