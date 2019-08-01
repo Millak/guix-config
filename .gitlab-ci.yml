@@ -24,6 +24,6 @@ macbook41:
 
 E2140:
     script:
-        - guix system build E2140_config.scm
+        - guix system build E2140_guix_config.scm
 #    dependencies:
 #        - installGuix

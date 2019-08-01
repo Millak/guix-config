@@ -80,7 +80,7 @@
                          (device "none")
                          (mount-point "/var/cache/fontconfig")
                          (type "tmpfs")
-                         (flags '("read-only"))
+                         (flags '(read-only))
                          (check? #f))
                        (file-system
                          (device (uuid "F010-1913" 'fat))
