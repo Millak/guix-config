@@ -177,24 +177,25 @@
                                         (service-type-name type)))))
                            (modify-services
                              %desktop-services
-                             (guix-service-type config =>
-                                                (guix-configuration
-                                                  (inherit config)
-                                                  (substitute-urls
-                                                    (list "http://192.168.1.183:3000" ; E2140
-                                                          "http://firefly.lan:8181"
-                                                          "https://ci.guix.gnu.org"
-                                                          "https://bayfront.guixsd.org"
-                                                          "https://guix.tobias.gr"))
-                                                  (authorized-keys
-                                                    (list (local-file "Extras/ci.guix.gnu.org.pub")
-                                                          (local-file "Extras/firefly_publish.pub")
-                                                          (local-file "Extras/E2140_publish.pub")
-                                                          (local-file "Extras/guix.tobias.gr.pub")))
-                                                  (extra-options
-                                                    (list "--gc-keep-derivations=yes"
-                                                          "--gc-keep-outputs=yes"
-                                                          "--cores=1")))))))) ; we're on a laptop
+                             (guix-service-type
+                               config =>
+                               (guix-configuration
+                                 (inherit config)
+                                 (substitute-urls
+                                   (list "http://192.168.1.183:3000" ; E2140
+                                         "http://firefly.lan:8181"
+                                         "https://ci.guix.gnu.org"
+                                         "https://bayfront.guixsd.org"
+                                         "https://guix.tobias.gr"))
+                                 (authorized-keys
+                                   (list (local-file "Extras/ci.guix.gnu.org.pub")
+                                         (local-file "Extras/firefly_publish.pub")
+                                         (local-file "Extras/E2140_publish.pub")
+                                         (local-file "Extras/guix.tobias.gr.pub")))
+                                 (extra-options
+                                   (list "--gc-keep-derivations=yes"
+                                         "--gc-keep-outputs=yes"
+                                         "--cores=1")))))))) ; we're on a laptop
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
