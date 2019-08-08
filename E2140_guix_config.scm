@@ -146,27 +146,34 @@
                                       (list
                                         gdm-service-type)
                                       %desktop-services)
-                     (guix-service-type config =>
-                                        (guix-configuration
-                                          (inherit config)
-                                          (substitute-urls
-                                            (list "http://192.168.1.209:3000" ; macbook41
-                                                  "http://firefly.lan:8181"
-                                                  "https://ci.guix.gnu.org"
-                                                  "https://bayfront.guixsd.org"
-                                                  "https://guix.tobias.gr"))
-                                          (authorized-keys
-                                            (list (local-file "Extras/ci.guix.gnu.org.pub")
-                                                  (local-file "Extras/firefly_publish.pub")
-                                                  (local-file "Extras/macbook41_publish.pub")
-                                                  (local-file "Extras/guix.tobias.gr.pub")))
-                                          (extra-options
-                                            (list "--gc-keep-derivations=yes"
-                                                  "--gc-keep-outputs=yes"))))
-                     (ntp-service-type config =>
-                                       (ntp-configuration
-                                         (inherit config)
-                                         (allow-large-adjustment? #t))))))
+                     (guix-service-type
+                       config =>
+                       (guix-configuration
+                         (inherit config)
+                         (substitute-urls
+                           (list "http://192.168.1.209:3000" ; macbook41
+                                 "http://firefly.lan:8181"
+                                 "https://ci.guix.gnu.org"
+                                 "https://bayfront.guixsd.org"
+                                 "https://guix.tobias.gr"))
+                         (authorized-keys
+                           (list (local-file "Extras/ci.guix.gnu.org.pub")
+                                 (local-file "Extras/firefly_publish.pub")
+                                 (local-file "Extras/macbook41_publish.pub")
+                                 (local-file "Extras/guix.tobias.gr.pub")))
+                         (extra-options
+                           (list "--gc-keep-derivations=yes"
+                                 "--gc-keep-outputs=yes"))))
+                     (network-manager-service-type
+                       config =>
+                       (network-manager-configuration
+                         (inherit config)
+                         (vpn-plugins '(network-manager-openconnect))))
+                     (ntp-service-type
+                       config =>
+                       (ntp-configuration
+                         (inherit config)
+                         (allow-large-adjustment? #t))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
