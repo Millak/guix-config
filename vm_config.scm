@@ -1,7 +1,7 @@
 (use-modules (guix store)
              (gnu)
              (srfi srfi-1))
-(use-service-modules admin networking ssh)
+(use-service-modules admin networking ssh sysctl)
 (use-package-modules certs)
 
 (define %os-release-file
@@ -95,11 +95,10 @@
                               (authorized-keys
                                 `(("efraim" ,%efraim-ssh-key)))))
 
-                   ;; This can be removed after upgrading the kernel to 5.1.11+
-                   ;; Fixes CVE-2019-11477, CVE-2019-11478, CVE-2019-11479.
-                   (service (@ (gnu services sysctl) sysctl-service-type)
-                            ((@ (gnu services sysctl) sysctl-configuration)
-                              (settings '(("net.ipv4.tcp_sack" . "0")))))
+                   (service sysctl-service-type
+                            (sysctl-configuration
+                              (settings '(("zswap.compressor" . "lz4")
+                                          ("zswap.zpool" . "z3fold")))))
 
                    ;(service tor-service-type)
                    ;(tor-hidden-service "ssh"
