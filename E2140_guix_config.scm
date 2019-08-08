@@ -69,7 +69,7 @@
                          (device "none")
                          (mount-point "/var/cache/fontconfig")
                          (type "tmpfs")
-                         (flags '("read-only"))
+                         (flags '(read-only))
                          (check? #f))
                        (file-system
                          (device "none")
