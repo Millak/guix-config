@@ -168,7 +168,7 @@
                        config =>
                        (network-manager-configuration
                          (inherit config)
-                         (vpn-plugins '(network-manager-openconnect))))
+                         (vpn-plugins (list network-manager-openconnect))))
                      (ntp-service-type
                        config =>
                        (ntp-configuration
