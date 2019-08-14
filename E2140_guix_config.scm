@@ -178,6 +178,7 @@
                        config =>
                        (network-manager-configuration
                          (inherit config)
+                         (dns "dnsmasq")
                          (vpn-plugins (list network-manager-openconnect))))
                      (ntp-service-type
                        config =>
