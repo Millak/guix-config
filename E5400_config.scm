@@ -25,7 +25,6 @@
                 "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
 
 (define %my-xorg-modules
-  ;; Only the modules on this laptop
   ;; It must be an explicit list, 'fold delete %default-xorg-modules' isn't enough.
   (list xf86-video-vesa
         xf86-video-fbdev
@@ -173,8 +172,7 @@
                                          (local-file "Extras/guix.tobias.gr.pub")))
                                  (extra-options
                                    (list "--gc-keep-derivations=yes"
-                                         "--gc-keep-outputs=yes"
-                                         "--cores=1")))))))) ; we're on a laptop
+                                         "--gc-keep-outputs=yes"))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
