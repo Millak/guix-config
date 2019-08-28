@@ -92,6 +92,7 @@
                    econnman
                    btrfs-progs
                    libvdpau-va-gl    ;intel graphics vdpau
+                   intel-vaapi-driver
                    %base-packages))
 
   (services (cons* (service enlightenment-desktop-service-type)

@@ -32,6 +32,7 @@
         "gst-plugins-good"
         "gst-plugins-ugly"
         "icecat"
+        "intel-vaapi-driver"
         "isync"
         "kdeconnect"
         "keepassxc"
