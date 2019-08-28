@@ -27,3 +27,10 @@ E2140:
         - guix system build E2140_guix_config.scm
 #    dependencies:
 #        - installGuix
+
+E5400:
+    script:
+        - guix system build E5400_guix_config.scm
+#    dependencies:
+#        - installGuix
+
