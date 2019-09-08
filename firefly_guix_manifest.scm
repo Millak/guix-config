@@ -4,7 +4,6 @@
         "bash-completion"
         "borg"
         "catimg"
-        "diffoscope"
         "file"
         "git"
         "git:send-email"
