@@ -134,8 +134,7 @@
                    (service openssh-service-type
                             (openssh-configuration
                               (x11-forwarding? #t)
-                              (extra-content "StreamLocalBindUnlink yes
-                                             ListenAddress 0.0.0.0")))
+                              (extra-content "StreamLocalBindUnlink yes")))
 
                    (service tor-service-type)
                    (tor-hidden-service "ssh"
