@@ -7,8 +7,8 @@
 (define %os-release-file
   (plain-file "os-release"
               (string-append
-                "NAME=\"GNU Guix\"\n"
-                "PRETTY_NAME=\"GNU Guix\"\n"
+                "NAME=\"Guix System\"\n"
+                "PRETTY_NAME=\"Guix System\"\n"
                 "VERSION=\""((@ (guix packages) package-version) (@ (gnu packages package-management) guix))"\"\n"
                 "ID=guix\n"
                 "HOME_URL=\"https://www.gnu.org/software/guix/\"\n"
