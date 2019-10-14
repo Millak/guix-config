@@ -2,7 +2,7 @@
              (gnu)
              (gnu system locale)
              (srfi srfi-1))
-(use-service-modules admin cups desktop mcron networking security-token ssh xorg)
+(use-service-modules admin cups desktop mcron networking sddm security-token ssh xorg)
 (use-package-modules certs connman cups linux video virtualization xorg)
 
 (define %btrfs-scrub
@@ -139,8 +139,15 @@
 
                    (service pcscd-service-type)
 
-                   (service slim-service-type
-                            (slim-configuration
+                   ;(service slim-service-type
+                   ;         (slim-configuration
+                   ;           (xorg-configuration
+                   ;             (xorg-configuration
+                   ;               (modules %my-xorg-modules)))))
+
+                   (service sddm-service-type
+                            (sddm-configuration
+                              (display-server "wayland")
                               (xorg-configuration
                                 (xorg-configuration
                                   (modules %my-xorg-modules)))))
