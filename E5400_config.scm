@@ -3,7 +3,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh xorg)
-(use-package-modules certs connman cups linux video virtualization xorg)
+(use-package-modules certs connman cups enlightenment linux video virtualization xorg)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -97,7 +97,9 @@
                    intel-vaapi-driver
                    %base-packages))
 
-  (services (cons* (service enlightenment-desktop-service-type)
+  (services (cons* (service enlightenment-desktop-service-type
+                            (enlightenment-desktop-configuration
+                              (enlightenment enlightenment-wayland)))
 
                    (simple-service 'os-release etc-service-type
                                    `(("os-release" ,%os-release-file)))
