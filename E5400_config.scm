@@ -1,3 +1,5 @@
+(include "config/os-release.scm")
+
 (use-modules (guix store)
              (gnu)
              (gnu system locale)
@@ -12,17 +14,6 @@
 (define %btrfs-balance
   #~(job '(next-hour '(5))
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
-
-(define %os-release-file
-  (plain-file "os-release"
-              (string-append
-                "NAME=\"Guix System\"\n"
-                "PRETTY_NAME=\"Guix System\"\n"
-                "VERSION=\""((@ (guix packages) package-version) (@ (gnu packages package-management) guix))"\"\n"
-                "ID=guix\n"
-                "HOME_URL=\"https://www.gnu.org/software/guix/\"\n"
-                "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
-                "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
 
 (define %my-xorg-modules
   ;; It must be an explicit list, 'fold delete %default-xorg-modules' isn't enough.
