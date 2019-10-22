@@ -167,11 +167,13 @@
                                  "http://192.168.1.217:3000" ; E5400
                                  "https://ci.guix.gnu.org"
                                  "https://bayfront.guixsd.org"
+                                 "http://guix.genenetwork.org"
                                  "https://guix.tobias.gr"))
                          (authorized-keys
                            (list (local-file "Extras/ci.guix.gnu.org.pub")
                                  (local-file "Extras/macbook41_publish.pub")
                                  (local-file "Extras/E5400_publish.pub")
+                                 (local-file "Extras/guix.genenetwork.org.pub")
                                  (local-file "Extras/guix.tobias.gr.pub")))
                          (extra-options
                            (list "--gc-keep-derivations=yes"
