@@ -159,8 +159,7 @@
                                  "https://ci.guix.gnu.org"
                                  "https://bayfront.guixsd.org"
                                  "http://guix.genenetwork.org"
-                                 ;"https://guix.tobias.gr"
-                                 ))
+                                 "https://guix.tobias.gr"))
                          (authorized-keys
                            (list (local-file "Extras/macbook41_publish.pub")
                                  (local-file "Extras/E5400_publish.pub")
