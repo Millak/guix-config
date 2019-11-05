@@ -98,7 +98,7 @@
   (packages (cons* nss-certs         ;for HTTPS access
                    cups
                    econnman
-                   btrfs-progs
+                   btrfs-progs compsize
                    virt-manager
                    libvdpau-va-gl    ;intel graphics vdpau
                    intel-vaapi-driver

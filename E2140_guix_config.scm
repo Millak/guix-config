@@ -107,7 +107,8 @@
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
                    gvfs              ;for user mounts
-                   btrfs-progs pavucontrol
+                   pavucontrol
+                   btrfs-progs compsize
                    font-terminus font-dejavu
                    %base-packages))
 
