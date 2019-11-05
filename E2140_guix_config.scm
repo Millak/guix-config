@@ -33,12 +33,12 @@
 (operating-system
   (host-name "E2140")
   (timezone "Asia/Jerusalem")
-  (locale "en_US.utf8")
+  (locale "en_US.UTF-8")
   (locale-definitions
     (list (locale-definition (source "en_US")
-                             (name "en_US.utf8"))
+                             (name "en_US.UTF-8"))
           (locale-definition (source "he_IL")
-                             (name "he_IL.utf8"))))
+                             (name "he_IL.UTF-8"))))
 
   (locale-libcs (list glibc-2.28 (canonical-package glibc)))
 

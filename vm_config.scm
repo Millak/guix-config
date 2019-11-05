@@ -33,7 +33,7 @@
 (operating-system
   (host-name "guix_vm")
   (timezone "Etc/UTC")
-  (locale "en_US.utf8")
+  (locale "en_US.UTF-8")
 
   ;; Choose either grub or grub-efi.
   ;; Check 'lsblk' if grub for '/dev/vda' replacement.
