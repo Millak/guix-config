@@ -4,7 +4,7 @@
              (gnu)
              (gnu system locale)
              (srfi srfi-1))
-(use-service-modules admin cups desktop mcron networking sddm security-token ssh xorg)
+(use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups enlightenment linux video virtualization xorg)
 
 (define %btrfs-scrub
@@ -75,6 +75,7 @@
                 (group "users")
                 (supplementary-groups '("wheel" "netdev" "kvm"
                                         "lp" "lpadmin"
+                                        "libvirt"
                                         "audio" "video"))
                 (home-directory "/home/efraim"))
                %base-user-accounts))
@@ -84,6 +85,7 @@
                    cups
                    econnman
                    btrfs-progs compsize
+                   virt-manager
                    libvdpau-va-gl    ;intel graphics vdpau
                    intel-vaapi-driver
                    %base-packages))
@@ -129,6 +131,11 @@
                               (allow-large-adjustment? #t)))
 
                    (service connman-service-type)
+
+                   (service libvirt-service-type
+                            (libvirt-configuration
+                              (unix-sock-group "libvirt")))
+                   (service virtlog-service-type)
 
                    (service pcscd-service-type)
 
