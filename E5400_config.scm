@@ -54,6 +54,10 @@
                          (type "btrfs")
                          (options "autodefrag,compress=lzo,discard,ssd_spread"))
                        (file-system
+                         (device (file-system-label "data"))
+                         (mount-point "/data")
+                         (type "ext4"))
+                       (file-system
                          (device "none")
                          (mount-point "/var/guix/temproots")
                          (type "tmpfs")
