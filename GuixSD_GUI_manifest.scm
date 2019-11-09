@@ -57,7 +57,7 @@
         "nss-certs"
         "openssh"
         "parallel"
-        "parcimonie.sh"
+        "parcimonie"
         "pavucontrol"
         "qrencode"
         "quassel"
