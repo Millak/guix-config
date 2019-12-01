@@ -58,7 +58,7 @@
                          (mount-point "/data")
                          (type "ext4"))
                        (file-system
-                         (device "none")
+                         (device "tmpfs")
                          (mount-point "/var/guix/temproots")
                          (type "tmpfs")
                          (check? #f))

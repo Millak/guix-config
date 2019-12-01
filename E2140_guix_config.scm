@@ -73,7 +73,7 @@
                          (flags '(read-only))
                          (check? #f))
                        (file-system
-                         (device "none")
+                         (device "tmpfs")
                          (mount-point "/var/guix/temproots")
                          (type "tmpfs")
                          (check? #f))

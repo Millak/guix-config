@@ -64,7 +64,7 @@
                          (type "btrfs")
                          (options "autodefrag,compress=lzo,discard,ssd_spread"))
                        (file-system
-                         (device "none")
+                         (device "tmpfs")
                          (mount-point "/var/guix/temproots")
                          (type "tmpfs")
                          (check? #f))
