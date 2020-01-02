@@ -5,7 +5,7 @@
              (gnu system locale)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
-(use-package-modules certs connman cups enlightenment linux scanner video virtualization xorg)
+(use-package-modules certs connman cups enlightenment gnome linux scanner video virtualization xorg)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -87,6 +87,7 @@
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
                    cups
+                   hicolor-icon-theme
                    econnman
                    btrfs-progs compsize
                    virt-manager
