@@ -9,22 +9,6 @@
 (use-service-modules admin desktop mcron networking ssh xorg)
 (use-package-modules certs fonts gnome linux pulseaudio)
 
-(define %btrfs-scrub-root
-  #~(job '(next-hour '(3))
-         (string-append #$btrfs-progs "/bin/btrfs scrub start -c 3 /")))
-
-(define %btrfs-scrub-data
-  #~(job '(next-hour '(4))
-         (string-append #$btrfs-progs "/bin/btrfs scrub start -c 3 /data")))
-
-(define %btrfs-balance-root
-  #~(job '(next-hour '(5))
-         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
-
-(define %btrfs-balance-data
-  #~(job '(next-hour '(6))
-         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /data")))
-
 (define (remove-services types services)
   (remove (lambda (service)
             (any (lambda (type)
@@ -129,10 +113,8 @@
                    (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
-                             (jobs (list %btrfs-scrub-root
-                                         %btrfs-scrub-data
-                                         %btrfs-balance-root
-                                         %btrfs-balance-data))))
+                              (jobs (append (%btrfs-maintenance-jobs "/")
+                                            (%btrfs-maintenance-jobs "/data")))))
 
                    (service slim-service-type)
 

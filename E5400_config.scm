@@ -10,14 +10,6 @@
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups enlightenment gnome linux scanner video virtualization)
 
-(define %btrfs-scrub
-  #~(job '(next-hour '(3))
-         (string-append #$btrfs-progs "/bin/btrfs scrub start -c 3 /")))
-
-(define %btrfs-balance
-  #~(job '(next-hour '(5))
-         (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
-
 (operating-system
   (host-name "E5400")
   (timezone "Asia/Jerusalem")
@@ -113,8 +105,7 @@
                    (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
-                             (jobs (list %btrfs-scrub
-                                         %btrfs-balance))))
+                              (jobs (%btrfs-maintenance-jobs "/"))))
 
                    (service openntpd-service-type
                             (openntpd-configuration
