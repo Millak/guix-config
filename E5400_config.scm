@@ -2,12 +2,13 @@
              (guix gexp)
              (gnu)
              (gnu system locale)
+             (config filesystems)
              (config guix-daemon)
              (config os-release)
              (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
-(use-package-modules certs connman cups enlightenment gnome linux scanner video virtualization xorg)
+(use-package-modules certs connman cups enlightenment gnome linux scanner video virtualization)
 
 (define %btrfs-scrub
   #~(job '(next-hour '(3))
@@ -50,18 +51,8 @@
                          (device (file-system-label "data"))
                          (mount-point "/data")
                          (type "ext4"))
-                       (file-system
-                         (device "tmpfs")
-                         (mount-point "/var/guix/temproots")
-                         (type "tmpfs")
-                         (check? #f))
-                       ;; This directory shouldn't exist
-                       (file-system
-                         (device "none")
-                         (mount-point "/var/cache/fontconfig")
-                         (type "tmpfs")
-                         (flags '(read-only))
-                         (check? #f))
+                       %fontconfig
+                       %guix-temproots
                        %base-file-systems))
 
   (swap-devices '("/dev/sda1"))

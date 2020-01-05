@@ -1,4 +1,5 @@
 SOURCES = \
+		  config/filesystems.scm \
 		  config/guix-daemon.scm \
 		  config/os-release.scm \
 		  config/xorg-modules.scm \

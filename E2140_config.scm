@@ -2,6 +2,7 @@
              (guix gexp)
              (gnu)
              (gnu system locale)
+             (config filesystems)
              (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
@@ -64,18 +65,8 @@
                          (mount-point "/data")
                          (type "btrfs")
                          (options "autodefrag,compress=lzo"))
-                       ;; This directory shouldn't exist
-                       (file-system
-                         (device "none")
-                         (mount-point "/var/cache/fontconfig")
-                         (type "tmpfs")
-                         (flags '(read-only))
-                         (check? #f))
-                       (file-system
-                         (device "tmpfs")
-                         (mount-point "/var/guix/temproots")
-                         (type "tmpfs")
-                         (check? #f))
+                       %fontconfig
+                       %guix-temproots
                        %base-file-systems))
 
   (swap-devices '("/dev/sda1" "/dev/sdb1" "/dev/sdc1"))
