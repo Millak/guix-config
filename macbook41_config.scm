@@ -4,6 +4,7 @@
              (gnu system locale)
              (config guix-daemon)
              (config os-release)
+             (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking security-token ssh virtualization xorg)
 (use-package-modules certs connman cups linux scanner video virtualization xorg)
@@ -15,14 +16,6 @@
 (define %btrfs-balance
   #~(job '(next-hour '(5))
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
-
-(define %my-xorg-modules
-  ;; Only the modules on this laptop
-  ;; It must be an explicit list, 'fold delete %default-xorg-modules' isn't enough.
-  (list xf86-video-vesa
-        xf86-video-fbdev
-        xf86-video-intel
-        xf86-input-libinput))
 
 (define %my-macbook-touchpad
   "Section \"InputClass\"
@@ -157,7 +150,7 @@
                               (xorg-configuration
                                 (xorg-configuration
                                   (extra-config (list %my-macbook-touchpad))
-                                  (modules %my-xorg-modules)))))
+                                  (modules %intel-xorg-modules)))))
 
                    (remove (lambda (service)
                              (let ((type (service-kind service)))

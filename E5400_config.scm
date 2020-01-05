@@ -4,6 +4,7 @@
              (gnu system locale)
              (config guix-daemon)
              (config os-release)
+             (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups enlightenment gnome linux scanner video virtualization xorg)
@@ -15,13 +16,6 @@
 (define %btrfs-balance
   #~(job '(next-hour '(5))
          (string-append #$btrfs-progs "/bin/btrfs balance start -dusage=50 -musage=70 /")))
-
-(define %my-xorg-modules
-  ;; It must be an explicit list, 'fold delete %default-xorg-modules' isn't enough.
-  (list xf86-video-vesa
-        xf86-video-fbdev
-        xf86-video-intel
-        xf86-input-libinput))
 
 (operating-system
   (host-name "E5400")
@@ -145,18 +139,12 @@
 
                    (service pcscd-service-type)
 
-                   ;(service slim-service-type
-                   ;         (slim-configuration
-                   ;           (xorg-configuration
-                   ;             (xorg-configuration
-                   ;               (modules %my-xorg-modules)))))
-
                    (service sddm-service-type
                             (sddm-configuration
                               (display-server "wayland")
                               (xorg-configuration
                                 (xorg-configuration
-                                  (modules %my-xorg-modules)))))
+                                  (modules %intel-xorg-modules)))))
 
                    (remove (lambda (service)
                              (let ((type (service-kind service)))

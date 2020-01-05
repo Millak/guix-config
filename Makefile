@@ -1,6 +1,7 @@
 SOURCES = \
 		  config/guix-daemon.scm \
 		  config/os-release.scm \
+		  config/xorg-modules.scm \
 		  Extras/kernel.scm \
 		  E2140_config.scm \
 		  E5400_config.scm \
