@@ -1,8 +1,7 @@
-(include "config/os-release.scm")
-
 (use-modules (guix store)
              (gnu)
              (gnu system locale)
+             (config os-release)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups enlightenment gnome linux scanner video virtualization xorg)

@@ -1,8 +1,7 @@
-(include "config/os-release.scm")
-
 (use-modules (guix store)
              (gnu)
              (gnu system locale)
+             (config os-release)
              (srfi srfi-1))
 (use-service-modules admin desktop mcron networking ssh xorg)
 (use-package-modules certs fonts gnome linux pulseaudio)
