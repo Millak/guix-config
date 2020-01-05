@@ -1,4 +1,5 @@
 (use-modules (guix store)
+             (guix gexp)
              (gnu)
              (gnu system locale)
              (config os-release)

@@ -51,11 +51,11 @@
   (file-systems (cons* (file-system
                          (mount-point "/")
                          ;; lsblk --output MOUNTPOINT,UUID
-                         (device (uuid "FILL_ME_IN"))
+                         (device (uuid "0000-0000" 'fat))
                          (type "ext4"))
                        ;; This is only necessary if you're using EFI.
                        ;(file-system
-                       ;  (device (uuid "FILL_ME_IN" 'fat))
+                       ;  (device (uuid "0000-0000" 'fat))
                        ;  (mount-point "/boot/efi")
                        ;  (type "vfat"))
                        (file-system
