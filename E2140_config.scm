@@ -2,6 +2,7 @@
              (guix gexp)
              (gnu)
              (gnu system locale)
+             (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
 (use-service-modules admin desktop mcron networking ssh xorg)
@@ -152,22 +153,9 @@
                        config =>
                        (guix-configuration
                          (inherit config)
-                         (substitute-urls
-                           (list "http://192.168.1.209:3000" ; macbook41
-                                 "http://192.168.1.217:3000" ; E5400
-                                 "https://ci.guix.gnu.org"
-                                 "https://bayfront.guixsd.org"
-                                 "http://guix.genenetwork.org"
-                                 "https://guix.tobias.gr"))
-                         (authorized-keys
-                           (list (local-file "Extras/macbook41_publish.pub")
-                                 (local-file "Extras/E5400_publish.pub")
-                                 (local-file "Extras/ci.guix.gnu.org.pub")
-                                 (local-file "Extras/guix.genenetwork.org.pub")
-                                 (local-file "Extras/guix.tobias.gr.pub")))
-                         (extra-options
-                           (list "--gc-keep-derivations=yes"
-                                 "--gc-keep-outputs=yes"))))
+                         (substitute-urls %substitute-urls)
+                         (authorized-keys %authorized-keys)
+                         (extra-options %extra-options)))
                      (network-manager-service-type
                        config =>
                        (network-manager-configuration

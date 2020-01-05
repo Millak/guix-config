@@ -2,6 +2,7 @@
              (guix gexp)
              (gnu)
              (gnu system locale)
+             (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking security-token ssh virtualization xorg)
@@ -175,23 +176,11 @@
                                config =>
                                (guix-configuration
                                  (inherit config)
-                                 (substitute-urls
-                                   (list "http://192.168.1.183:3000" ; E2140
-                                         "http://192.168.1.217:3000" ; E5400
-                                         "https://ci.guix.gnu.org"
-                                         "https://bayfront.guixsd.org"
-                                         "http://guix.genenetwork.org"
-                                         "https://guix.tobias.gr"))
-                                 (authorized-keys
-                                   (list (local-file "Extras/E2140_publish.pub")
-                                         (local-file "Extras/E5400_publish.pub")
-                                         (local-file "Extras/ci.guix.gnu.org.pub")
-                                         (local-file "Extras/guix.genenetwork.org.pub")
-                                         (local-file "Extras/guix.tobias.gr.pub")))
+                                 (substitute-urls %substitute-urls)
+                                 (authorized-keys %authorized-keys)
                                  (extra-options
-                                   (list "--gc-keep-derivations=yes"
-                                         "--gc-keep-outputs=yes"
-                                         "--cores=1")))))))) ; we're on a laptop
+                                   (cons* "--cores=1" ; we're on a laptop
+                                          %extra-options))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))

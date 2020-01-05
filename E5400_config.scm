@@ -2,6 +2,7 @@
              (guix gexp)
              (gnu)
              (gnu system locale)
+             (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
@@ -174,22 +175,9 @@
                                config =>
                                (guix-configuration
                                  (inherit config)
-                                 (substitute-urls
-                                   (list "http://192.168.1.183:3000" ; E2140
-                                         "http://192.168.1.209:3000" ; macbook41
-                                         "https://ci.guix.gnu.org"
-                                         "https://bayfront.guixsd.org"
-                                         "http://guix.genenetwork.org"
-                                         "https://guix.tobias.gr"))
-                                 (authorized-keys
-                                   (list (local-file "Extras/E2140_publish.pub")
-                                         (local-file "Extras/macbook41_publish.pub")
-                                         (local-file "Extras/ci.guix.gnu.org.pub")
-                                         (local-file "Extras/guix.genenetwork.org.pub")
-                                         (local-file "Extras/guix.tobias.gr.pub")))
-                                 (extra-options
-                                   (list "--gc-keep-derivations=yes"
-                                         "--gc-keep-outputs=yes"))))))))
+                                 (substitute-urls %substitute-urls)
+                                 (authorized-keys %authorized-keys)
+                                 (extra-options %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
