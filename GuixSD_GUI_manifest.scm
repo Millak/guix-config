@@ -1,3 +1,6 @@
+(use-modules (guix profiles)
+             (gnu packages))
+
 (packages->manifest
  (map (compose list specification->package+output)
        '("aria2"
