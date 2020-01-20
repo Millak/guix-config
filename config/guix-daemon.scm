@@ -16,10 +16,11 @@
         "https://guix.tobias.gr"))
 
 (define %authorized-keys
-  (list (local-file "../Extras/ci.guix.gnu.org.pub")
-        (local-file "../Extras/E2140_publish.pub")
+  (list (local-file "../Extras/E2140_publish.pub")
         (local-file "../Extras/E5400_publish.pub")
         (local-file "../Extras/macbook41_publish.pub")
+        (local-file "../Extras/ci.guix.gnu.org.pub")
+        (local-file "../Extras/bayfront.guixsd.org.pub")
         (local-file "../Extras/guix.genenetwork.org.pub")
         (local-file "../Extras/guix.tobias.gr.pub")))
 
