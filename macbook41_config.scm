@@ -8,7 +8,7 @@
              (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking security-token ssh virtualization xorg)
-(use-package-modules certs connman cups linux scanner video virtualization)
+(use-package-modules certs connman cups linux video virtualization)
 
 (define %my-macbook-touchpad
   "Section \"InputClass\"
@@ -105,8 +105,6 @@
                               (default-paper-size "A4")
                               (extensions
                                 (list cups-filters hplip-minimal))))
-                   (simple-service 'custom-udev-rules udev-service-type
-                                   (list sane-backends-minimal))
 
                    (service rottlog-service-type)
                    (service mcron-service-type
