@@ -84,6 +84,7 @@
         "vim"
         "vim-airline"
         "vim-fugitive"
+        "vim-guix-vim"
         "wcalc"
         "weechat"
         "wget"
