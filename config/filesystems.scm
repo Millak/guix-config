@@ -12,11 +12,11 @@
     #~(job '(next-hour '(3))
            (string-append #$btrfs-progs "/bin/btrfs"
                           "scrub " "start " "-c " "idle "
-                          mountpoint))
+                          #$mount-point))
     #~(job '(next-hour '(5))
            (string-append #$btrfs-progs "/bin/btrfs "
                           "balance " "start"  "-dusage=50 " "-musage=70 "
-                          mountpoint))))
+                          #$mount-point))))
 
 ;; This directory shouldn't exist.
 (define %fontconfig
