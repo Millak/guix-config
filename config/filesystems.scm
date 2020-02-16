@@ -10,11 +10,13 @@
 (define (%btrfs-maintenance-jobs mount-point)
   (list
     #~(job '(next-hour '(3))
-           (invoke #$(file-append btrfs-progs "/bin/btrfs")
-                   "scrub" "start" "-c" "3" mountpoint))
+           (string-append #$btrfs-progs "/bin/btrfs"
+                          "scrub " "start " "-c " "idle "
+                          mountpoint))
     #~(job '(next-hour '(5))
-           (invoke #$(file-append btrfs-progs "/bin/btrfs")
-                   "balance" "start" "-dusage=50" "-musage=70" mountpoint))))
+           (string-append #$btrfs-progs "/bin/btrfs "
+                          "balance " "start"  "-dusage=50 " "-musage=70 "
+                          mountpoint))))
 
 ;; This directory shouldn't exist.
 (define %fontconfig
