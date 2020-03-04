@@ -9,7 +9,7 @@
 (define %substitute-urls
   (list "http://192.168.1.183:3000" ; E2140
         "http://192.168.1.217:3000" ; E5400
-        "http://192.168.1.209:3000" ; macbook41
+        ;"http://192.168.1.209:3000" ; macbook41
         "https://ci.guix.gnu.org"
         "https://bayfront.guix.gnu.org"
         "http://guix.genenetwork.org"
@@ -18,7 +18,7 @@
 (define %authorized-keys
   (list (local-file "../Extras/E2140_publish.pub")
         (local-file "../Extras/E5400_publish.pub")
-        (local-file "../Extras/macbook41_publish.pub")
+        ;(local-file "../Extras/macbook41_publish.pub")
         (local-file "../Extras/ci.guix.gnu.org.pub")
         (local-file "../Extras/bayfront.guix.gnu.org.pub")
         (local-file "../Extras/guix.genenetwork.org.pub")
