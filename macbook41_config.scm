@@ -52,7 +52,6 @@
                          (device (uuid "F010-1913" 'fat))
                          (mount-point "/boot/efi")
                          (type "vfat"))
-                       %fontconfig
                        %guix-temproots
                        %base-file-systems))
 

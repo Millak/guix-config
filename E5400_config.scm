@@ -43,7 +43,6 @@
                          (device (file-system-label "data"))
                          (mount-point "/data")
                          (type "ext4"))
-                       %fontconfig
                        %guix-temproots
                        %base-file-systems))
 

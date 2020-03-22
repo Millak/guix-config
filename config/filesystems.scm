@@ -4,7 +4,6 @@
   #:use-module (gnu packages linux)
   #:use-module (guix gexp)
   #:export (%btrfs-maintenance-jobs
-            %fontconfig
             %guix-temproots))
 
 (define (%btrfs-maintenance-jobs mount-point)
@@ -17,15 +16,6 @@
            (string-append #$btrfs-progs "/bin/btrfs "
                           "balance " "start "  "-dusage=50 " "-musage=70 "
                           #$mount-point))))
-
-;; This directory shouldn't exist.
-(define %fontconfig
-  (file-system
-    (device "none")
-    (mount-point "/var/cache/fontconfig")
-    (type "tmpfs")
-    (flags '(read-only))
-    (check? #f)))
 
 (define %guix-temproots
   (file-system

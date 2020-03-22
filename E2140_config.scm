@@ -49,7 +49,6 @@
                          (mount-point "/data")
                          (type "btrfs")
                          (options "autodefrag,compress=lzo"))
-                       %fontconfig
                        %guix-temproots
                        %base-file-systems))
 
