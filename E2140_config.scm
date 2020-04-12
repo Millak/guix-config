@@ -109,7 +109,6 @@
                    (tor-hidden-service "guix-publish"
                                        ; fqq67aawbuqnxzng.onion
                                        '((3000 "127.0.0.1:3000")))
-                   (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
                               (jobs (append (%btrfs-maintenance-jobs "/")

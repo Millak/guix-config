@@ -104,7 +104,6 @@
                    ;(tor-hidden-service "ssh"
                    ;                    '((22 "127.0.0.1:22")))
 
-                   (service rottlog-service-type)
 
                    (service openntpd-service-type
                             (openntpd-configuration

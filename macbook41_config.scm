@@ -105,7 +105,6 @@
                               (extensions
                                 (list cups-filters hplip-minimal))))
 
-                   (service rottlog-service-type)
                    (service mcron-service-type
                             (mcron-configuration
                               (jobs (%btrfs-maintenance-jobs "/"))))
