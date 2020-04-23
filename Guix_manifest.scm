@@ -21,7 +21,7 @@
         "evisum"
         "font-culmus"
         "font-dejavu"
-        "font-gnu-freefont-ttf"
+        "font-gnu-freefont"
         "font-gnu-unifont"
         "font-opendyslexic"
         "font-terminus"
