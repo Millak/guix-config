@@ -43,12 +43,12 @@
                          (device (file-system-label "my-root"))
                          (mount-point "/")
                          (type "btrfs")
-                         (options "autodefrag,compress=lzo"))
+                         (options "autodefrag,compress-force=zstd"))
                        (file-system
                          (device (file-system-label "data"))
                          (mount-point "/data")
                          (type "btrfs")
-                         (options "autodefrag,compress=lzo"))
+                         (options "autodefrag,compress-force=zstd"))
                        %guix-temproots
                        %base-file-systems))
 

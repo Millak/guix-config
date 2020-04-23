@@ -38,7 +38,7 @@
                          (device (file-system-label "root"))
                          (mount-point "/")
                          (type "btrfs")
-                         (options "autodefrag,compress=lzo,discard,ssd_spread"))
+                         (options "autodefrag,compress-force=zstd,discard,ssd_spread"))
                        (file-system
                          (device (file-system-label "data"))
                          (mount-point "/data")
