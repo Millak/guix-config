@@ -57,6 +57,7 @@
         "ffmpeg"
         "git-annex"
         "isync"
+        "keybase"
         "khal"
         "khard"
         "libhdate"
@@ -77,6 +78,7 @@
 
 (define %guix-system-apps
   (list "guile"
+        "guile-colorized"
         "guile-readline"
         "mcron"
         "shepherd"))
