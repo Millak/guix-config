@@ -7,7 +7,7 @@
              (config os-release)
              (config xorg-modules)
              (srfi srfi-1))
-(use-service-modules admin cups desktop mcron networking sddm security-token ssh virtualization xorg)
+(use-service-modules admin cups desktop linux mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups enlightenment gnome linux video virtualization)
 
 (operating-system
@@ -25,14 +25,6 @@
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
                 (target "/dev/sda")))
-
-  (kernel-arguments '("zswap.enabled=1"
-                      "zswap.compressor=lz4"
-                      "zswap.zpool=z3fold"
-                      ;; Required to run X32 software and VMs
-                      ;; https://wiki.debian.org/X32Port
-                      ;; Still untested on GuixSD.
-                      "syscall.x32=y"))
 
   (file-systems (cons* (file-system
                          (device (file-system-label "root"))
@@ -116,6 +108,20 @@
                    (service virtlog-service-type)
 
                    (service pcscd-service-type)
+                   (service earlyoom-service-type
+                            (earlyoom-configuration
+                              (minimum-free-swap 50)))
+
+                   (service kernel-module-loader-service-type
+                            '("zram"))
+                   (simple-service 'zram-config etc-service-type
+                                   (list `("modprobe.d/zram.conf"
+                                           ,(plain-file "zram.conf"
+                                                        "options zram num_devices=2"))))
+                   (udev-rules-service 'zram (file->udev-rule
+                                               "99-zram.rules"
+                                               (plain-file "99-zram.rules"
+"KERNEL==\"zram0\", ATTR{comp_algorithm}=\"zstd\" ATTR{disksize}=\"2G\" RUN+=\"/run/current-system/profile/sbin/mkswap /dev/zram0\" RUN+=\"/run/current-system/profile/sbin/swapon --priority 100 /dev/zram0\"")))
 
                    (service sddm-service-type
                             (sddm-configuration
