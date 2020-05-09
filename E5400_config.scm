@@ -8,7 +8,7 @@
              (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop linux mcron networking sddm security-token ssh virtualization xorg)
-(use-package-modules certs connman cups enlightenment gnome linux video virtualization)
+(use-package-modules certs connman cups gnome linux video virtualization)
 
 (operating-system
   (host-name "E5400")
@@ -63,9 +63,7 @@
                    intel-vaapi-driver
                    %base-packages))
 
-  (services (cons* (service enlightenment-desktop-service-type
-                            (enlightenment-desktop-configuration
-                              (enlightenment enlightenment-wayland)))
+  (services (cons* (service enlightenment-desktop-service-type)
 
                    (simple-service 'os-release etc-service-type
                                    `(("os-release" ,%os-release-file)))
