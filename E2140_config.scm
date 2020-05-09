@@ -25,6 +25,7 @@
                              (name "en_US.UTF-8"))
           (locale-definition (source "he_IL")
                              (name "he_IL.UTF-8"))))
+  (locale-libcs (list glibc-2.29 (canonical-package glibc)))
 
   ;; Assuming /dev/sdX is the target hard disk, and "my-root"
   ;; is the label of the target root file system.
