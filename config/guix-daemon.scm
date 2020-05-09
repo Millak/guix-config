@@ -7,10 +7,11 @@
             %extra-options))
 
 (define %substitute-urls
-  (list "http://192.168.1.183:3000" ; E2140
-        "http://192.168.1.217:3000" ; E5400
+  (list "http://E2140:3000" ; E2140
+        "http://E5400:3000" ; E5400
         ;"http://192.168.1.209:3000" ; macbook41
         "https://ci.guix.gnu.org"
+        ;"http://bp7o7ckwlewr4slm.onion" ; ci.guix.gnu.org
         "https://bayfront.guix.gnu.org"
         "http://guix.genenetwork.org"
         "https://guix.tobias.gr"))
