@@ -69,8 +69,8 @@
         "weechat"
         "youtube-dl"))
 
-(define %intel-only
-  (list"git-annex"
+(define %intel-only-not-for-work
+  (list "git-annex"
         "keybase"
         "syncthing"))
 
@@ -130,7 +130,9 @@
                 %GUI-only)
               (if work-machine?
                 %work-applications
-                (append %not-for-work
-                        %intel-only))
+                (if (member (utsname:machine (uname))
+                            '("x86_64" "i686"))
+                  (append %intel-only-not-for-work %not-for-work)
+                  %not-for-work))
               %guix-system-apps
               %cli-apps)))
