@@ -18,6 +18,7 @@
 
 (define %GUI-only
   (list "ephoto"
+        "etui"
         "evisum"
         "font-culmus"
         "font-dejavu"
@@ -36,7 +37,6 @@
         "mpv"
         "mpv-mpris"
         "my-moreutils"
-        "my-mupdf"
         "my-pinentry-efl"
         "netsurf"
         "pavucontrol"
@@ -52,12 +52,9 @@
 
 (define %not-for-work
   (list "btrfs-progs"
-        "borg"
         "catimg"
         "ffmpeg"
-        "git-annex"
         "isync"
-        "keybase"
         "khal"
         "khard"
         "libhdate"
@@ -66,12 +63,16 @@
         "newsboat"
         "parcimonie"
         "sshfs"
-        "syncthing"
         "toot"
         "tuir"
         "vdirsyncer"
         "weechat"
         "youtube-dl"))
+
+(define %intel-only
+  (list"git-annex"
+        "keybase"
+        "syncthing"))
 
 (define %headless
   (list "pinentry-tty"))
@@ -129,6 +130,7 @@
                 %GUI-only)
               (if work-machine?
                 %work-applications
-                %not-for-work)
+                (append %not-for-work
+                        %intel-only))
               %guix-system-apps
               %cli-apps)))
