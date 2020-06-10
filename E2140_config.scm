@@ -132,8 +132,7 @@
                        config =>
                        (network-manager-configuration
                          (inherit config)
-                         (dns "dnsmasq")
-                         (vpn-plugins (list network-manager-openconnect))))
+                         (dns "dnsmasq")))
                      (ntp-service-type
                        config =>
                        (ntp-configuration
