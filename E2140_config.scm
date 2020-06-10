@@ -84,6 +84,7 @@
                    pavucontrol
                    btrfs-progs compsize
                    font-terminus font-dejavu
+                   font-opendyslexic
                    %base-packages))
 
   (services (cons* (service xfce-desktop-service-type)
