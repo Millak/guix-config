@@ -55,6 +55,7 @@
         "catimg"
         "ffmpeg"
         "isync"
+        "keybase"
         "khal"
         "khard"
         "libhdate"
@@ -63,6 +64,7 @@
         "newsboat"
         "parcimonie"
         "sshfs"
+        "syncthing"
         "toot"
         "tuir"
         "vdirsyncer"
@@ -70,9 +72,7 @@
         "youtube-dl"))
 
 (define %intel-only-not-for-work
-  (list "git-annex"
-        "keybase"
-        "syncthing"))
+  (list "git-annex"))
 
 (define %headless
   (list "pinentry-tty"))
