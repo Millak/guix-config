@@ -1,5 +1,6 @@
 (use-modules (guix profiles)
              (gnu packages)
+             (ice-9 match)
              (srfi srfi-1))
 
 (define headless?
@@ -61,7 +62,6 @@
         "libhdate"
         "msmtp"
         "mutt"
-        "newsboat"
         "parcimonie"
         "sshfs"
         "syncthing"
@@ -71,8 +71,14 @@
         "weechat"
         "youtube-dl"))
 
-(define %intel-only-not-for-work
+(define %not-for-work-ghc
   (list "git-annex"))
+
+(define %not-for-work-rust
+  (list "newsboat"))
+
+(define %not-for-work-no-rust
+  (list "newsboat@2.13"))
 
 (define %headless
   (list "pinentry-tty"))
@@ -113,7 +119,6 @@
         "translate-shell"
         "tree"
         "urlscan"
-        "vifm"
         "vim"
         "vim-airline"
         "vim-asyncrun"
@@ -130,9 +135,10 @@
                 %GUI-only)
               (if work-machine?
                 %work-applications
-                (if (member (utsname:machine (uname))
-                            '("x86_64" "i686"))
-                  (append %intel-only-not-for-work %not-for-work)
-                  %not-for-work))
+                (append %not-for-work
+                  (match (utsname:machine (uname))
+                   ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
+                   ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
+                   (_ %not-for-work-no-rust))))
               %guix-system-apps
               %cli-apps)))
