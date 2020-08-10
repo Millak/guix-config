@@ -111,16 +111,11 @@
                             (earlyoom-configuration
                               (minimum-free-swap 50)))
 
-                   (service kernel-module-loader-service-type
-                            '("zram"))
-                   (simple-service 'zram-config etc-service-type
-                                   (list `("modprobe.d/zram.conf"
-                                           ,(plain-file "zram.conf"
-                                                        "options zram num_devices=2"))))
-                   (udev-rules-service 'zram (file->udev-rule
-                                               "99-zram.rules"
-                                               (plain-file "99-zram.rules"
-"KERNEL==\"zram0\", ATTR{comp_algorithm}=\"zstd\" ATTR{disksize}=\"2G\" RUN+=\"/run/current-system/profile/sbin/mkswap /dev/zram0\" RUN+=\"/run/current-system/profile/sbin/swapon --priority 100 /dev/zram0\"")))
+                   (service zram-device-service-type
+                            (zram-device-configuration
+                              (size (expt 2 31))
+                              (compression-algorithm 'zstd)
+                              (priority 100)))
 
                    (service sddm-service-type
                             (sddm-configuration
