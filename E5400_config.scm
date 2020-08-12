@@ -5,7 +5,6 @@
              (config filesystems)
              (config guix-daemon)
              (config os-release)
-             (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop linux mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups gnome linux virtualization)
@@ -117,10 +116,7 @@
 
                    (service sddm-service-type
                             (sddm-configuration
-                              (display-server "wayland")
-                              (xorg-configuration
-                                (xorg-configuration
-                                  (modules %intel-xorg-modules)))))
+                              (display-server "wayland")))
 
                    (remove (lambda (service)
                              (let ((type (service-kind service)))
