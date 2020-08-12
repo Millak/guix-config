@@ -12,6 +12,9 @@
         "tux01"
         "tux02"))
 
+(define guix-system
+  (file-exists? "/run/current-system/provenance"))
+
 (define work-machine?
   (not (eq? #f (member (gethostname)
                        (cons "bayfront"
@@ -31,7 +34,6 @@
         "gst-plugins-good"
         "gst-plugins-ugly"
         "icecat"
-        "intel-vaapi-driver"
         "kdeconnect"
         "keepassxc"
         "libreoffice"

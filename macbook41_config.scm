@@ -8,7 +8,7 @@
              (config xorg-modules)
              (srfi srfi-1))
 (use-service-modules admin cups desktop mcron networking security-token ssh virtualization xorg)
-(use-package-modules certs connman cups linux video virtualization)
+(use-package-modules certs connman cups linux virtualization)
 
 (define %my-macbook-touchpad
   "Section \"InputClass\"
@@ -74,8 +74,6 @@
                    econnman
                    btrfs-progs compsize
                    virt-manager
-                   libvdpau-va-gl    ;intel graphics vdpau
-                   intel-vaapi-driver
                    %base-packages))
 
   (services (cons* (service enlightenment-desktop-service-type)
