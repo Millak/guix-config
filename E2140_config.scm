@@ -6,7 +6,7 @@
              (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
-(use-service-modules admin desktop mcron networking ssh xorg)
+(use-service-modules admin desktop linux mcron networking ssh xorg)
 (use-package-modules certs fonts gnome linux pulseaudio)
 
 (define (remove-services types services)
@@ -114,6 +114,12 @@
                             (mcron-configuration
                               (jobs (append (%btrfs-maintenance-jobs "/")
                                             (%btrfs-maintenance-jobs "/data")))))
+
+                   (service zram-device-service-type
+                            (zram-device-configuration
+                              (size (expt 1 31))
+                              (compression-algorithm 'zstd)
+                              (priority 100)))
 
                    (service slim-service-type)
 
