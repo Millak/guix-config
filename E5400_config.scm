@@ -100,11 +100,6 @@
                             (libvirt-configuration
                               (unix-sock-group "libvirt")))
                    (service virtlog-service-type)
-                   (service qemu-binfmt-service-type
-                            (qemu-binfmt-configuration
-                              (platforms
-                                (lookup-qemu-platforms "arm" "aarch64" "mips64el"))
-                              (guix-support? #t)))
 
                    (service pcscd-service-type)
                    (service earlyoom-service-type
