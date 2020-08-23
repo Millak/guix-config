@@ -19,8 +19,6 @@
           (locale-definition (source "he_IL")
                              (name "he_IL.UTF-8"))))
 
-  ;; Assuming /dev/sdX is the target hard disk, and "my-root"
-  ;; is the label of the target root file system.
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
                 (target "/dev/sda")))
@@ -37,6 +35,7 @@
                        %guix-temproots
                        %base-file-systems))
 
+  (kernel linux-libre-5.7)
   (swap-devices '("/dev/sda1"))
 
   (users (cons (user-account
