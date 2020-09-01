@@ -35,7 +35,7 @@
                        %guix-temproots
                        %base-file-systems))
 
-  (kernel linux-libre-5.7)
+  (kernel linux-libre-5.4)
   (swap-devices '("/dev/sda1"))
 
   (users (cons (user-account
