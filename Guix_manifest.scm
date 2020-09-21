@@ -36,6 +36,7 @@
         "icecat"
         "kdeconnect"
         "keepassxc"
+        "libnotify"     ; notify-send
         "libreoffice"
         "mpv"
         "mpv-mpris"
