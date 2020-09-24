@@ -6,7 +6,7 @@
              (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
-(use-service-modules admin cups desktop docker linux mcron networking sddm security-token ssh virtualization xorg)
+(use-service-modules admin cups desktop linux mcron networking sddm security-token ssh virtualization xorg)
 (use-package-modules certs connman cups gnome linux virtualization)
 
 (operating-system
@@ -44,7 +44,7 @@
                 (group "users")
                 (supplementary-groups '("wheel" "netdev" "kvm"
                                         "lp" "lpadmin"
-                                        "libvirt" "docker"
+                                        "libvirt"
                                         "audio" "video"))
                 (home-directory "/home/efraim"))
                %base-user-accounts))
@@ -100,7 +100,6 @@
                             (libvirt-configuration
                               (unix-sock-group "libvirt")))
                    (service virtlog-service-type)
-                   (service docker-service-type)
 
                    (service pcscd-service-type)
                    (service earlyoom-service-type
