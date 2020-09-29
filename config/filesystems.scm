@@ -14,7 +14,7 @@
                           #$mount-point))
     #~(job '(next-hour '(5))
            (string-append #$btrfs-progs "/bin/btrfs "
-                          "balance " "start "  "-dusage=50 " "-musage=70 "
+                          "balance " "start "  "-dusage=70 " "-musage=80 "
                           #$mount-point))))
 
 (define %guix-temproots
