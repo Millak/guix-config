@@ -106,7 +106,6 @@
         "glibc-utf8-locales"
         "gnupg"
         "links"
-        "mosh"
         "myrepos"
         "ncdu"
         "nmap"
