@@ -52,7 +52,8 @@
 
 (define %work-applications
   (list "diffoscope"
-        "mercurial"))
+        "mercurial"
+        "strace"))
 
 (define %not-for-work
   (list "btrfs-progs"
