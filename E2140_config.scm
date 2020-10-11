@@ -32,23 +32,16 @@
                 (bootloader grub-bootloader)
                 (target "/dev/sdb")))
 
-  (kernel-arguments '("zswap.enabled=1"
-                      "zswap.compressor=lz4"
-                      "zswap.zpool=z3fold"
-                      ;; Required to run X32 software and VMs
-                      ;; https://wiki.debian.org/X32Port
-                      "syscall.x32=y"))
-
   (file-systems (cons* (file-system
                          (device (file-system-label "my-root"))
                          (mount-point "/")
                          (type "btrfs")
-                         (options "autodefrag,compress-force=zstd"))
+                         (options "autodefrag,compress-force=zstd,space_cache=v2"))
                        (file-system
                          (device (file-system-label "data"))
                          (mount-point "/data")
                          (type "btrfs")
-                         (options "autodefrag,compress-force=zstd"))
+                         (options "autodefrag,compress-force=zstd,space_cache=v2"))
                        %guix-temproots
                        %base-file-systems))
 
