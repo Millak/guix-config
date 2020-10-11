@@ -8,7 +8,7 @@
              (srfi srfi-1))
 (use-service-modules
   linux
-  mcron
+  ;mcron
   networking
   ssh)
 (use-package-modules
@@ -102,11 +102,12 @@
                                       (alist-delete "pandoc"
                                                     (package-native-inputs base))))))))
 
-                   (service zram-device-service-type
-                            (zram-device-configuration
-                              (size (expt 2 31))
-                              (compression-algorithm 'zstd)
-                              (priority 100)))
+                   ;; Not supported by linux-libre-arm64-generic
+                   ;(service zram-device-service-type
+                   ;         (zram-device-configuration
+                   ;           (size (expt 2 31))
+                   ;           (compression-algorithm 'zstd)
+                   ;           (priority 100)))
 
                    (modify-services
                      %base-services
