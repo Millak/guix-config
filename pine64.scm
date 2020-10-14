@@ -28,9 +28,10 @@
 
   (bootloader (bootloader-configuration
                 (bootloader u-boot-pine64-plus-bootloader)
-                (target "/dev/mmcblk0")))
+                (target "/dev/mmcblk0")))   ; SD card/eMMC (SD priority) storage
 
   (initrd-modules '())
+  ;; The board fails to boot with stock linux-libre
   (kernel linux-libre-arm64-generic)
 
   (file-systems (cons* (file-system
