@@ -108,7 +108,7 @@
 
                    (service zram-device-service-type
                             (zram-device-configuration
-                              (size (expt 2 31))
+                              (size (* 2 (expt 2 30)))
                               (compression-algorithm 'zstd)
                               (priority 100)))
 

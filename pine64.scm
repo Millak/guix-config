@@ -71,7 +71,8 @@
                               (port 3000)))
                    (service openssh-service-type
                             (openssh-configuration
-                              (password-authentication? #t)))
+                              (x11-forwarding? #t)
+                              (extra-content "StreamLocalBindUnlink yes")))
 
                    (service tor-service-type)
                    (tor-hidden-service "ssh"
@@ -106,7 +107,7 @@
                    ;; Not supported by linux-libre-arm64-generic
                    ;(service zram-device-service-type
                    ;         (zram-device-configuration
-                   ;           (size (expt 2 31))
+                   ;           (size (* 2 (expt 2 30)))
                    ;           (compression-algorithm 'zstd)
                    ;           (priority 100)))
 
