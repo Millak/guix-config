@@ -9,7 +9,7 @@
 (define %substitute-urls
   (list "http://E2140.local:3000"
         "http://E5400.local:3000"
-        "http://pine64.local:3000"
+        "http://pine64:3000"
         ;"http://macbook41.local:3000"
         "https://ci.guix.gnu.org"
         ;"http://bp7o7ckwlewr4slm.onion" ; ci.guix.gnu.org
@@ -21,6 +21,7 @@
   (list (local-file "../Extras/E2140_publish.pub")
         (local-file "../Extras/E5400_publish.pub")
         (local-file "../Extras/pine64_publish.pub")
+        (local-file "../Extras/odroidc2_publish.pub")
         ;(local-file "../Extras/macbook41_publish.pub")
         (local-file "../Extras/ci.guix.gnu.org.pub")
         (local-file "../Extras/bayfront.guix.gnu.org.pub")
