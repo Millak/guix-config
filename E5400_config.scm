@@ -114,7 +114,7 @@
 
                    (service sddm-service-type
                             (sddm-configuration
-                              (display-server "wayland")))
+                              (display-server "x11")))
 
                    (remove (lambda (service)
                              (let ((type (service-kind service)))
