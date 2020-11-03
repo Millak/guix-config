@@ -10,7 +10,20 @@
   (list "lily"
         "penguin2"
         "tux01"
-        "tux02"))
+        "tux02"
+        "tux03"
+        "octopus01"
+        "octopus02"
+        "octopus03"
+        "octopus04"
+        "octopus05"
+        "octopus06"
+        "octopus07"
+        "octopus08"
+        "octopus09"
+        "octopus10"
+        "octopus11"
+        ))
 
 (define guix-system
   (file-exists? "/run/current-system/provenance"))
@@ -21,7 +34,8 @@
                              UTenn_machines)))))
 
 (define %GUI-only
-  (list "ephoto"
+  (list "adwaita-icon-theme"
+        "ephoto"
         "etui"
         "evisum"
         "font-culmus"
