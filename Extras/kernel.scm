@@ -219,6 +219,12 @@
     ("CONFIG_X86_X32" . #t)
     ))
 
+(define %zram-support
+  `(("CONFIG_ZSMALLOC" . m)
+    ("CONFIG_CRYPTO_LZO" . m)
+    ("CONFIG_ZRAM" . m)
+    ("CONFIG_ZRAM_WRITEBACK" . #t)))
+
 (define %macbook41-full-config
   (append %macbook41-config-options
           %filesystems
@@ -227,21 +233,22 @@
           (@@ (gnu packages linux) %default-extra-linux-options)))
 
 (define-public linux-libre-macbook41
-  ((@@ (gnu packages linux) make-linux-libre) (@@ (gnu packages linux) %linux-libre-version)
-                    (@@ (gnu packages linux) %linux-libre-hash)
+  ((@@ (gnu packages linux) make-linux-libre) (@@ (gnu packages linux) linux-libre-version)
+                    (@@ (gnu packages linux) linux-libre-source)
                     '("x86_64-linux")
                     #:extra-version "macbook41"
-                    #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches)
+                    ;#:patches (@@ (gnu packages linux) %linux-libre-5.0-patches)
                     #:extra-options %macbook41-full-config))
 
 (define-public linux-libre-E2140
   (let ((base
           ((@@ (gnu packages linux) make-linux-libre)
-           (@@ (gnu packages linux) %linux-libre-version)
-           (@@ (gnu packages linux) %linux-libre-hash)
+           (@@ (gnu packages linux) linux-libre-version)
+           (@@ (gnu packages linux) linux-libre-source)
            '("x86_64-linux")
            #:extra-version "E2140"
-           #:patches (@@ (gnu packages linux) %linux-libre-5.0-patches))))
+           ;#:patches (@@ (gnu packages linux) %linux-libre-5.0-patches)
+           )))
     (package
       (inherit base)
       (native-inputs
@@ -251,8 +258,8 @@
 (define-public linux-libre-kvm
   (let ((base
           ((@@ (gnu packages linux) make-linux-libre)
-           (@@ (gnu packages linux) %linux-libre-version)
-           (@@ (gnu packages linux) %linux-libre-hash)
+           (@@ (gnu packages linux) linux-libre-version)
+           (@@ (gnu packages linux) linux-libre-source)
            '("x86_64-linux")
            #:extra-version "kvm"
            #:defconfig "kvmconfig"
@@ -262,3 +269,69 @@
       (native-inputs
        `(("kconfig" ,(local-file "5.x-defconfig.config"))
          ,@(package-native-inputs base))))))
+
+(define-public linux-libre-arm64-generic-zram
+  ((@@ (gnu packages linux) make-linux-libre*)
+   linux-libre-version
+   linux-libre-pristine-source
+   '("aarch64-linux")
+   #:defconfig "defconfig"
+   #:extra-version "arm64-generic"
+   #:extra-options
+   (append
+     %zram-support
+     %default-extra-linux-options)))
+
+
+;; From guixvits
+(define custom-linux-libre-arm64-generic
+  ;; customized of 81ea278e05986f9ccee078bd00d4d7fc309dd19c
+  (eval
+    '((lambda ()
+        (use-modules (ice-9 popen) (ice-9 rdelim)
+                     (gnu packages) (guix packages))
+
+        ;; I want working `nft` on our generic kernel.
+        ;; The default linux-libre even not boots on this RockPro64 for me.
+        (define non-spartan-netfilter-settings
+          (letrec* ((kconfig (car (assoc-ref (package-native-inputs linux-libre)
+                                             "kconfig")))
+                    (pipe (open-pipe* OPEN_READ "grep" "-iE"
+                                      "config_(nf|nft|netfilter)(_.*=|=)[ym]$"
+                                      kconfig))
+                    (iter
+                      (lambda (l)
+                        (let ((input (read-line pipe)))
+                          (if (string? input)
+                            (let* ((pair (string-split input #\=))
+                                   (value (if (string= (cadr pair) "y") #t 'm))
+                                   (pa.ir `(,(car pair) . ,value)))
+                              (iter (append l `(,pa.ir))))
+                            l))))
+                    (result (iter '())))
+            (display
+              (string-append "The following was borrowed from\n"
+                             kconfig ":\n"))
+            (for-each (lambda (pa.ir)
+                        (display "   ") (display pa.ir) (newline)) result)
+            (newline)
+
+            result))
+
+        (make-linux-libre* linux-libre-version
+                           linux-libre-source
+                           '("aarch64-linux")
+                           #:defconfig "defconfig"
+                           #:extra-version "custom-arm64-generic"
+                           #:extra-options
+                           (append
+                             `(;; needed to fix the RTC on rockchip platforms
+                               ("CONFIG_RTC_DRV_RK808" . #t)
+                               ;; we store in /run/current-system/kernel/.config
+                               ("CONFIG_IKCONFIG" . #f)
+                               ;; better than ondemand for power-saving.
+                               ("CONFIG_CPU_FREQ_GOV_CONSERVATIVE" . #t)
+                               ("CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE" . #t))
+                             non-spartan-netfilter-settings        ; for nftables
+                             %default-extra-linux-options))))
+    (resolve-module '(gnu packages linux))))
