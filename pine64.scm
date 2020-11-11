@@ -34,6 +34,8 @@
   ;; The board fails to boot with stock linux-libre
   (kernel linux-libre-arm64-generic)
 
+  (swap-devices (list "/swapfile"))
+
   (file-systems (cons* (file-system
                          (device (file-system-label "root"))
                          (mount-point "/")
