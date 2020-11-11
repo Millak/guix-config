@@ -104,7 +104,8 @@
                    (service pcscd-service-type)
                    (service earlyoom-service-type
                             (earlyoom-configuration
-                              (minimum-free-swap 50)))
+                              (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
+                              (avoid-regexp "enlightenment")))
 
                    (service zram-device-service-type
                             (zram-device-configuration
