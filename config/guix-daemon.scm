@@ -22,6 +22,7 @@
         (local-file "../Extras/E5400_publish.pub")
         (local-file "../Extras/pine64_publish.pub")
         (local-file "../Extras/odroidc2_publish.pub")
+        (local-file "../Extras/g4_publish.pub")
         ;(local-file "../Extras/macbook41_publish.pub")
         (local-file "../Extras/ci.guix.gnu.org.pub")
         (local-file "../Extras/bayfront.guix.gnu.org.pub")
