@@ -31,6 +31,8 @@
                 (bootloader grub-bootloader)
                 (target "/dev/sda")))
 
+  (firmware '())
+
   (initrd-modules '())
   (kernel linux-libre-mips64el-fuloong2e)
 
