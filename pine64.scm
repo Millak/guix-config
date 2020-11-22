@@ -90,7 +90,8 @@
                    (service openntpd-service-type
                             (openntpd-configuration
                               (listen-on '("127.0.0.1" "::1"))
-                              (allow-large-adjustment? #t)))
+                              ;; Prevent moving to year 2116.
+                              (allow-large-adjustment? #f)))
 
                    (service connman-service-type)
                    (service wpa-supplicant-service-type)
