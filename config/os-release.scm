@@ -9,7 +9,7 @@
                 "PRETTY_NAME=\"Guix System\"\n"
                 "VERSION=\"" ((@ (guix packages) package-version)
                               (@ (gnu packages package-management) guix)) "\"\n"
-                "VERSION_ID=\"" ((@ (guix utils) version-major+minor)
+                "VERSION_ID=\"" ((@ (guix utils) version-major+minor+point)
                                  ((@ (guix packages) package-version)
                                   (@ (gnu packages package-management) guix))) "\"\n"
                 "ID=guix\n"
