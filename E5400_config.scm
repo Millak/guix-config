@@ -6,8 +6,25 @@
              (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
-(use-service-modules admin cups desktop linux mcron networking sddm security-token ssh virtualization xorg)
-(use-package-modules certs connman cups gnome linux virtualization)
+(use-service-modules
+  admin
+  cups
+  desktop
+  linux
+  mcron
+  networking
+  sddm
+  security-token
+  ssh
+  virtualization
+  xorg)
+(use-package-modules
+  certs
+  connman
+  cups
+  gnome
+  linux
+  virtualization)
 
 (operating-system
   (host-name "E5400")
@@ -66,7 +83,8 @@
                    (service guix-publish-service-type
                             (guix-publish-configuration
                               (host "0.0.0.0")
-                              (port 3000)))
+                              (port 3000)
+                              (advertise? #t)))
                    (service openssh-service-type
                             (openssh-configuration
                               (password-authentication? #t)))
@@ -134,6 +152,7 @@
                                config =>
                                (guix-configuration
                                  (inherit config)
+                                 (discover? #t)
                                  (substitute-urls %substitute-urls)
                                  (authorized-keys %authorized-keys)
                                  (extra-options %extra-options)))))))

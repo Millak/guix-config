@@ -7,9 +7,9 @@
             %extra-options))
 
 (define %substitute-urls
-  (list "http://E2140.local:3000"
-        "http://E5400.local:3000"
-        "http://pine64:3000"
+  (list ;"http://E2140.local:3000"
+        ;"http://E5400.local:3000"
+        ;"http://pine64:3000"
         ;"http://macbook41.local:3000"
         "https://ci.guix.gnu.org"
         ;"http://bp7o7ckwlewr4slm.onion" ; ci.guix.gnu.org
@@ -35,7 +35,7 @@
 
 (define %guix-configuration
   (guix-configuration
-    (inherit (@@ (gnu services base) %default-guix-configuration))
+    (inherit %default-guix-configuration)
     (substitute-urls %substitute-urls)
     (authorized-keys %authorized-keys)
     (extra-options %extra-options)))

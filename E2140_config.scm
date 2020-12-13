@@ -6,8 +6,20 @@
              (config guix-daemon)
              (config os-release)
              (srfi srfi-1))
-(use-service-modules admin desktop linux mcron networking ssh xorg)
-(use-package-modules certs fonts gnome linux pulseaudio)
+(use-service-modules
+  admin
+  desktop
+  linux
+  mcron
+  networking
+  ssh
+  xorg)
+(use-package-modules
+  certs
+  fonts
+  gnome
+  linux
+  pulseaudio)
 
 (define (remove-services types services)
   (remove (lambda (service)
@@ -88,6 +100,7 @@
                             (guix-publish-configuration
                               (host "0.0.0.0")
                               (port 3000)
+                              (advertise? #t)
                               ;; This machine is slow;
                               ;; support only minimal compression
                               (compression '(("lzip" 1) ("gzip" 1)))))
@@ -124,6 +137,7 @@
                        config =>
                        (guix-configuration
                          (inherit config)
+                         (discover? #t)
                          (substitute-urls %substitute-urls)
                          (authorized-keys %authorized-keys)
                          (extra-options %extra-options)))
