@@ -1,3 +1,4 @@
+(define-module (pine64))
 (use-modules (guix packages)
              (gnu)
              (gnu bootloader u-boot)

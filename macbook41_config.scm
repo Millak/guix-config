@@ -1,3 +1,4 @@
+(define-module (macbook41_config))
 (use-modules (guix store)
              (guix gexp)
              (gnu)

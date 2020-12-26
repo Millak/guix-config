@@ -1,3 +1,4 @@
+(define-module (lemote))
 (use-modules (guix packages)
              (gnu)
              (gnu bootloader u-boot)

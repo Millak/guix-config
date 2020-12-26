@@ -1,3 +1,4 @@
+(define-module (E2140_config))
 (use-modules (guix store)
              (guix gexp)
              (gnu)

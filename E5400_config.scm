@@ -1,3 +1,4 @@
+(define-module (E5400_config))
 (use-modules (guix store)
              (guix gexp)
              (gnu)

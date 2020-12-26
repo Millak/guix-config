@@ -1,3 +1,4 @@
+(define-module (Guix_manifest))
 (use-modules (guix profiles)
              (gnu packages)
              (ice-9 match)

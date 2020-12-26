@@ -1,3 +1,4 @@
+(define-module (vm_config))
 (use-modules (guix store)
              (gnu)
              (srfi srfi-1))
