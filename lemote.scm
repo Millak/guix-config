@@ -1,12 +1,10 @@
 (define-module (lemote))
 (use-modules (guix packages)
              (gnu)
-             (gnu bootloader u-boot)
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
              (config os-release)
-             (Extras kernel)
              (srfi srfi-1))
 (use-service-modules
   linux
