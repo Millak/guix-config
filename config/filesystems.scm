@@ -4,7 +4,8 @@
   #:use-module (gnu packages linux)
   #:use-module (guix gexp)
   #:export (%btrfs-maintenance-jobs
-            %guix-temproots))
+            %guix-temproots
+            %tmp-tmpfs))
 
 (define (%btrfs-maintenance-jobs mount-point)
   (list
@@ -22,4 +23,14 @@
     (device "tmpfs")
     (mount-point "/var/guix/temproots")
     (type "tmpfs")
+    (flags '(no-suid no-dev no-exec))
+    (check? #f)))
+
+;; Defaults to 50%
+(define %tmp-tmpfs
+  (file-system
+    (device "tmpfs")
+    (mount-point "/tmp")
+    (type "tmpfs")
+    (flags '(no-suid))
     (check? #f)))

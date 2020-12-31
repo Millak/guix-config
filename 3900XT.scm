@@ -49,6 +49,8 @@
              (mount-point "/boot/efi")
              (device (uuid "9146-2C77" 'fat32))
              (type "vfat"))
+           %tmp-tmpfs
+           %guix-temproots
            %base-file-systems))
 
   (users (cons* (user-account
