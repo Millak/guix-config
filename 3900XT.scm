@@ -116,6 +116,11 @@
                       (unix-sock-group "libvirt")))
            (service virtlog-service-type)
 
+           (service qemu-binfmt-service-type
+                    (qemu-binfmt-configuration
+                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "powerpc"))
+                      (guix-support? #t)))
+
            (service earlyoom-service-type
                     (earlyoom-configuration
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
