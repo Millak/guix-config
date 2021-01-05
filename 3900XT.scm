@@ -134,7 +134,7 @@
 
            (service sddm-service-type
                     (sddm-configuration
-                      (display-server "x11")))
+                      (display-server "wayland")))
 
            ;(set-xorg-configuration
            ;  (xorg-configuration
