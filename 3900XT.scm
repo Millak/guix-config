@@ -119,7 +119,7 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "powerpc"))
+                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc"))
                       (guix-support? #t)))
 
            (service earlyoom-service-type
