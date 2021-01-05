@@ -92,6 +92,7 @@
                                '((22 "127.0.0.1:22")))
            (tor-hidden-service "guix-publish"
                                '((3000 "127.0.0.1:3000")))
+           ;; k7muufoychzetmq7evsv6gcq4sxq4olxo3uy2zlhek5fkfvl5uscbgyd.onion
 
            (service cups-service-type
                     (cups-configuration
