@@ -108,7 +108,7 @@
            (service openntpd-service-type
                     (openntpd-configuration
                       (listen-on '("127.0.0.1" "::1"))
-                      (allow-large-adjustment? #t)))
+                      (constraints-from '("https://www.google.com/"))))
 
            (service connman-service-type)
 

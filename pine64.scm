@@ -58,12 +58,12 @@
                    btrfs-progs compsize
                    %base-packages))
 
-  (services (cons* (service agetty-service-type
-                            (agetty-configuration
-                              (extra-options '("-L")) ; no carrier detect
-                              (baud-rate "115200")
-                              (term "vt100")
-                              (tty "ttyS0")))
+  (services (cons* ;(service agetty-service-type
+                   ;         (agetty-configuration
+                   ;           (extra-options '("-L")) ; no carrier detect
+                   ;           (baud-rate "115200")
+                   ;           (term "vt100")
+                   ;           (tty "ttyS0")))
 
                    (simple-service 'os-release etc-service-type
                                    `(("os-release" ,%os-release-file)))
@@ -92,21 +92,21 @@
                             (openntpd-configuration
                               (listen-on '("127.0.0.1" "::1"))
                               ;; Prevent moving to year 2116.
-                              (allow-large-adjustment? #f)))
+                              (constraints-from '("https://www.google.com/"))))
 
                    (service connman-service-type)
                    (service wpa-supplicant-service-type)
 
                    ;; Needs no-manual version, depends on pandoc.
-                   (service earlyoom-service-type
-                            (earlyoom-configuration
-                              (earlyoom
-                                (let ((base earlyoom))
-                                  (package
-                                    (inherit base)
-                                    (native-inputs
-                                      (alist-delete "pandoc"
-                                                    (package-native-inputs base))))))))
+                   ;(service earlyoom-service-type
+                   ;         (earlyoom-configuration
+                   ;           (earlyoom
+                   ;             (let ((base earlyoom))
+                   ;               (package
+                   ;                 (inherit base)
+                   ;                 (native-inputs
+                   ;                   (alist-delete "pandoc"
+                   ;                                 (package-native-inputs base))))))))
 
                    ;; Not supported by linux-libre-arm64-generic
                    ;(service zram-device-service-type
