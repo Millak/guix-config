@@ -107,7 +107,7 @@
         "guile-colorized"
         "guile-readline"
         "mcron"
-        "shepherd-guile-latest"))
+        "shepherd"))
 
 (define %cli-apps
   (list "aria2"

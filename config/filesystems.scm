@@ -24,6 +24,7 @@
     (mount-point "/var/guix/temproots")
     (type "tmpfs")
     (flags '(no-suid no-dev no-exec))
+    (options "size=10M")
     (check? #f)))
 
 ;; Defaults to 50%
