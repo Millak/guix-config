@@ -8,24 +8,20 @@
              (config os-release)
              (srfi srfi-1))
 (use-service-modules
-  admin
   cups
   desktop
   linux
   mcron
   networking
-  sddm
-  security-token
   ssh
-  virtualization
   xorg)
 (use-package-modules
   certs
-  connman
   cups
+  fonts
   gnome
   linux
-  virtualization)
+  pulseaudio)
 
 (operating-system
   (host-name "E5400")
@@ -53,30 +49,35 @@
                        %guix-temproots
                        %base-file-systems))
 
-  (kernel linux-libre-5.4)
   (swap-devices '("/dev/sda1"))
 
-  (users (cons (user-account
-                (name "efraim")
-                (comment "Efraim")
-                (group "users")
-                (supplementary-groups '("wheel" "netdev" "kvm"
-                                        "lp" "lpadmin"
-                                        "libvirt"
-                                        "audio" "video"))
-                (home-directory "/home/efraim"))
-               %base-user-accounts))
+  (users (cons* (user-account
+                 (name "efraim")
+                 (comment "Efraim")
+                 (group "users")
+                 (supplementary-groups '("wheel" "netdev" "kvm"
+                                         "lp" "lpadmin"
+                                         "audio" "video"))
+                 (home-directory "/home/efraim"))
+                (user-account
+                 (name "kids")
+                 (comment "both kids")
+                 (group "users")
+                 (supplementary-groups '("netdev"
+                                         "audio" "video"))
+                 (home-directory "/home/kids"))
+                %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
-                   cups
-                   hicolor-icon-theme
-                   econnman
+                   gvfs              ;for user mounts
+                   pavucontrol
                    btrfs-progs compsize
-                   virt-manager
+                   font-terminus font-dejavu
+                   font-opendyslexic
                    %base-packages))
 
-  (services (cons* (service enlightenment-desktop-service-type)
+  (services (cons* (service xfce-desktop-service-type)
 
                    (simple-service 'os-release etc-service-type
                                    `(("os-release" ,%os-release-file)))
@@ -113,18 +114,10 @@
                               (listen-on '("127.0.0.1" "::1"))
                               (constraints-from '("https://www.google.com/"))))
 
-                   (service connman-service-type)
-
-                   (service libvirt-service-type
-                            (libvirt-configuration
-                              (unix-sock-group "libvirt")))
-                   (service virtlog-service-type)
-
-                   (service pcscd-service-type)
                    (service earlyoom-service-type
                             (earlyoom-configuration
                               (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
-                              (avoid-regexp "enlightenment")))
+                              (avoid-regexp "xfce")))
 
                    (service zram-device-service-type
                             (zram-device-configuration
@@ -132,21 +125,14 @@
                               (compression-algorithm 'zstd)
                               (priority 100)))
 
-                   (service sddm-service-type
-                            (sddm-configuration
-                              (display-server "x11")))
+                   (service slim-service-type)
 
                    (remove (lambda (service)
                              (let ((type (service-kind service)))
                                (or (memq type
                                          (list
                                            gdm-service-type
-                                           modem-manager-service-type
-                                           network-manager-service-type
-                                           ntp-service-type
-                                           screen-locker-service-type))
-                                   (eq? 'network-manager-applet
-                                        (service-type-name type)))))
+                                           ntp-service-type)))))
                            (modify-services
                              %desktop-services
                              (guix-service-type
