@@ -45,6 +45,7 @@
                        (file-system
                          (device (file-system-label "data"))
                          (mount-point "/data")
+                         (mount-may-fail? #t)
                          (type "ext4"))
                        %guix-temproots
                        %base-file-systems))

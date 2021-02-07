@@ -53,6 +53,7 @@
                        (file-system
                          (device (file-system-label "data"))
                          (mount-point "/data")
+                         (mount-may-fail? #t)
                          (type "btrfs")
                          (options "autodefrag,compress-force=zstd,space_cache=v2"))
                        %guix-temproots
