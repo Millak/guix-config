@@ -67,6 +67,7 @@
   (packages
     (append
       (list (specification->package "nss-certs")
+            (specification->package "ddcutil")  ; for enlightenment screen darkness controls
             (specification->package "compsize")
             (specification->package "econnman")
             (specification->package "virt-manager"))
