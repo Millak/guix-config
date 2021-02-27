@@ -7,8 +7,7 @@
             %extra-options))
 
 (define %substitute-urls
-  (list ;"http://E2140.local:3000"
-        ;"http://E5400.local:3000"
+  (list ;"http://E5400.local:3000"
         ;"http://pine64:3000"
         ;"http://macbook41.local:3000"
         "https://ci.guix.gnu.org"
@@ -19,7 +18,6 @@
 
 (define %authorized-keys
   (list (local-file "../Extras/3900XT_publish.pub")
-        (local-file "../Extras/E2140_publish.pub")
         (local-file "../Extras/E5400_publish.pub")
         (local-file "../Extras/pine64_publish.pub")
         (local-file "../Extras/odroidc2_publish.pub")
