@@ -51,7 +51,7 @@
                        %guix-temproots
                        %base-file-systems))
 
-  (swap-devices '("/dev/sdb1"))
+  (swap-devices (list (uuid "66e10e64-e066-4c77-9ce7-63198f98aa88")))
 
   (users (cons* (user-account
                  (name "efraim")
