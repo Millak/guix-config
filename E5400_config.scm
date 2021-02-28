@@ -35,7 +35,7 @@
 
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
-                (target "/dev/sda")))
+                (target "/dev/sdb")))
 
   (file-systems (cons* (file-system
                          (device (file-system-label "root"))
@@ -51,7 +51,7 @@
                        %guix-temproots
                        %base-file-systems))
 
-  (swap-devices '("/dev/sda1"))
+  (swap-devices '("/dev/sdb1"))
 
   (users (cons* (user-account
                  (name "efraim")
