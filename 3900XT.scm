@@ -84,7 +84,7 @@
                       (host "0.0.0.0")
                       (port 3000)
                       (advertise? #t)
-                      (compression '(("lzip" 3) ("gzip" 3)))))
+                      (compression '(("lzip" 3)))))
            (service openssh-service-type
                     (openssh-configuration
                       (password-authentication? #t)))
@@ -121,8 +121,7 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc"))
-                      (guix-support? #t)))
+                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc"))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration

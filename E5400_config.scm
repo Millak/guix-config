@@ -89,7 +89,7 @@
                               (host "0.0.0.0")
                               (port 3000)
                               (advertise? #t)
-                              (compression '(("lzip" 3) ("gzip" 3)))))
+                              (compression '(("lzip" 3)))))
                    (service openssh-service-type
                             (openssh-configuration
                               (password-authentication? #t)))
