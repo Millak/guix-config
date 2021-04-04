@@ -88,8 +88,7 @@
                             (guix-publish-configuration
                               (host "0.0.0.0")
                               (port 3000)
-                              (advertise? #t)
-                              (compression '(("lzip" 3)))))
+                              (advertise? #t)))
                    (service openssh-service-type
                             (openssh-configuration
                               (password-authentication? #t)))
