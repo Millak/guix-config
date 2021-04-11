@@ -48,7 +48,7 @@
                          (device (file-system-label "my-root"))
                          (mount-point "/")
                          (type "btrfs")
-                         (options "autodefrag,compress-force=zstd,discard,ssd_spread"))
+                         (options "autodefrag,compress=zstd,discard,ssd_spread"))
                        (file-system
                          (device (uuid "F010-1913" 'fat))
                          (mount-point "/boot/efi")

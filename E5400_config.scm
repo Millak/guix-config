@@ -41,13 +41,13 @@
                          (device (file-system-label "root"))
                          (mount-point "/")
                          (type "btrfs")
-                         (options "autodefrag,compress-force=zstd,discard,ssd_spread,space_cache=v2"))
+                         (options "autodefrag,compress=zstd,discard,ssd_spread,space_cache=v2"))
                        (file-system
                          (device (file-system-label "data"))
                          (mount-point "/data")
                          (mount-may-fail? #t)
                          (type "btrfs")
-                         (options "autodefrag,compress-force=zstd,space_cache=v2"))
+                         (options "autodefrag,compress=zstd,space_cache=v2"))
                        %guix-temproots
                        %base-file-systems))
 
