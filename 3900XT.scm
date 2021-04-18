@@ -120,7 +120,7 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc"))))
+                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc" "ppc64le"))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
