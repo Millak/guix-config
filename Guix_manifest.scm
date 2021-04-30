@@ -139,7 +139,7 @@
         "urlscan"
         "vim"
         "vim-airline"
-        "vim-asyncrun"
+        "vim-dispatch"
         "vim-fugitive"
         "vim-guix-vim"
         "wcalc"
