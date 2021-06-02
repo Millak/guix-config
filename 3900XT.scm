@@ -120,7 +120,7 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc" "ppc64le"))))
+                      (platforms (lookup-qemu-platforms "arm" "aarch64" "mips64el" "ppc" "ppc64le" "riscv64"))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
@@ -136,10 +136,6 @@
            (service sddm-service-type
                     (sddm-configuration
                       (display-server "wayland")))
-
-           ;(set-xorg-configuration
-           ;  (xorg-configuration
-           ;    (keyboard-layout keyboard-layout)))
 
            (remove (lambda (service)
                      (let ((type (service-kind service)))
