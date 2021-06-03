@@ -8,8 +8,16 @@
              (config os-release)
              (config xorg-modules)
              (srfi srfi-1))
-(use-service-modules admin cups desktop mcron networking security-token ssh virtualization xorg)
-(use-package-modules certs connman cups linux virtualization)
+(use-service-modules
+  dns
+  linux
+  mcron
+  networking
+  ssh
+  sysctl)
+(use-package-modules
+  certs
+  linux)
 
 (define %my-macbook-touchpad
   "Section \"InputClass\"
@@ -20,6 +28,113 @@
       Option \"TappingButtonMap\" \"lrm\"
   EndSection")
 
+(define %iptables-ipv4-rules
+  (plain-file "iptables.rules" "*nat
+              :PREROUTING ACCEPT
+              :INPUT ACCEPT
+              :OUTPUT ACCEPT
+              :POSTROUTING ACCEPT
+
+              # eno2 is WAN interface, #eno1 is LAN interface
+              -A POSTROUTING -o eno2 -j MASQUERADE
+
+              COMMIT
+
+              *filter
+              :INPUT ACCEPT
+              :FORWARD ACCEPT
+              :OUTPUT ACCEPT
+
+              # Service rules
+
+              # basic global accept rules - ICMP, loopback, traceroute, established all accepted
+              -A INPUT -s 127.0.0.0/8 -d 127.0.0.0/8 -i lo -j ACCEPT
+              -A INPUT -p icmp -j ACCEPT
+              -A INPUT -m state --state ESTABLISHED -j ACCEPT
+
+              # enable traceroute rejections to get sent out
+              -A INPUT -p udp -m udp --dport 33434:33523 -j REJECT --reject-with icmp-port-unreachable
+
+              # DNS - accept from LAN
+              -A INPUT -i eno1 -p tcp --dport 53 -j ACCEPT
+              -A INPUT -i eno1 -p udp --dport 53 -j ACCEPT
+
+              # SSH - accept from LAN
+              -A INPUT -i eno1 -p tcp --dport 22 -j ACCEPT
+
+              # DHCP client requests - accept from LAN
+              -A INPUT -i eno1 -p udp --dport 67:68 -j ACCEPT
+
+              # drop all other inbound traffic
+              -A INPUT -j DROP
+
+              # Forwarding rules
+
+              # forward packets along established/related connections
+              -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+              # forward from LAN (eno1) to WAN (eno2)
+              -A FORWARD -i eno1 -o eno2 -j ACCEPT
+
+              # drop all other forwarded traffic
+              -A FORWARD -j DROP
+
+              COMMIT
+              "))
+
+(define %iptables-ipv6-rules
+  (plain-file "iptables6.rules" "*nat
+              :PREROUTING ACCEPT [0:0]
+              :INPUT ACCEPT [0:0]
+              :OUTPUT ACCEPT [0:0]
+              :POSTROUTING ACCEPT [0:0]
+
+              # eno2 is WAN interface, #eno1 is LAN interface
+              -A POSTROUTING -o eno2 -j MASQUERADE
+
+              COMMIT
+
+              *filter
+              :INPUT ACCEPT [0:0]
+              :FORWARD ACCEPT [0:0]
+              :OUTPUT ACCEPT [0:0]
+
+              # Service rules
+
+              # basic global accept rules - ICMP, loopback, traceroute, established all accepted
+              -A INPUT -s 127.0.0.0/8 -d 127.0.0.0/8 -i lo -j ACCEPT
+              -A INPUT -p icmp -j ACCEPT
+              -A INPUT -m state --state ESTABLISHED -j ACCEPT
+
+              # enable traceroute rejections to get sent out
+              -A INPUT -p udp -m udp --dport 33434:33523 -j REJECT --reject-with icmp-port-unreachable
+
+              # DNS - accept from LAN
+              -A INPUT -i eno1 -p tcp --dport 53 -j ACCEPT
+              -A INPUT -i eno1 -p udp --dport 53 -j ACCEPT
+
+              # SSH - accept from LAN
+              -A INPUT -i eno1 -p tcp --dport 22 -j ACCEPT
+
+              # DHCP client requests - accept from LAN
+              -A INPUT -i eno1 -p udp --dport 67:68 -j ACCEPT
+
+              # drop all other inbound traffic
+              -A INPUT -j DROP
+
+              # Forwarding rules
+
+              # forward packets along established/related connections
+              -A FORWARD -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+              # forward from LAN (eno1) to WAN (eno2)
+              -A FORWARD -i eno1 -o eno2 -j ACCEPT
+
+              # drop all other forwarded traffic
+              -A FORWARD -j DROP
+
+              COMMIT
+              "))
 (operating-system
   (host-name "macbook41")
   (timezone "Asia/Jerusalem")
@@ -36,14 +151,6 @@
                 (bootloader grub-efi-bootloader)
                 (target "/boot/efi")))
 
-  (kernel-arguments '("zswap.enabled=1"
-                      "zswap.compressor=lz4"
-                      "zswap.zpool=z3fold"
-                      ;; Required to run X32 software and VMs
-                      ;; https://wiki.debian.org/X32Port
-                      ;; Still untested on GuixSD.
-                      "syscall.x32=y"))
-
   (file-systems (cons* (file-system
                          (device (file-system-label "my-root"))
                          (mount-point "/")
@@ -56,101 +163,89 @@
                        %guix-temproots
                        %base-file-systems))
 
-  (swap-devices '("/dev/sda2"))
-
   (users (cons (user-account
                 (name "efraim")
                 (comment "Efraim")
                 (group "users")
-                (supplementary-groups '("wheel" "netdev" "kvm"
-                                        "lp" "lpadmin"
-                                        "libvirt"
-                                        "audio" "video"))
+                (supplementary-groups '("wheel" "netdev" "kvm"))
                 (home-directory "/home/efraim"))
                %base-user-accounts))
 
-  ;; This is where we specify system-wide packages.
   (packages (cons* nss-certs         ;for HTTPS access
-                   cups
-                   econnman
                    btrfs-progs compsize
-                   virt-manager
                    %base-packages))
 
-  (services (cons* (service enlightenment-desktop-service-type)
+  (services
+    (cons* (simple-service 'os-release etc-service-type
+                           `(("os-release" ,%os-release-file)))
 
-                   (simple-service 'os-release etc-service-type
-                                   `(("os-release" ,%os-release-file)))
+           (service openssh-service-type
+                    (openssh-configuration
+                      (password-authentication? #f)
+                      (authorized-keys
+                        `(("efraim" ,(local-file "Extras/efraim.pub"))))))
 
-                   (service guix-publish-service-type
-                            (guix-publish-configuration
-                              (host "0.0.0.0")
-                              (port 3000)))
-                   (service openssh-service-type
-                            (openssh-configuration
-                              (password-authentication? #t)))
+           (service tor-service-type)
+           (tor-hidden-service "ssh"
+                               '((22 "127.0.0.1:22")))
 
-                   (service tor-service-type)
-                   (tor-hidden-service "ssh"
-                                       '((22 "127.0.0.1:22")))
-                   (tor-hidden-service "guix-publish"
-                                       ; ql3bdn6vkhhwdcj5.onion
-                                       '((3000 "127.0.0.1:3000")))
+           (service zram-device-service-type
+                    (zram-device-configuration
+                      (size (* 2 (expt 2 30)))
+                      (compression-algorithm 'zstd)
+                      (priority 100)))
 
-                   (service cups-service-type
-                            (cups-configuration
-                              (web-interface? #t)
-                              (default-paper-size "A4")
-                              (extensions
-                                (list cups-filters hplip-minimal))))
+           (service mcron-service-type
+                    (mcron-configuration
+                      (jobs (%btrfs-maintenance-jobs "/"))))
 
-                   (service mcron-service-type
-                            (mcron-configuration
-                              (jobs (%btrfs-maintenance-jobs "/"))))
+           (service openntpd-service-type
+                    (openntpd-configuration
+                      ;; expand to rest of LAN
+                      (listen-on '("127.0.0.1" "192.168.1.0/24" "::1"))
+                      (constraints-from '("https://www.google.com/"))))
 
-                   (service openntpd-service-type
-                            (openntpd-configuration
-                              (listen-on '("127.0.0.1" "::1"))
-                              (constraints-from '("https://www.google.com/"))))
+           ;(service wpa-supplicant-service-type)
+           ;(service connman-service-type)
+           (service dnsmasq-service-type)
 
-                   (service connman-service-type)
+           (static-networking-service
+             ;; interior Ethernet port, LAN side
+             "eno1"
+             "192.168.1.1"
+             #:netmask "255.255.255.0"
+             ;#:gateway
+             ;#:name-servers '("208.67.222.222" "208.67.220.220") ; opendns
+             ;#:name-servers '("8.8.8.8" "8.8.4.4") ; google
+             )
 
-                   (service libvirt-service-type
-                            (libvirt-configuration
-                              (unix-sock-group "libvirt")))
-                   (service virtlog-service-type)
+           (service iptables-service-type
+                    (iptables-configuration
+                      ;(ipv4-rules %iptables-ipv4-rules)
+                      ;(ipv6-rules %iptables-ipv6-rules)
+                      ))
 
-                   (service pcscd-service-type)
+           ;(service polkit-wheel-service)
+           ;(service usb-modeswitch-service-type)
+           (modify-services
+             %base-services
+             (sysctl-service-type
+               config =>
+               (sysctl-configuration
+                 (settings (append '(("net.ipv4.ip_forward" . "1")
+                                     ("net.ipv6.conf.all.forwarding" . "1"))
+                                   %default-sysctl-settings))))
 
-                   (service slim-service-type
-                            (slim-configuration
-                              (xorg-configuration
-                                (xorg-configuration
-                                  (extra-config (list %my-macbook-touchpad))
-                                  (modules %intel-xorg-modules)))))
-
-                   (remove (lambda (service)
-                             (let ((type (service-kind service)))
-                               (or (memq type
-                                         (list
-                                           gdm-service-type
-                                           modem-manager-service-type
-                                           network-manager-service-type
-                                           ntp-service-type
-                                           screen-locker-service-type))
-                                   (eq? 'network-manager-applet
-                                        (service-type-name type)))))
-                           (modify-services
-                             %desktop-services
-                             (guix-service-type
-                               config =>
-                               (guix-configuration
-                                 (inherit config)
-                                 (substitute-urls %substitute-urls)
-                                 (authorized-keys %authorized-keys)
-                                 (extra-options
-                                   (cons* "--cores=1" ; we're on a laptop
-                                          %extra-options))))))))
+             (guix-service-type
+               config =>
+               (guix-configuration
+                 (inherit config)
+                 (discover? #t)
+                 (substitute-urls %substitute-urls)
+                 (authorized-keys %authorized-keys)
+                 (extra-options
+                   (cons* "--cores=1" ; we're on a laptop
+                          %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
