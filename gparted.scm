@@ -4,6 +4,7 @@
 ;;   guix system image /path/to/gparted.scm
 ;;
 
+(define-module (gparted))
 (use-modules (gnu) (guix) (srfi srfi-1))
 (use-service-modules desktop networking xorg)
 (use-package-modules
