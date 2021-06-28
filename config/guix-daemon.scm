@@ -7,8 +7,7 @@
             %extra-options))
 
 (define %substitute-urls
-  (list ;"http://pine64:3000"
-        "https://ci.guix.gnu.org"
+  (list "https://ci.guix.gnu.org"
         ;"http://bp7o7ckwlewr4slm.onion" ; ci.guix.gnu.org
         "https://bayfront.guix.gnu.org"
         "https://bordeaux.guix.gnu.org"
@@ -32,7 +31,7 @@
 
 (define %guix-configuration
   (guix-configuration
-    (inherit %default-guix-configuration)
+    (inherit guix-configuration)
     (substitute-urls %substitute-urls)
     (authorized-keys %authorized-keys)
     (extra-options %extra-options)))
