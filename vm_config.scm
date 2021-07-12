@@ -27,9 +27,9 @@
                    (curve Ed25519)
                    (q #8D156F295D24B0D9A86FA5741A840FF2D24F60F7B6C4134814AD55625971B394#)))"))
 
-(define this-file
-  (local-file (basename (assoc-ref (current-source-location) 'filename))
-              "config.scm"))
+;(define this-file
+;  (local-file (basename (assoc-ref (current-source-location) 'filename))
+;              "config.scm"))
 
 (operating-system
   (host-name "guix_vm")
@@ -85,8 +85,8 @@
                                    `(("os-release" ,%os-release-file)))
 
                    ;; Copy this file to /etc/config.scm in the OS.
-                   (simple-service 'config-file etc-service-type
-                                   `(("config.scm" ,this-file)))
+                   ;(simple-service 'config-file etc-service-type
+                   ;                `(("config.scm" ,this-file)))
 
                    (service openssh-service-type
                             (openssh-configuration
