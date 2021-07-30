@@ -1,5 +1,6 @@
 (define-module (Guix_manifest))
 (use-modules (guix profiles)
+             (guix packages)
              (gnu packages)
              (ice-9 match)
              (srfi srfi-1))
@@ -51,6 +52,7 @@
         "icecat"
         "kdeconnect"
         "keepassxc"
+        "lagrange"
         "libnotify"     ; notify-send
         "libreoffice"
         "mpv"
@@ -61,7 +63,6 @@
         "pinentry-efl"
         "quassel"
         "terminology"
-        "tilda"
         "viewnior"
         "xclip"))
 
@@ -120,7 +121,9 @@
         "git"
         "git:send-email"
         "glibc-utf8-locales"
+        "global-with-tags"
         "gnupg"
+        "hunspell-dict-en"
         "links"
         "myrepos"
         "ncdu"
@@ -146,8 +149,26 @@
         "wget"
         "wgetpaste"))
 
+;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
+;; Both of these are equivilent to '--with-input'
+;; package-input-rewriting => takes an 'identity'
+;; package-input-rewriting/spec => takes a name
+
+(define native-packages
+  ;; We really want it to be the following, but I'm having a hard time making it work with how the file is laid out.
+  ;(package-input-rewriting
+  ; `((,(@ (gnu packages tls) openssl) . ,(const (@ (dfsg main openssl) openssl-native))))))
+  (package-input-rewriting/spec
+   `(("openssl" . ,(const (@ (dfsg main openssl) openssl-native))))))
+
+(define modified-packages
+  (package-input-rewriting/spec
+   `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
+
 (packages->manifest
- (map (compose list specification->package+output)
+  ;(map native-packages
+  (map modified-packages
+    (map specification->package+output
       (append (if headless?
                 %headless
                 %GUI-only)
@@ -160,3 +181,5 @@
                    (_ %not-for-work-no-rust))))
               %guix-system-apps
               %cli-apps)))
+  ;)
+  )
