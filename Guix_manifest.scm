@@ -61,6 +61,7 @@
         "netsurf"
         "pavucontrol"
         "pinentry-efl"
+        "qtwayland"
         "quassel"
         "terminology"
         "viewnior"
