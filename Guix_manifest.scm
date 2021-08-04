@@ -1,5 +1,6 @@
 (define-module (Guix_manifest))
 (use-modules (guix profiles)
+             (guix transformations)
              (guix packages)
              (gnu packages)
              (ice-9 match)
@@ -105,6 +106,7 @@
   (list "pinentry-tty"))
 
 (define %guix-system-apps
+  ;; These packages are provided by Guix System.
   (list "guile"
         "guile-colorized"
         "guile-readline"
@@ -150,37 +152,40 @@
         "wget"
         "wgetpaste"))
 
+
+;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html
+
+(define native-grafts
+  (options->transformation
+   '((with-graft . "openssl=ssl-ntv")
+     (without-tests . "tuir"))))
+
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
 ;; Both of these are equivilent to '--with-input'
 ;; package-input-rewriting => takes an 'identity'
 ;; package-input-rewriting/spec => takes a name
-
-(define native-packages
-  ;; We really want it to be the following, but I'm having a hard time making it work with how the file is laid out.
-  ;(package-input-rewriting
-  ; `((,(@ (gnu packages tls) openssl) . ,(const (@ (dfsg main openssl) openssl-native))))))
-  (package-input-rewriting/spec
-   `(("openssl" . ,(const (@ (dfsg main openssl) openssl-native))))))
 
 (define modified-packages
   (package-input-rewriting/spec
    `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
 
 (packages->manifest
-  ;(map native-packages
-  (map modified-packages
-    (map specification->package+output
-      (append (if headless?
-                %headless
-                %GUI-only)
-              (if work-machine?
-                %work-applications
-                (append %not-for-work
-                  (match (utsname:machine (uname))
-                   ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
-                   ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
-                   (_ %not-for-work-no-rust))))
-              %guix-system-apps
-              %cli-apps)))
-  ;)
-  )
+  (map native-grafts
+       (map modified-packages
+            (map specification->package+output
+                 (append
+                   (if headless?
+                     %headless
+                     %GUI-only)
+                   (if work-machine?
+                     %work-applications
+                     (append
+                       %not-for-work
+                       (match (utsname:machine (uname))
+                              ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
+                              ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
+                              (_ %not-for-work-no-rust))))
+                   (if (file-exists? "/run/current-system")
+                     '()
+                     %guix-system-apps)
+                   %cli-apps)))))
