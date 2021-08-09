@@ -88,7 +88,6 @@
         "sshfs"
         "syncthing"
         "toot"
-        "tuir"
         "vdirsyncer"
         "weechat"
         "youtube-dl"))
@@ -157,8 +156,7 @@
 
 (define native-grafts
   (options->transformation
-   '((with-graft . "openssl=ssl-ntv")
-     (without-tests . "tuir"))))
+   '((with-graft . "openssl=ssl-ntv"))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
 ;; Both of these are equivilent to '--with-input'
