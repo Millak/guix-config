@@ -43,10 +43,12 @@
         "evisum"
         "font-culmus"
         "font-dejavu"
+        ;"font-ghostscript"
         "font-gnu-freefont"
         "font-gnu-unifont"
         "font-opendyslexic"
         "font-terminus"
+        "flatpak"
         "gs-fonts"
         "gst-plugins-good"
         "gst-plugins-ugly"
@@ -156,6 +158,7 @@
 
 (define native-grafts
   (options->transformation
+   ;; This graft sometimes causes trouble with git.
    '((with-graft . "openssl=ssl-ntv"))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
@@ -168,7 +171,7 @@
    `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
 
 (packages->manifest
-  (map native-grafts
+  ;(map native-grafts
        (map modified-packages
             (map specification->package+output
                  (append
@@ -186,4 +189,6 @@
                    (if (file-exists? "/run/current-system")
                      '()
                      %guix-system-apps)
-                   %cli-apps)))))
+                   %cli-apps)))
+  ;     )
+  )
