@@ -156,10 +156,11 @@
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html
 
-(define native-grafts
+(define package-transformations
   (options->transformation
-   ;; This graft sometimes causes trouble with git.
-   '((with-graft . "openssl=ssl-ntv"))))
+   '(;; This graft sometimes causes trouble with git.
+     ;(with-graft . "openssl=ssl-ntv")
+     (with-branch . "vim-guix-vim=master"))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
 ;; Both of these are equivilent to '--with-input'
@@ -171,7 +172,7 @@
    `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
 
 (packages->manifest
-  ;(map native-grafts
+  (map package-transformations
        (map modified-packages
             (map specification->package+output
                  (append
@@ -189,6 +190,4 @@
                    (if (file-exists? "/run/current-system")
                      '()
                      %guix-system-apps)
-                   %cli-apps)))
-  ;     )
-  )
+                   %cli-apps)))))

@@ -28,7 +28,7 @@
 
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
-                (target "/dev/sda")))
+                (targets '("/dev/sda"))))
 
   (firmware '())
 

@@ -40,7 +40,7 @@
   ;; Check 'lsblk' if grub for '/dev/vda' replacement.
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
-                (target "/dev/vda")
+                (targets '("/dev/vda"))
                 ;(bootloader grub-efi-bootloader)
                 ;(target "/boot/efi")
                 (terminal-outputs '(console))))
