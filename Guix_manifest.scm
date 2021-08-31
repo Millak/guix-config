@@ -125,7 +125,7 @@
         "git"
         "git:send-email"
         "glibc-utf8-locales"
-        "global-with-tags"
+        "global"
         "gnupg"
         "hunspell-dict-en"
         "links"
