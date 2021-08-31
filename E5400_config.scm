@@ -35,7 +35,7 @@
 
   (bootloader (bootloader-configuration
                 (bootloader grub-bootloader)
-                (targets '("/deb/sda" "/dev/sdb" "/dev/sdc"))))
+                (targets '("/dev/sda" "/dev/sdb" "/dev/sdc"))))
 
   (file-systems (cons* (file-system
                          (device (file-system-label "root"))
