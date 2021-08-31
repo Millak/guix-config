@@ -29,7 +29,7 @@
 
   (bootloader (bootloader-configuration
                (bootloader grub-bootloader)
-               (target "/dev/sda")
+               (targets '("/dev/sda"))
                (terminal-outputs '(console))))
   (file-systems (cons (file-system
                         (mount-point "/")
