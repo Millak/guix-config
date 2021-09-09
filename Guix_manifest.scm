@@ -176,7 +176,8 @@
        (map modified-packages
             (map specification->package+output
                  (append
-                   (if headless?
+                   (if (or headless?
+                           (not guix-system))
                      %headless
                      %GUI-only)
                    (if work-machine?
