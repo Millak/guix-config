@@ -188,7 +188,7 @@
                               ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
                               ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
                               (_ %not-for-work-no-rust))))
-                   (if (file-exists? "/run/current-system")
+                   (if guix-system
                      '()
                      %guix-system-apps)
                    %cli-apps)))))
