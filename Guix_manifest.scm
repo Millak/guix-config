@@ -158,8 +158,7 @@
 
 (define package-transformations
   (options->transformation
-   '(;; This graft sometimes causes trouble with git.
-     ;(with-graft . "openssl=ssl-ntv")
+   '((with-graft . "openssl=ssl-ntv")
      (with-branch . "vim-guix-vim=master"))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
