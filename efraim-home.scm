@@ -7,9 +7,7 @@
   #:use-module (guix packages)
   #:use-module (guix transformations)
   #:use-module (guix gexp)
-  #:use-module (dfsg main mpv)
   #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages less)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages video)
@@ -170,8 +168,10 @@
 
 (define package-transformations
   (options->transformation
-   '((with-graft . "openssl=ssl-ntv")
-     (with-branch . "vim-guix-vim=master"))))
+   (if (false-if-exception (specification->package "ssl-ntv"))
+     `((with-graft . "openssl=ssl-ntv")
+       (with-branch . "vim-guix-vim=master"))
+     '((with-branch . "vim-guix-vim=master")))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
 ;; Both of these are equivilent to '--with-input'
@@ -180,7 +180,9 @@
 
 (define modified-packages
   (package-input-rewriting/spec
-   `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
+   `(("sdl2" . ,(if work-machine?
+                  (const (specification->package "sdl2"))
+                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
 
 (define package-list
   (map specification->package+output
@@ -320,10 +322,10 @@
     "pbuilderrc"
     (string-append
       "MIRRORSITE=http://deb.debian.org/debian-ports\n"
-      ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" debian-ports-archive-keyring "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
+      ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (specification->package "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
       "DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '/usr/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
       "EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
-      ;"PBUILDERSATISFYDEPENDSCMD=" pbuilder "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
+      ;"PBUILDERSATISFYDEPENDSCMD=" (specification->package "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
       "PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n"
       ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
       "APTCACHE=\"/var/cache/apt/archives\"\n"
@@ -356,7 +358,9 @@
 (define %gpg-agent.conf
   (mixed-text-file
     "gpg-agent.conf"
-    "pinentry-program " pinentry-efl "/bin/pinentry-efl\n"))
+    #~(if #$headless?
+        (string-append "pinentry-program " #$(file-append pinentry-tty "/bin/pinentry-tty") "\n")
+        (string-append "pinentry-program " #$(file-append pinentry-efl "/bin/pinentry-efl") "\n"))))
 
 ;; TODO: Adjust based on work machine or headless.
 (define %git-config
@@ -425,30 +429,31 @@
 
 ;;;
 
-(home-environment
-  (packages transformed-package-list)
-  ;; TODO: adjust services based on machine type.
-  (services
-    (list
-      (service home-bash-service-type
-               (home-bash-configuration
-                 (guix-defaults? #t)
-                 (environment-variables
-                   `(("QT_QPA_PLATFORM" . "wayland")
-                     ("ECORE_EVAS_ENGINE" . "wayland_egl")
-                     ("ELM_ENGINE" . "wayland_egl")
-                     ;TODO: enable after sdl >= 2.0.14
-                     ("SDL_VIDEODRIVER" . "wayland")
-                     ;("MOZ_ENABLE_WAYLAND" . "1")
-                     ("EDITOR" . ,(file-append vim "/bin/vim"))
-                     ("GPG_TTY" . "$(tty)")
-                     ("HISTSIZE" . "3000")
-                     ("HISTFILESIZE" . "10000")
-                     ("HISTCONTROL" . "ignorespace")
-                     ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
-                     ("PROMPT_COMMAND" . "\"history -a; $PROMPT_COMMAND\"")))
-                 (bash-profile
-                   '("\
+(define work-home-environment
+  (home-environment
+    (packages transformed-package-list)
+    ;; TODO: adjust services based on machine type.
+    (services
+      (list
+        (service home-bash-service-type
+                 (home-bash-configuration
+                   (guix-defaults? #t)
+                   (environment-variables
+                     `(("QT_QPA_PLATFORM" . "wayland")
+                       ("ECORE_EVAS_ENGINE" . "wayland_egl")
+                       ("ELM_ENGINE" . "wayland_egl")
+                       ;TODO: enable after sdl >= 2.0.14
+                       ("SDL_VIDEODRIVER" . "wayland")
+                       ;("MOZ_ENABLE_WAYLAND" . "1")
+                       ("EDITOR" . ,(file-append vim "/bin/vim"))
+                       ("GPG_TTY" . "$(tty)")
+                       ("HISTSIZE" . "3000")
+                       ("HISTFILESIZE" . "10000")
+                       ("HISTCONTROL" . "ignorespace")
+                       ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
+                       ("PROMPT_COMMAND" . "\"history -a; $PROMPT_COMMAND\"")))
+                   (bash-profile
+                     '("\
 unset SSH_AGENT_PID
 if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
     export SSH_AUTH_SOCK=\"$(gpgconf --list-dirs agent-ssh-socket)\"
@@ -466,126 +471,264 @@ fi
 #if [ $(which fc-cache 2>/dev/null) ]; then
 #    fc-cache -frv &>/dev/null;
 #fi"))
-                 (bashrc
-                   '("\
+                   (bashrc
+                     '("\
 allias cp='cp --reflink=auto'
 alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 
 alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
 alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
 alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'"))
-                 ))
+                   ))
 
-      (simple-service 'aria2-config
-                      home-files-service-type
-                      (list `("config/aria2/aria2.conf"
-                              ,%aria2-config)))
+        (simple-service 'aria2-config
+                        home-files-service-type
+                        (list `("config/aria2/aria2.conf"
+                                ,%aria2-config)))
 
-      (simple-service 'cvsrc-config
-                      home-files-service-type
-                      (list `("cvsrc"
-                              ,%cvsrc)))
+        (simple-service 'cvsrc-config
+                        home-files-service-type
+                        (list `("cvsrc"
+                                ,%cvsrc)))
 
-      ;; Need a different one for work machine.
-      (simple-service 'git-config
-                      home-files-service-type
-                      (list `("config/git/config"
-                              ,%git-config)))
+        (simple-service 'git-config
+                        home-files-service-type
+                        (list `("config/git/config"
+                                ,%git-config)))
 
-      (simple-service 'git-ignore
-                      home-files-service-type
-                      (list `("config/git/ignore"
-                              ,%git-ignore)))
+        (simple-service 'git-ignore
+                        home-files-service-type
+                        (list `("config/git/ignore"
+                                ,%git-ignore)))
 
-      (simple-service 'gnupg-conf
+        (simple-service 'gnupg-conf
                       home-files-service-type
                       (list `("gnupg/gpg.conf"
                               ,%gpg.conf)))
 
-      (simple-service 'gnupg-agent-conf
-                      home-files-service-type
-                      (list `("gnupg/gpg-agent.conf"
-                              ,%gpg-agent.conf)))
+        (simple-service 'gnupg-agent-conf
+                        home-files-service-type
+                        (list `("gnupg/gpg-agent.conf"
+                                ,%gpg-agent.conf)))
 
-      (simple-service 'hgrc-config
-                      home-files-service-type
-                      (list `("hgrc"
-                              ,%hgrc)))
+        (simple-service 'hgrc-config
+                        home-files-service-type
+                        (list `("hgrc"
+                                ,%hgrc)))
 
-      (simple-service 'inputrc-config
-                      home-files-service-type
-                      (list `("inputrc"
-                              ,%inputrc)))
+        (simple-service 'inputrc-config
+                        home-files-service-type
+                        (list `("inputrc"
+                                ,%inputrc)))
 
-      ;; This clears the defaults, do not use.
-      ;(simple-service 'less-config
-      ;                home-files-service-type
-      ;                (list `("config/lesskey"
-      ;                        ,%lesskey)))
+        ;; This clears the defaults, do not use.
+        ;(simple-service 'less-config
+        ;                home-files-service-type
+        ;                (list `("config/lesskey"
+        ;                        ,%lesskey)))
 
-      (simple-service 'mailcap-config
-                      home-files-service-type
-                      (list `("mailcap"
-                              ,%mailcap)))
+        ;; Not sure about using this one.
+        ;(simple-service 'mailcap-config
+        ;                home-files-service-type
+        ;                (list `("mailcap"
+        ;                        ,%mailcap)))
 
-      ;; Not for work machine.
-      (simple-service 'mpv-mpris
-                      home-files-service-type
-                      (list `("config/mpv/scripts/mpris.so"
-                              ,(file-append mpv-mpris "/lib/mpris.so"))))
+        (simple-service 'pbuilderrc
+                        home-files-service-type
+                        (list `("pbuilderrc"
+                                ,%pbuilderrc)))
 
-      ;; Not for work machine.
-      (simple-service 'mpv-sponsorblock
-                      home-files-service-type
-                      (list `("config/mpv/scripts/sponsorblock_minimal.lua"
-                              ,(file-append mpv-sponsorblock-minimal
-                                            "/lib/sponsorblock_minimal.lua"))))
-      ;; Not for work machine.
-      (simple-service 'mpv-twitch-chat
-                      home-files-service-type
-                      (list `("config/mpv/scripts/twitch-chat/main.lua"
-                              ,(file-append mpv-twitch-chat "/lib/main.lua"))))
+        (simple-service 'screenrc
+                        home-files-service-type
+                        (list `("screenrc"
+                                ,%screenrc)))
 
-      ;; Not for work machine.
-      (simple-service 'mpv-conf
-                      home-files-service-type
-                      (list `("config/mpv/conf"
-                              ,%mpv-conf)))
+        (simple-service 'signature
+                        home-files-service-type
+                        (list `("signature"
+                                ,%signature)))
 
-      (simple-service 'pbuilderrc
-                      home-files-service-type
-                      (list `("pbuilderrc"
-                              ,%pbuilderrc)))
+        (simple-service 'wcalcrc
+                        home-files-service-type
+                        (list `("wcalcrc"
+                                ,%wcalcrc)))
 
-      (simple-service 'screenrc
-                      home-files-service-type
-                      (list `("screenrc"
-                              ,%screenrc)))
+        (simple-service 'wgetpaste-conf
+                        home-files-service-type
+                        (list `("wgetpaste.conf"
+                                ,%wgetpaste.conf)))
+        ))))
 
-      (simple-service 'signature
-                      home-files-service-type
-                      (list `("signature"
-                              ,%signature)))
+(define my-home-environment
+  (home-environment
+    (packages transformed-package-list)
+    (services
+      (list
+        (service home-bash-service-type
+                 (home-bash-configuration
+                   (guix-defaults? #t)
+                   (environment-variables
+                     `(("QT_QPA_PLATFORM" . "wayland")
+                       ("ECORE_EVAS_ENGINE" . "wayland_egl")
+                       ("ELM_ENGINE" . "wayland_egl")
+                       ;TODO: enable after sdl >= 2.0.14
+                       ("SDL_VIDEODRIVER" . "wayland")
+                       ;("MOZ_ENABLE_WAYLAND" . "1")
+                       ("EDITOR" . ,(file-append vim "/bin/vim"))
+                       ("GPG_TTY" . "$(tty)")
+                       ("HISTSIZE" . "3000")
+                       ("HISTFILESIZE" . "10000")
+                       ("HISTCONTROL" . "ignorespace")
+                       ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
+                       ("PROMPT_COMMAND" . "\"history -a; $PROMPT_COMMAND\"")))
+                   (bash-profile
+                     '("\
+unset SSH_AGENT_PID
+if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
+    export SSH_AUTH_SOCK=\"$(gpgconf --list-dirs agent-ssh-socket)\"
+fi
+#if [ -d ${HOME}/.cache/efreet ]; then
+#    rm -rf -- ${HOME}/.cache/efreet
+#fi
+if [ -d ${HOME}/.cache/tilda/locks ]; then
+    rm -rf -- ${HOME}/.cache/tilda/locks
+fi
+if [ -d ${HOME}/.local/share/flatpak/exports/share ]; then
+    export XDG_DATA_DIRS=$XDG_DATA_DIRS:${HOME}/.local/share/flatpak/exports/share
+fi
+# This seems to be covered in guix-home-service.
+#if [ $(which fc-cache 2>/dev/null) ]; then
+#    fc-cache -frv &>/dev/null;
+#fi"))
+                   (bashrc
+                     '("\
+allias cp='cp --reflink=auto'
+alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 
-      ;; Not for work machine.
-      (simple-service 'streamlink-conf
-                      home-files-service-type
-                      (list `("config/streamlink/config"
-                              ,%streamlink-config)))
+alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
+alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
+alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'"))
+                   ))
 
-      (simple-service 'wcalcrc
-                      home-files-service-type
-                      (list `("wcalcrc"
-                              ,%wcalcrc)))
+        (simple-service 'aria2-config
+                        home-files-service-type
+                        (list `("config/aria2/aria2.conf"
+                                ,%aria2-config)))
 
-      (simple-service 'wgetpaste-conf
-                      home-files-service-type
-                      (list `("wgetpaste.conf"
-                              ,%wgetpaste.conf)))
+        (simple-service 'cvsrc-config
+                        home-files-service-type
+                        (list `("cvsrc"
+                                ,%cvsrc)))
 
-      ;; Not for work machine.
-      (simple-service 'youtubedl-conf
+        (simple-service 'git-config
+                        home-files-service-type
+                        (list `("config/git/config"
+                                ,%git-config)))
+
+        (simple-service 'git-ignore
+                        home-files-service-type
+                        (list `("config/git/ignore"
+                                ,%git-ignore)))
+
+        (simple-service 'gnupg-conf
                       home-files-service-type
-                      (list `("config/youtube-dl/config"
-                              ,%ytdl-config)))
-      )))
+                      (list `("gnupg/gpg.conf"
+                              ,%gpg.conf)))
+
+        (simple-service 'gnupg-agent-conf
+                        home-files-service-type
+                        (list `("gnupg/gpg-agent.conf"
+                                ,%gpg-agent.conf)))
+
+        (simple-service 'hgrc-config
+                        home-files-service-type
+                        (list `("hgrc"
+                                ,%hgrc)))
+
+        (simple-service 'inputrc-config
+                        home-files-service-type
+                        (list `("inputrc"
+                                ,%inputrc)))
+
+        ;; This clears the defaults, do not use.
+        ;(simple-service 'less-config
+        ;                home-files-service-type
+        ;                (list `("config/lesskey"
+        ;                        ,%lesskey)))
+
+        ;; Not sure about using this one.
+        ;(simple-service 'mailcap-config
+        ;                home-files-service-type
+        ;                (list `("mailcap"
+        ;                        ,%mailcap)))
+
+        (simple-service 'pbuilderrc
+                        home-files-service-type
+                        (list `("pbuilderrc"
+                                ,%pbuilderrc)))
+
+        (simple-service 'screenrc
+                        home-files-service-type
+                        (list `("screenrc"
+                                ,%screenrc)))
+
+        (simple-service 'signature
+                        home-files-service-type
+                        (list `("signature"
+                                ,%signature)))
+
+        (simple-service 'wcalcrc
+                        home-files-service-type
+                        (list `("wcalcrc"
+                                ,%wcalcrc)))
+
+        (simple-service 'wgetpaste-conf
+                        home-files-service-type
+                        (list `("wgetpaste.conf"
+                                ,%wgetpaste.conf)))
+
+        ;; Not for work machine.
+        (simple-service 'mpv-mpris
+                        home-files-service-type
+                        (list `("config/mpv/scripts/mpris.so"
+                                ,(file-append mpv-mpris "/lib/mpris.so"))))
+
+        ;; Not for work machine.
+        (simple-service 'mpv-sponsorblock
+                        home-files-service-type
+                        (list `("config/mpv/scripts/sponsorblock_minimal.lua"
+                                ,(file-append
+                                   (specification->package "mpv-sponsorblock-minimal")
+                                   "/lib/sponsorblock_minimal.lua"))))
+
+        ;; Not for work machine.
+        (simple-service 'mpv-twitch-chat
+                        home-files-service-type
+                        (list `("config/mpv/scripts/twitch-chat/main.lua"
+                                ,(file-append
+                                   (specification->package "mpv-twitch-chat")
+                                   "/lib/main.lua"))))
+
+        ;; Not for work machine.
+        (simple-service 'mpv-conf
+                        home-files-service-type
+                        (list `("config/mpv/conf"
+                                ,%mpv-conf)))
+
+        ;; Not for work machine.
+        (simple-service 'streamlink-conf
+                        home-files-service-type
+                        (list `("config/streamlink/config"
+                                ,%streamlink-config)))
+
+        ;; Not for work machine.
+        (simple-service 'youtubedl-conf
+                        home-files-service-type
+                        (list `("config/youtube-dl/config"
+                                ,%ytdl-config)))
+        ))))
+
+(if work-machine?
+  work-home-environment
+  my-home-environment
+  )
