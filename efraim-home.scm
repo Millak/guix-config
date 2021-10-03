@@ -180,6 +180,7 @@
 
 (define modified-packages
   (package-input-rewriting/spec
+   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
    `(("sdl2" . ,(if work-machine?
                   (const (specification->package "sdl2"))
                   (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
@@ -208,8 +209,10 @@
   (cons (list (package-transformations
                 (specification->package "git")) "send-email")
          (map package-transformations
-              (map modified-packages
-                   package-list))))
+              (if work-machine?
+                package-list
+                (map modified-packages
+                     package-list)))))
 
 ;;;
 
@@ -362,7 +365,6 @@
         (string-append "pinentry-program " #$(file-append pinentry-tty "/bin/pinentry-tty") "\n")
         (string-append "pinentry-program " #$(file-append pinentry-efl "/bin/pinentry-efl") "\n"))))
 
-;; TODO: Adjust based on work machine or headless.
 (define %git-config
   (mixed-text-file
     "git-config"
@@ -442,9 +444,10 @@
                      `(("QT_QPA_PLATFORM" . "wayland")
                        ("ECORE_EVAS_ENGINE" . "wayland_egl")
                        ("ELM_ENGINE" . "wayland_egl")
-                       ;TODO: enable after sdl >= 2.0.14
+                       ;; TODO: enable after sdl >= 2.0.14
+                       ;; Apparently only a problem on enlightenment/wayland.
                        ("SDL_VIDEODRIVER" . "wayland")
-                       ;("MOZ_ENABLE_WAYLAND" . "1")
+                       ;; ("MOZ_ENABLE_WAYLAND" . "1")
                        ("EDITOR" . ,(file-append vim "/bin/vim"))
                        ("GPG_TTY" . "$(tty)")
                        ("HISTSIZE" . "3000")
@@ -573,14 +576,17 @@ alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback 
                           home-files-service-type
                           (list `("config/mpv/scripts/sponsorblock_minimal.lua"
                                   ,(file-append
-                                     (specification->package "mpv-sponsorblock-minimal")
+                                     (false-if-exception
+                                       (specification->package
+                                         "mpv-sponsorblock-minimal"))
                                      "/lib/sponsorblock_minimal.lua"))))
 
           (simple-service 'mpv-twitch-chat
                           home-files-service-type
                           (list `("config/mpv/scripts/twitch-chat/main.lua"
                                   ,(file-append
-                                     (specification->package "mpv-twitch-chat")
+                                     (false-if-exception
+                                       (specification->package "mpv-twitch-chat"))
                                      "/lib/main.lua"))))
 
           (simple-service 'mpv-conf
