@@ -123,7 +123,7 @@
         "bash-completion"
         "file"
         "git"
-        "git:send-email"
+        ;"git:send-email"   ; listed below
         "glibc-utf8-locales"
         "global"
         "gnupg"
@@ -171,23 +171,25 @@
    `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
 
 (packages->manifest
-  (map package-transformations
-       (map modified-packages
-            (map specification->package+output
-                 (append
-                   (if (or headless?
-                           (not guix-system))
-                     %headless
-                     %GUI-only)
-                   (if work-machine?
-                     %work-applications
-                     (append
-                       %not-for-work
-                       (match (utsname:machine (uname))
-                              ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
-                              ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
-                              (_ %not-for-work-no-rust))))
-                   (if guix-system
-                     '()
-                     %guix-system-apps)
-                   %cli-apps)))))
+  (cons (list (package-transformations
+                (specification->package "git")) "send-email")
+        (map package-transformations
+             (map modified-packages
+                  (map specification->package+output
+                       (append
+                         (if (or headless?
+                                 (not guix-system))
+                           %headless
+                           %GUI-only)
+                         (if work-machine?
+                           %work-applications
+                           (append
+                             %not-for-work
+                             (match (utsname:machine (uname))
+                                    ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
+                                    ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
+                                    (_ %not-for-work-no-rust))))
+                         (if guix-system
+                           '()
+                           %guix-system-apps)
+                         %cli-apps))))))
