@@ -2,18 +2,12 @@
   #:use-module (gnu home)
   #:use-module (gnu home-services)
   #:use-module (gnu home-services shells)
+  #:use-module (gnu home-services shepherd)
   #:use-module (gnu services)
   #:use-module (gnu packages)
   #:use-module (guix packages)
   #:use-module (guix transformations)
   #:use-module (guix gexp)
-  #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages mail)
-  #:use-module (gnu packages ssh)
-  #:use-module (gnu packages video)
-  #:use-module (gnu packages vim)
-  #:use-module (gnu packages web)
-  #:use-module (gnu packages web-browsers)
   #:use-module (ice-9 match))
 
 ;;;
@@ -166,9 +160,11 @@
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html
 
+(define S specification->package)
+
 (define package-transformations
   (options->transformation
-   (if (false-if-exception (specification->package "ssl-ntv"))
+   (if (false-if-exception (S "ssl-ntv"))
      `((with-graft . "openssl=ssl-ntv")
        (with-branch . "vim-guix-vim=master"))
      '((with-branch . "vim-guix-vim=master")))))
@@ -182,7 +178,7 @@
   (package-input-rewriting/spec
    ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
    `(("sdl2" . ,(if work-machine?
-                  (const (specification->package "sdl2"))
+                  (const (S "sdl2"))
                   (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
 
 (define package-list
@@ -207,7 +203,7 @@
 
 (define transformed-package-list
   (cons (list (package-transformations
-                (specification->package "git")) "send-email")
+                (S "git")) "send-email")
          (map package-transformations
               (if work-machine?
                 package-list
@@ -266,7 +262,7 @@
 (define %mailcap
   (mixed-text-file
     "mailcap"
-    "text/html; " links "/bin/links -dump %s; nametemplate=%s.html; copiousoutput\n"))
+    "text/html; " (S "links") "/bin/links -dump %s; nametemplate=%s.html; copiousoutput\n"))
 
 (define %signature
   (plain-file
@@ -312,7 +308,7 @@
   (mixed-text-file
     "streamlink-config"
     "default-stream 720p,1080p,best\n"
-    "player=" mpv "/bin/mpv\n"))
+    "player=" (S "mpv") "/bin/mpv\n"))
 
 (define %aria2-config
   (plain-file
@@ -325,10 +321,10 @@
     "pbuilderrc"
     (string-append
       "MIRRORSITE=http://deb.debian.org/debian-ports\n"
-      ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (specification->package "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
+      ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
       "DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '/usr/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
       "EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
-      ;"PBUILDERSATISFYDEPENDSCMD=" (specification->package "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
+      ;"PBUILDERSATISFYDEPENDSCMD=" (S "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
       "PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n"
       ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
       "APTCACHE=\"/var/cache/apt/archives\"\n"
@@ -362,8 +358,8 @@
   (mixed-text-file
     "gpg-agent.conf"
     #~(if #$headless?
-        (string-append "pinentry-program " #$(file-append pinentry-tty "/bin/pinentry-tty") "\n")
-        (string-append "pinentry-program " #$(file-append pinentry-efl "/bin/pinentry-efl") "\n"))))
+        (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
+        (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))))
 
 (define %git-config
   (mixed-text-file
@@ -373,7 +369,7 @@
     "    email = efraim@flashner.co.il\n"
     "    signingkey = 0xca3d8351\n"
     "[core]\n"
-    "    editor = " vim "/bin/vim\n"
+    "    editor = " (S "vim") "/bin/vim\n"
     "[submodule]\n"
     "    fetchJobs = 5\n"
     "[format]\n"
@@ -388,7 +384,7 @@
     #~(if #$work-machine?
         "    smtpServer = flashner.co.il\n"
         ;"    smtp-ssl-cert-path = \"\"\n"
-        (string-append "    smtpServer = " #$(file-append msmtp "/bin/msmtpq") "\n"))
+        (string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtpq") "\n"))
     "    smtpUser = efraim\n"
     "    smtpPort = 465\n"
     "    supresscc = self\n"
@@ -401,19 +397,19 @@
     "    status = auto\n"
     "[imap]\n"
     "    folder = Drafts\n"
-    "    tunnel = \"" openssh "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
+    "    tunnel = \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
     "[transfer]\n"
     "    fsckObjects = true\n"
     #~(if #$work-machine?
         ""
         (string-append "[gpg]\n"
-                       "    program = " #$(file-append gnupg "/bin/gpg") "\n"
+                       "    program = " #$(file-append (S "gnupg") "/bin/gpg") "\n"
                        "[commit]\n"
                        "    gpgSign = true\n"))
     "[web]\n"
     #~(if (or #$headless? #$work-machine?)
-        (string-append "    browser = " #$(file-append links "/bin/links") "\n")
-        (string-append "    browser = " #$(file-append netsurf "/bin/netsurf-gtk3") "\n"))
+        (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
+        (string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n"))
     "[pull]\n"
     "    rebase = true\n"))
 
@@ -429,7 +425,65 @@
       "GRTAGS\n"
       "GTAGS\n")))
 
+;; This part does not work yet.
+;(define %bg.edc
+;  (plain-file
+;    "bg.edc"
+;      "images {
+;      set { name: \"guix-checkered-16-9\";
+;      image {
+;      image: \"guix-checkered-16-9.svg\" LOSSY 100;
+;      size: 1920 1080 1000000000 1000000000;}}}
+;      collections {
+;      group { name: \"e/desktop/background\";
+;      data.item: \"noanimation\" \"1\";
+;      data { item: \"style\" \"4\"; }
+;      parts {
+;      part { name: \"bg\"; mouse_events: 0;
+;      description { state: \"default\" 0;
+;      image {
+;      normal: \"guix-checkered-16-9\";
+;      scale_hint: STATIC;}
+;      aspect: (1920/1080) (1920/1080); aspect_preference: NONE;}}}}}"))
+;
+;(define %guix-background
+;  (computed-file "guix-checkered-16-9.edj"
+;    #~(begin
+;        (system* #+(file-append (S "efl") "/bin/edje_cc") "-id" #$(file-append (@ (gnu artwork) %artwork-repository) "/backgrounds") #$%bg.edc "-o" #$output))))
+
 ;;;
+
+(define %logdir
+  (or (getenv "XDG_LOG_HOME")
+      (format #f "~a/.local/var/log"
+              (getenv "HOME"))))
+
+(define %mbsyncrc
+  (mixed-text-file
+    "mbsyncrc"
+    "# Global values\n"
+    "Expunge Both\n"
+    "Create Near\n"
+    "MaildirStore local\n"
+    "Path ~/Maildir/\n"
+    "Inbox ~/Maildir/INBOX\n"
+    "#MapInbox INBOX\n"
+    "#Trash Trash\n"
+    "Flatten .\n"
+    "#SubFolders Verbatim\n"
+    "\n"
+    "IMAPStore flashner\n"
+    "Host flashner.co.il\n"
+    "#PassCmd \"" (S "gnupg") "/bin/gpg --quiet --for-your-eyes-only --decrypt $HOME/.msmtp.password.gpg\"\n"
+    "#SSLType IMAPS\n"
+    "#CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
+    "Timeout 120 # 25 * 8 / 2\n"
+    "Tunnel \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il 'MAIL=maildir:~/Maildir exec /usr/lib/dovecot/imap'\"\n"
+    "\n"
+    "Channel flashner\n"
+    "Far :flashner:\n"
+    "Near :local:\n"
+    "Patterns * !work\n"))
 
 (define work-home-environment
   (home-environment
@@ -448,7 +502,7 @@
                        ;; Apparently only a problem on enlightenment/wayland.
                        ("SDL_VIDEODRIVER" . "wayland")
                        ;; ("MOZ_ENABLE_WAYLAND" . "1")
-                       ("EDITOR" . ,(file-append vim "/bin/vim"))
+                       ("EDITOR" . ,(file-append (S "vim") "/bin/vim"))
                        ("GPG_TTY" . "$(tty)")
                        ("HISTSIZE" . "3000")
                        ("HISTFILESIZE" . "10000")
@@ -567,18 +621,160 @@ alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback 
       (append
         (home-environment-user-services work-home-environment)
         (list
+          (service home-shepherd-service-type
+            (home-shepherd-configuration
+              (services
+                (list
+                  (shepherd-service
+                    (documentation "Run `syncthing' without calling the browser")
+                    (provision '(syncthing))
+                    (start #~(make-forkexec-constructor
+                               (list #$(file-append (S "syncthing") "/bin/syncthing")
+                                     "-no-browser")
+                               #:log-file (string-append %logdir "/syncthing.log")))
+                    (stop #~(make-kill-destructor))
+                    (respawn? #t))
+
+                  (shepherd-service
+                    (documentation "Provide access to Dropbox™")
+                    (provision '(dropbox dbxfs))
+                    (start #~(make-forkexec-constructor
+                               (list #$(file-append (S "dbxfs") "/bin/dbxfs")
+                                     "--foreground"
+                                     "--verbose"
+                                     "/home/efraim/Dropbox")
+                               #:log-file (string-append %logdir "/dbxfs.log")))
+                    ;; Perhaps I want to use something like this?
+                    ;(stop (or #~(make-system-destructor
+                    ;              (string-append
+                    ;                #$(file-append (S "fuse") "/bin/fusermount")
+                    ;                " -u /home/efraim/Dropbox"))
+                    ;          #~(make-system-destructor
+                    ;              "fusermount -u /home/efraim/Dropbox")))
+                    (stop #~(make-system-destructor
+                              "fusermount -u /home/efraim/Dropbox"))
+                    (respawn? #f))
+
+                  (shepherd-service
+                    (documentation "Run vdirsyncer hourly")
+                    (provision '(vdirsyncer))
+                    (start
+                      #~(lambda args
+                          (match (primitive-fork)
+                                 (0 (begin
+                                      (while #t
+                                             (system* #$(file-append (S "vdirsyncer")
+                                                                     "/bin/vdirsyncer")
+                                                      "sync")
+                                             ;; Random time between 30 and 45 minutes.
+                                             (sleep (+ (* 30 60)
+                                                       (random
+                                                         (* 15 60)))))))
+                                 (pid pid))))
+                    (stop #~(make-kill-destructor))
+                    (respawn? #t))
+
+                  (shepherd-service
+                    (documentation "Connect to UTHSC VPN")
+                    (provision '(uthsc-vpn openconnect))
+                    (start #~(make-forkexec-constructor
+                              (list #$(file-append (S "openconnect-sso")
+                                                   "/bin/openconnect-sso")
+                                    "--server"
+                                    "uthscvpn1.uthsc.edu")
+                              #:log-file (string-append %logdir "/uthsc-vpn.log")))
+                    (auto-start? #f)
+                    (respawn? #f))
+
+                  (shepherd-service
+                    (documentation "Sync mail to the local system")
+                    (provision '(mbsync))
+                    (start
+                      #~(lambda args
+                          (match (primitive-fork)
+                                 (0 (begin
+                                      (while #t
+                                             (system* #$(file-append (S "isync")
+                                                                     "/bin/mbsync")
+                                                      "--config" #$%mbsyncrc
+                                                      "--all")
+                                             ;; Random time between 45 and 60 seconds
+                                             (sleep (+ 45 (random 15))))))
+                                 (pid pid))))
+                    (stop #~(make-kill-destructor))
+                    (respawn? #t))
+
+                  ;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/keybase.service
+                  (shepherd-service
+                    (documentation "Provide access to Keybase™")
+                    (provision '(keybase))
+                    (start #~(make-forkexec-constructor
+                               (list #$(file-append (S "keybase") "/bin/keybase")
+                                     "service")
+                               #:log-file (string-append %logdir "/keybase.log")
+                               #:directory #~(string-append
+                                               "/run/user/"
+                                               (number->string
+                                                 (passwd:uid (getpw "efraim")))
+                                               "/keybase")))
+                    (stop #~(make-system-destructor
+                              (string-append #$(file-append (S "keybase")
+                                                            "/bin/keybase")
+                                             " ctl stop")))
+                    (respawn? #t))
+
+                  ;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/kbfs.service
+                  (shepherd-service
+                    (documentation "Provide access to Keybase™ fuse store")
+                    (requirement '(keybase))
+                    (provision '(kbfs))
+                    (start #~(make-forkexec-constructor
+                               (list #$(file-append (S "keybase") "/bin/kbfsfuse")
+                                     ;"-debug"
+                                     "-log-to-file")
+                               #:log-file (string-append %logdir "/kbfs.log")))
+                    (stop #~(make-kill-destructor))
+                    (respawn? #t))
+
+                  ;; kdeconnect-indicator must not be running when it it started
+                  (shepherd-service
+                    (documentation "Run the KDEconnect daemon")
+                    (provision '(kdeconnect))
+                    (start #~(make-forkexec-constructor
+                               (list #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
+                                     "-platform" "offscreen")
+                               #:log-file (string-append %logdir "/kdeconnect.log")))
+                    (stop #~(make-kill-destructor)))
+
+                  (shepherd-service
+                    (documentation "Incrementally refresh gnupg keyring")
+                    (provision '(parcimonie))
+                    (start #~(make-forkexec-constructor
+                               (list #$(file-append (S "parcimonie") "/bin/parcimonie")
+                                     "--gnupg_extra_args"
+                                     "--keyring=/home/efraim/.config/guix/upstream/trustedkeys.kbx"
+                                     "--gnupg_extra_args"
+                                     "--keyring=/home/efraim/.config/guix/gpg/trustedkeys.kbx")
+                               #:log-file (string-append %logdir "/parcimonie.log")))
+                    (stop #~(make-kill-destructor))
+                    (respawn? #t))))))
+
+          ;(simple-service 'enlightenment-background
+          ;                home-files-service-type
+          ;                (list `("e/e/backgrounds/guix-checkered-16-9.edj"
+          ;                        %guix-background)))
+
           (simple-service 'mpv-mpris
                           home-files-service-type
                           (list `("config/mpv/scripts/mpris.so"
-                                  ,(file-append mpv-mpris "/lib/mpris.so"))))
+                                  ,(file-append (S "mpv-mpris") "/lib/mpris.so"))))
 
           (simple-service 'mpv-sponsorblock
                           home-files-service-type
                           (list `("config/mpv/scripts/sponsorblock_minimal.lua"
                                   ,(file-append
                                      (false-if-exception
-                                       (specification->package
-                                         "mpv-sponsorblock-minimal"))
+                                       (S "mpv-sponsorblock-minimal"))
                                      "/lib/sponsorblock_minimal.lua"))))
 
           (simple-service 'mpv-twitch-chat
@@ -586,7 +782,7 @@ alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback 
                           (list `("config/mpv/scripts/twitch-chat/main.lua"
                                   ,(file-append
                                      (false-if-exception
-                                       (specification->package "mpv-twitch-chat"))
+                                       (S "mpv-twitch-chat"))
                                      "/lib/main.lua"))))
 
           (simple-service 'mpv-conf
