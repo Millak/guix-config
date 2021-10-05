@@ -67,7 +67,7 @@
         "quassel"
         "terminology"
         "viewnior"
-        "xclip"
+        "wl-clipboard-x11"
         "zathura"
         "zathura-pdf-poppler"))
 
