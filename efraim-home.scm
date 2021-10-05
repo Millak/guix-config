@@ -44,7 +44,6 @@
 (define %GUI-only
   (list "adwaita-icon-theme"
         "ephoto"
-        "etui"
         "evisum"
         "font-culmus"
         "font-dejavu"
@@ -72,7 +71,9 @@
         "quassel"
         "terminology"
         "viewnior"
-        "xclip"))
+        "xclip"
+        "zathura"
+        "zathura-pdf-poppler"))
 
 (define %work-applications
   (list "diffoscope"
