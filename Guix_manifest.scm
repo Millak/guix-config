@@ -59,6 +59,7 @@
         "libreoffice"
         "mpv"
         "mpv-mpris"
+        "mupdf"
         "my-moreutils"
         "netsurf"
         "pavucontrol"
@@ -157,10 +158,14 @@
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html
 
+(define S specification->package)
+
 (define package-transformations
   (options->transformation
-   '((with-graft . "openssl=ssl-ntv")
-     (with-branch . "vim-guix-vim=master"))))
+   (if (false-if-exception (S "ssl-ntv"))
+     `((with-graft . "openssl=ssl-ntv")
+       (with-branch . "vim-guix-vim=master"))
+     '((with-branch . "vim-guix-vim=master")))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
 ;; Both of these are equivilent to '--with-input'
@@ -169,11 +174,14 @@
 
 (define modified-packages
   (package-input-rewriting/spec
-   `(("sdl2" . ,(const (@ (dfsg main sdl) sdl2-2.0.14))))))
+   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
+   `(("sdl2" . ,(if work-machine?
+                  (const (S "sdl2"))
+                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
 
 (packages->manifest
   (cons (list (package-transformations
-                (specification->package "git")) "send-email")
+                (S "git")) "send-email")
         (map package-transformations
              (map modified-packages
                   (map specification->package+output

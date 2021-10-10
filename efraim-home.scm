@@ -1,8 +1,8 @@
 (define-module (efraim-home)
   #:use-module (gnu home)
-  #:use-module (gnu home-services)
-  #:use-module (gnu home-services shells)
-  #:use-module (gnu home-services shepherd)
+  #:use-module (gnu home services)
+  #:use-module (gnu home services shells)
+  #:use-module (gnu home services shepherd)
   #:use-module (gnu services)
   #:use-module (gnu packages)
   #:use-module (guix packages)
@@ -63,6 +63,7 @@
         "libnotify"     ; notify-send
         "libreoffice"
         "mpv"
+        "mupdf"
         "my-moreutils"
         "netsurf"
         "pavucontrol"
@@ -534,9 +535,10 @@ fi
 allias cp='cp --reflink=auto'
 alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 
-alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
-alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
-alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'"))))
+#alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
+#alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
+alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
+alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'"))))
 
         (simple-service 'aria2-config
                         home-files-service-type
@@ -656,6 +658,7 @@ alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback 
                               "fusermount -u /home/efraim/Dropbox"))
                     (respawn? #f))
 
+                  ;; This can probably be moved to an mcron service.
                   (shepherd-service
                     (documentation "Run vdirsyncer hourly")
                     (provision '(vdirsyncer))
