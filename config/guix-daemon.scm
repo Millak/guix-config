@@ -19,6 +19,7 @@
         (local-file "../Extras/E5400_publish.pub")
         (local-file "../Extras/pine64_publish.pub")
         (local-file "../Extras/g4_publish.pub")
+        (local-file "../Extras/unmatched_publish.pub")
         (local-file "../Extras/ci.guix.gnu.org.pub")
         (local-file "../Extras/bayfront.guix.gnu.org.pub")
         (local-file "../Extras/bordeaux.guix.gnu.org.pub")
