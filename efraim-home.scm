@@ -321,18 +321,16 @@
 (define %pbuilderrc
   (mixed-text-file
     "pbuilderrc"
-    (string-append
-      "MIRRORSITE=http://deb.debian.org/debian-ports\n"
-      ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
-      "DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '/usr/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
-      "EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
-      ;"PBUILDERSATISFYDEPENDSCMD=" (S "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
-      "PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n"
-      ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
-      "APTCACHE=\"/var/cache/apt/archives\"\n"
-      "AUTO_DEBSIGN=yes\n"
-      "CCACHEDIR=/var/cache/pbuilder/ccache\n"
-      "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n")))
+    "MIRRORSITE=http://deb.debian.org/debian-ports\n"
+    "DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
+    "EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
+    ;"PBUILDERSATISFYDEPENDSCMD=" (S "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
+    "PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n"
+    ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
+    "APTCACHE=\"/var/cache/apt/archives\"\n"
+    "AUTO_DEBSIGN=yes\n"
+    "CCACHEDIR=/var/cache/pbuilder/ccache\n"
+    "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
 (define %gpg.conf
   (plain-file
@@ -361,7 +359,9 @@
     "gpg-agent.conf"
     #~(if #$headless?
         (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
-        (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))))
+        (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))
+    ;"enable-ssh-support\n"
+    "ignore-cache-for-signing\n"))
 
 (define %git-config
   (mixed-text-file
@@ -384,8 +384,10 @@
     "[sendemail]\n"
     "    smtpEncryption = ssl\n"
     #~(if #$work-machine?
-        "    smtpServer = flashner.co.il\n"
-        ;"    smtp-ssl-cert-path = \"\"\n"
+        (string-append "    smtpServer = flashner.co.il\n"
+                       "    smtpUser = efraim\n"
+                       ;"    smtpsslcertpath = \"\"\n"
+        )
         (string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtpq") "\n"))
     "    smtpUser = efraim\n"
     "    smtpPort = 465\n"
@@ -512,10 +514,11 @@
                        ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
                        ("PROMPT_COMMAND" . "\"history -a; $PROMPT_COMMAND\"")))
                    (bash-profile
-                     '("\
+                     (list
+                       (mixed-text-file "bash-profile" "\
 unset SSH_AGENT_PID
 if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
-    export SSH_AUTH_SOCK=\"$(gpgconf --list-dirs agent-ssh-socket)\"
+    export SSH_AUTH_SOCK=\"$(" (S "gnupg") "/bin/gpgconf --list-dirs agent-ssh-socket)\"
 fi
 #if [ -d ${HOME}/.cache/efreet ]; then
 #    rm -rf -- ${HOME}/.cache/efreet
@@ -529,16 +532,17 @@ fi
 # This seems to be covered in guix-home-service.
 #if [ $(which fc-cache 2>/dev/null) ]; then
 #    fc-cache -frv &>/dev/null;
-#fi"))
+#fi")))
                    (bashrc
-                     '("\
-allias cp='cp --reflink=auto'
+                     (list
+                       (mixed-text-file "bashrc" "\
+alias cp='cp --reflink=auto'
 alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 
 #alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
 #alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
 alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
-alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'"))))
+alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'")))))
 
         (simple-service 'aria2-config
                         home-files-service-type
