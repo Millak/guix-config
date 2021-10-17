@@ -18,13 +18,13 @@
                           "balance " "start "  "-dusage=70 " "-musage=80 "
                           #$mount-point))))
 
+;; 10MiB should be enough, but 'guix lint -c derivations' needs much more.
 (define %guix-temproots
   (file-system
     (device "tmpfs")
     (mount-point "/var/guix/temproots")
     (type "tmpfs")
     (flags '(no-suid no-dev no-exec))
-    (options "size=10M")
     (check? #f)))
 
 ;; Defaults to 50%
