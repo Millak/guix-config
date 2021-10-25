@@ -122,6 +122,11 @@
                     (qemu-binfmt-configuration
                       (platforms %qemu-platforms)))
 
+           (service hurd-vm-service-type
+                    (hurd-vm-configuration
+                      (disk-size (* 25 (expt 2 30)))
+                      (memory-size 4096)))
+
            (service earlyoom-service-type
                     (earlyoom-configuration
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
