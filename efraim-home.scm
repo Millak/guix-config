@@ -98,7 +98,7 @@
         "toot"
         "vdirsyncer"
         "weechat"
-        "youtube-dl"))
+        "yt-dlp"))
 
 (define %not-for-work-ghc
   (list "git-annex"))
