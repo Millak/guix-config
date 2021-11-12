@@ -340,15 +340,16 @@
       "default-key CA3D8351\n"
       "charset utf-8\n"
       "with-fingerprint\n"
-      "keyserver hkp://keys.openpgp.org\n"
-      "keyserver hkp://keyserver.ubuntu.com\n"
+      ;"keyserver hkp://keys.openpgp.org\n"
+      ;"keyserver hkp://keyserver.ubuntu.com\n"
+      "keyserver hkp://keys.gnupg.net\n"
       "keyserver-options auto-key-retrieve\n"
       "keyserver-options include-revoked\n"
       "keyserver-options no-honor-keyserver-url\n"
       "list-options show-uid-validity\n"
       "verify-options show-uid-validity\n"
       "keyid-format 0xlong\n"
-      "auto-key-locate wkd cert pka ldap hkp://keys.openpgp.org hkp://keyserver.ubuntu.com\n"
+      "auto-key-locate wkd cert pka ldap hkp://keys.gnupg.net\n"
       "personal-cipher-preferences AES256 AES192 AES CAST5\n"
       "personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"
       "cert-digest-algo SHA512\n"
@@ -538,12 +539,13 @@ fi
                      (list
                        (mixed-text-file "bashrc" "\
 alias cp='cp --reflink=auto'
+alias exitexit='exit'
 alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 
 #alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
 #alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
-alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
-alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'")))))
+alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --no-grafts --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'
+alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'")))))
 
         (simple-service 'aria2-config
                         home-files-service-type
@@ -807,6 +809,10 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
           (simple-service 'youtubedl-conf
                           home-files-service-type
                           (list `("config/youtube-dl/config"
+                                  ,%ytdl-config)))
+          (simple-service 'yt-dlp-conf
+                          home-files-service-type
+                          (list `("config/yt-dlp/config"
                                   ,%ytdl-config))))))))
 
 (if work-machine?
