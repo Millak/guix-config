@@ -70,6 +70,7 @@
         "pinentry-efl"
         "qtwayland"
         "quassel"
+        "qutebrowser"
         "terminology"
         "viewnior"
         "wl-clipboard-x11"
