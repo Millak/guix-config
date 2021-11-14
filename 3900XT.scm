@@ -163,9 +163,7 @@
                          (substitute-urls %substitute-urls)
                          (authorized-keys %authorized-keys)
                          (extra-options
-                           (cons* "--max-jobs=5"
-                                  "--disable-deduplication"
-                                  %extra-options))))))))
+                           (cons* "--max-jobs=5" %extra-options))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
