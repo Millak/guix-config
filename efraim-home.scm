@@ -417,7 +417,9 @@
         (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
         (string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n"))
     "[pull]\n"
-    "    rebase = true\n"))
+    "    rebase = true\n"
+    "[fetch]\n"
+    "    prune = true\n"))
 
 (define %git-ignore
   (plain-file
@@ -774,6 +776,12 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
           ;                home-files-service-type
           ;                (list `("e/e/backgrounds/guix-checkered-16-9.edj"
           ;                        %guix-background)))
+
+          ;; TODO: Make this work
+          ;(simple-service 'lagrange-fonts
+          ;                home-files-service-type
+          ;                (list `("config/lagrange/fonts")
+          ;                      ,"guix-profile/share/fonts/truetype"))
 
           (simple-service 'mpv-mpris
                           home-files-service-type
