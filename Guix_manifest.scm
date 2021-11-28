@@ -127,7 +127,7 @@
         "file"
         "git"
         ;"git:send-email"   ; listed below
-        "glibc-utf8-locales"
+        "glibc-locales"
         "global"
         "gnupg"
         "hunspell-dict-en"
