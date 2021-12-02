@@ -120,7 +120,10 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (platforms %qemu-platforms)))
+                      ;; We get i386 for free from the architecture.
+                      (platforms
+                        (delete (@@ (gnu services virtualization) %i386)
+                                %qemu-platforms))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
