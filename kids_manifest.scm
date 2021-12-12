@@ -9,6 +9,7 @@
         "font-terminus"
         "gcompris"
         "gcompris-qt"
+        "glibc-locales"
         "gnujump"
         "icecat"
         "kodi"
