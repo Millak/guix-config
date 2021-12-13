@@ -20,7 +20,7 @@
 (operating-system
   (host-name "pine64")
   (timezone "Asia/Jerusalem")
-  (locale "en_US.UTF-8")
+  (locale "en_IL.utf8")
   (locale-definitions
     (list (locale-definition (source "en_US")
                              (name "en_US.UTF-8"))
@@ -35,6 +35,8 @@
   ;; The board fails to boot with stock linux-libre
   (kernel linux-libre-arm64-generic)
 
+  ;(swap-space
+  ;  (target "/swapfile"))
   (swap-devices (list "/swapfile"))
 
   (file-systems (cons* (file-system
@@ -113,7 +115,7 @@
                    ;         (zram-device-configuration
                    ;           (size (* 2 (expt 2 30)))
                    ;           (compression-algorithm 'zstd)
-                   ;           (priority 100)))
+                   ;           (priority 250)))
 
                    (modify-services
                      %base-services
@@ -121,10 +123,11 @@
                        config =>
                        (guix-configuration
                          (inherit config)
+                         (discover? #t)
                          (substitute-urls %substitute-urls)
                          (authorized-keys %authorized-keys)
                          (extra-options
-                           (cons* "--cores=2" %extra-options)))))))
+                           (cons* "--cores=2" "--cache-failures" %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
