@@ -7,7 +7,6 @@
       (list
         "font-dejavu"
         "font-terminus"
-        "gcompris"
         "gcompris-qt"
         "glibc-locales"
         "gnujump"
