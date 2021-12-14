@@ -88,7 +88,13 @@
                     (openssh-configuration
                       (password-authentication? #t)))
 
-           (service tor-service-type)
+           (service tor-service-type
+                    (tor-configuration
+                      (config-file
+                        (plain-file "extra-torrc-bits"
+                                    (string-append
+                                      "# NumCPUs only affects relays, but we want to silence the warnings"
+                                      "NumCPUs 2\n")))))
            (tor-hidden-service "ssh"
                                '((22 "127.0.0.1:22")))
            (tor-hidden-service "guix-publish"
