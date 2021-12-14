@@ -53,7 +53,7 @@
         "icecat"
         "kdeconnect"
         "keepassxc"
-        "lagrange"
+        ;"lagrange"
         "libnotify"     ; notify-send
         "libreoffice"
         "mpv"
