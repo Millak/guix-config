@@ -5,17 +5,6 @@
 (use-service-modules admin networking ssh sysctl)
 (use-package-modules certs)
 
-(define %os-release-file
-  (plain-file "os-release"
-              (string-append
-                "NAME=\"Guix System\"\n"
-                "PRETTY_NAME=\"Guix System\"\n"
-                "VERSION=\""((@ (guix packages) package-version) (@ (gnu packages package-management) guix))"\"\n"
-                "ID=guix\n"
-                "HOME_URL=\"https://www.gnu.org/software/guix/\"\n"
-                "SUPPORT_URL=\"https://www.gnu.org/software/guix/help/\"\n"
-                "BUG_REPORT_URL=\"mailto:bug-guix@gnu.org\"\n")))
-
 (define %efraim-ssh-key
   (plain-file "id_ecdsa.pub"
               "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBkVckSY5TpAONmDG8Hy+vvxbIwr9gcLVPexFjgwS/BKsSn4GR/rqPvyYJdeJeMvAiaOJsNz8M3z6nGvoFe32I4= efraim@flashner.co.il"))
@@ -81,10 +70,7 @@
   (packages (cons* nss-certs         ;for HTTPS access
                    %base-packages))
 
-  (services (cons* (simple-service 'os-release etc-service-type
-                                   `(("os-release" ,%os-release-file)))
-
-                   ;; Copy this file to /etc/config.scm in the OS.
+  (services (cons* ;; Copy this file to /etc/config.scm in the OS.
                    ;(simple-service 'config-file etc-service-type
                    ;                `(("config.scm" ,this-file)))
 

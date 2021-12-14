@@ -5,7 +5,6 @@
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
-             (config os-release)
              (srfi srfi-1))
 (use-service-modules
   cups
@@ -80,9 +79,6 @@
                    %base-packages))
 
   (services (cons* (service xfce-desktop-service-type)
-
-                   (simple-service 'os-release etc-service-type
-                                   `(("os-release" ,%os-release-file)))
 
                    (service guix-publish-service-type
                             (guix-publish-configuration

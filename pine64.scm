@@ -5,7 +5,6 @@
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
-             (config os-release)
              (srfi srfi-1))
 (use-service-modules
   linux
@@ -66,9 +65,6 @@
                    ;           (baud-rate "115200")
                    ;           (term "vt100")
                    ;           (tty "ttyS0")))
-
-                   (simple-service 'os-release etc-service-type
-                                   `(("os-release" ,%os-release-file)))
 
                    (service guix-publish-service-type
                             (guix-publish-configuration
