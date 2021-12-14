@@ -176,12 +176,12 @@
 ;; package-input-rewriting => takes an 'identity'
 ;; package-input-rewriting/spec => takes a name
 
-(define modified-packages
-  (package-input-rewriting/spec
-   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
-   `(("sdl2" . ,(if work-machine?
-                  (const (S "sdl2"))
-                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
+;(define modified-packages
+;  (package-input-rewriting/spec
+;   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
+;   `(("sdl2" . ,(if work-machine?
+;                  (const (S "sdl2"))
+;                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
 
 (define package-list
   (map specification->package+output
@@ -207,10 +207,7 @@
   (cons (list (package-transformations
                 (S "git")) "send-email")
          (map package-transformations
-              (if work-machine?
-                package-list
-                (map modified-packages
-                     package-list)))))
+                package-list)))
 
 ;;;
 

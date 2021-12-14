@@ -172,33 +172,32 @@
 ;; package-input-rewriting => takes an 'identity'
 ;; package-input-rewriting/spec => takes a name
 
-(define modified-packages
-  (package-input-rewriting/spec
-   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
-   `(("sdl2" . ,(if work-machine?
-                  (const (S "sdl2"))
-                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
+;(define modified-packages
+;  (package-input-rewriting/spec
+;   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
+;   `(("sdl2" . ,(if work-machine?
+;                  (const (S "sdl2"))
+;                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
 
 (packages->manifest
   (cons (list (package-transformations
                 (S "git")) "send-email")
         (map package-transformations
-             (map modified-packages
-                  (map specification->package+output
-                       (append
-                         (if (or headless?
-                                 (not guix-system))
-                           %headless
-                           %GUI-only)
-                         (if work-machine?
-                           %work-applications
-                           (append
-                             %not-for-work
-                             (match (utsname:machine (uname))
-                                    ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
-                                    ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
-                                    (_ %not-for-work-no-rust))))
-                         (if guix-system
-                           '()
-                           %guix-system-apps)
-                         %cli-apps))))))
+             (map specification->package+output
+                  (append
+                    (if (or headless?
+                            (not guix-system))
+                      %headless
+                      %GUI-only)
+                    (if work-machine?
+                      %work-applications
+                      (append
+                        %not-for-work
+                        (match (utsname:machine (uname))
+                               ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
+                               ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
+                               (_ %not-for-work-no-rust))))
+                    (if guix-system
+                      '()
+                      %guix-system-apps)
+                    %cli-apps)))))
