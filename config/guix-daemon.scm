@@ -17,6 +17,7 @@
 (define %authorized-keys
   (list (local-file "../Extras/3900XT_publish.pub")
         (local-file "../Extras/E5400_publish.pub")
+        (local-file "../Extras/pinebookpro_publish.pub")
         (local-file "../Extras/pine64_publish.pub")
         (local-file "../Extras/g4_publish.pub")
         (local-file "../Extras/unmatched_publish.pub")
