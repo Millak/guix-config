@@ -150,6 +150,7 @@
         "vim-airline"
         "vim-dispatch"
         "vim-fugitive"
+        "vim-gnupg"
         "vim-guix-vim"
         "wcalc"
         "wget"
