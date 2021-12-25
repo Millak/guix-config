@@ -103,7 +103,7 @@
   (list "newsboat"))
 
 (define %not-for-work-no-rust
-  (list "newsboat@2.13"))
+  (list))
 
 (define %headless
   (list "pinentry-tty"))
