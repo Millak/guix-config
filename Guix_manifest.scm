@@ -2,9 +2,24 @@
 (use-modules (guix profiles)
              (guix transformations)
              (guix packages)
+             (guix utils)
              (gnu packages)
              (ice-9 match)
              (srfi srfi-1))
+
+;; Define a couple of our own architecture groupings depending on which architectures support various features
+(define* (with-rust? #:optional (system (or (%current-target-system)
+                                            (%current-system))))
+         (target-x86-64? target))
+
+(define* (with-ghc? #:optional (system (or (%current-target-system)
+                                           (%current-system))))
+         (or (target-x86-64? target) (target-x86-32? target)))
+
+(define* (with-go? #:optional (system (or (%current-target-system)
+                                          (%current-system))))
+         (not (target-ppc32? target)))
+
 
 (define headless?
   (eq? #f (getenv "DISPLAY")))
@@ -15,18 +30,7 @@
         "tux01"
         "tux02"
         "tux03"
-        "octopus01"
-        "octopus02"
-        "octopus03"
-        "octopus04"
-        "octopus05"
-        "octopus06"
-        "octopus07"
-        "octopus08"
-        "octopus09"
-        "octopus10"
-        "octopus11"
-        ))
+        "octopus01"))
 
 (define guix-system
   (file-exists? "/run/current-system/provenance"))
@@ -125,7 +129,7 @@
         "bash-completion"
         "file"
         "git"
-        ;"git:send-email"   ; listed below
+        "git:send-email"
         "glibc-locales"
         "global"
         "gnupg"
@@ -161,12 +165,12 @@
 
 (define S specification->package)
 
-(define package-transformations
-  (options->transformation
-   (if (false-if-exception (S "ssl-ntv"))
-     `((with-graft . "openssl=ssl-ntv")
-       (with-branch . "vim-guix-vim=master"))
-     '((with-branch . "vim-guix-vim=master")))))
+;(define package-transformations
+;  (options->transformation
+;   (if (false-if-exception (S "ssl-ntv"))
+;     `((with-graft . "openssl=ssl-ntv")
+;       (with-branch . "vim-guix-vim=master"))
+;     '((with-branch . "vim-guix-vim=master")))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
 ;; Both of these are equivilent to '--with-input'
@@ -181,24 +185,30 @@
 ;                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
 
 (packages->manifest
-  (cons (list (package-transformations
-                (S "git")) "send-email")
-        (map package-transformations
-             (map specification->package+output
-                  (append
-                    (if (or headless?
-                            (not guix-system))
-                      %headless
-                      %GUI-only)
-                    (if work-machine?
-                      %work-applications
-                      (append
-                        %not-for-work
-                        (match (utsname:machine (uname))
-                               ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
-                               ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
-                               (_ %not-for-work-no-rust))))
-                    (if guix-system
-                      '()
-                      %guix-system-apps)
-                    %cli-apps)))))
+  (map (compose list specification->package+output)
+       (append
+         (if (or headless?
+                 ;(target-aarch64?)
+                 (not guix-system))
+           %headless
+           %GUI-only)
+         (if work-machine?
+           %work-applications
+           (append
+             %not-for-work
+             ;(match (utsname:machine (uname))
+             ;       ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
+             ;       ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
+             ;       (_ %not-for-work-no-rust))))
+             (cond
+               ((or (target-arm?) (target-powerpc?) (target-riscv64?))
+                %not-for-work-no-rust)
+               ((target-x86-64?)
+                (append %not-for-work-ghc %not-for-work-rust))
+               ((target-x86-32?)
+                (append %not-for-work-ghc %not-for-work-no-rust))
+               (else %not-for-work-no-rust))))
+         (if guix-system
+           '()
+           %guix-system-apps)
+         %cli-apps)))
