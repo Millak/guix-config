@@ -12,6 +12,11 @@
 
 ;;;
 
+(define %logdir
+  (or (getenv "XDG_LOG_HOME")
+      (format #f "~a/.local/var/log"
+              (getenv "HOME"))))
+
 (define headless?
   (eq? #f (getenv "DISPLAY")))
 
@@ -21,17 +26,7 @@
         "tux01"
         "tux02"
         "tux03"
-        "octopus01"
-        "octopus02"
-        "octopus03"
-        "octopus04"
-        "octopus05"
-        "octopus06"
-        "octopus07"
-        "octopus08"
-        "octopus09"
-        "octopus10"
-        "octopus11"))
+        "octopus01"))
 
 (define guix-system
   (file-exists? "/run/current-system/provenance"))
@@ -117,8 +112,9 @@
   (list "guile"
         "guile-colorized"
         "guile-readline"
-        "mcron"
-        "shepherd"))
+        ;"mcron"
+        ;"shepherd"
+        ))
 
 (define %cli-apps
   (list "aria2"
@@ -129,7 +125,7 @@
         "bash-completion"
         "file"
         "git"
-        ;"git:send-email"   ; listed below
+        "git:send-email"
         "glibc-locales"
         "global"
         "gnupg"
@@ -161,31 +157,10 @@
         "wgetpaste"))
 
 
-;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html
-
 (define S specification->package)
 
-(define package-transformations
-  (options->transformation
-   (if (false-if-exception (S "ssl-ntv"))
-     `((with-graft . "openssl=ssl-ntv")
-       (with-branch . "vim-guix-vim=master"))
-     '((with-branch . "vim-guix-vim=master")))))
-
-;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
-;; Both of these are equivilent to '--with-input'
-;; package-input-rewriting => takes an 'identity'
-;; package-input-rewriting/spec => takes a name
-
-;(define modified-packages
-;  (package-input-rewriting/spec
-;   ;; We leave the conditional here too to prevent searching for (dfsg main sdl).
-;   `(("sdl2" . ,(if work-machine?
-;                  (const (S "sdl2"))
-;                  (const (@ (dfsg main sdl) sdl2-2.0.14)))))))
-
 (define package-list
-  (map specification->package+output
+  (map (compose list specification->package+output)
        (append
          (if (or headless?
                  (not guix-system))
@@ -203,12 +178,6 @@
            '()
            %guix-system-apps)
          %cli-apps)))
-
-(define transformed-package-list
-  (cons (list (package-transformations
-                (S "git")) "send-email")
-         (map package-transformations
-                package-list)))
 
 ;;;
 
@@ -338,8 +307,8 @@
       "charset utf-8\n"
       "with-fingerprint\n"
       ;"keyserver hkp://keys.openpgp.org\n"
-      ;"keyserver hkp://keyserver.ubuntu.com\n"
-      "keyserver hkp://keys.gnupg.net\n"
+      "keyserver hkp://keyserver.ubuntu.com\n"
+      ;"keyserver hkp://keys.gnupg.net\n"
       "keyserver-options auto-key-retrieve\n"
       "keyserver-options include-revoked\n"
       "keyserver-options no-honor-keyserver-url\n"
@@ -458,11 +427,6 @@
 
 ;;;
 
-(define %logdir
-  (or (getenv "XDG_LOG_HOME")
-      (format #f "~a/.local/var/log"
-              (getenv "HOME"))))
-
 (define %mbsyncrc
   (mixed-text-file
     "mbsyncrc"
@@ -490,10 +454,156 @@
     "Near :local:\n"
     "Patterns * !work\n"))
 
-(define work-home-environment
+;;;
+
+(define %syncthing-user-service
+  (shepherd-service
+    (documentation "Run `syncthing' without calling the browser")
+    (provision '(syncthing))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "syncthing") "/bin/syncthing")
+                     "-no-browser")
+               #:log-file (string-append %logdir "/syncthing.log")))
+    (stop #~(make-kill-destructor))
+    (respawn? #t)))
+
+(define %dropbox-user-service
+  (shepherd-service
+    (documentation "Provide access to Dropbox™")
+    (provision '(dropbox dbxfs))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "dbxfs") "/bin/dbxfs")
+                     "--foreground"
+                     "--verbose"
+                     "/home/efraim/Dropbox")
+               #:log-file (string-append %logdir "/dbxfs.log")))
+    ;; Perhaps I want to use something like this?
+    ;(stop (or #~(make-system-destructor
+    ;              (string-append
+    ;                #$(file-append (S "fuse") "/bin/fusermount")
+    ;                " -u " (getenv "HOME") "/Dropbox"))
+    ;          #~(make-system-destructor
+    ;              "fusermount -u /home/efraim/Dropbox")))
+    (stop #~(make-system-destructor
+              "fusermount -u /home/efraim/Dropbox"))
+    (respawn? #f)))
+
+;; This can probably be moved to an mcron service.
+(define %vdirsyncer-user-service
+  (shepherd-service
+    (documentation "Run vdirsyncer hourly")
+    (provision '(vdirsyncer))
+    (start
+      #~(lambda args
+          (match (primitive-fork)
+                 (0 (begin
+                      (while #t
+                             (system* #$(file-append (S "vdirsyncer")
+                                                     "/bin/vdirsyncer")
+                                      "sync")
+                             ;; Random time between 30 and 45 minutes.
+                             (sleep (+ (* 30 60)
+                                       (random
+                                         (* 15 60)))))))
+                 (pid pid))))
+    (stop #~(make-kill-destructor))
+    (respawn? #t)))
+
+(define %uthsc-vpn-user-service
+  (shepherd-service
+    (documentation "Connect to UTHSC VPN")
+    (provision '(uthsc-vpn openconnect))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "openconnect-sso")
+                                    "/bin/openconnect-sso")
+                     "--server"
+                     "uthscvpn1.uthsc.edu")
+               #:log-file (string-append %logdir "/uthsc-vpn.log")))
+    (auto-start? #f)
+    (respawn? #f)))
+
+(define %mbsync-user-service
+  (shepherd-service
+    (documentation "Sync mail to the local system")
+    (provision '(mbsync))
+    (start
+      #~(lambda args
+          (match (primitive-fork)
+                 (0 (begin
+                      (while #t
+                             (system* #$(file-append (S "isync")
+                                                     "/bin/mbsync")
+                                      "--config" #$%mbsyncrc
+                                      "--all")
+                             ;; Random time between 45 and 60 seconds
+                             (sleep (+ 45 (random 15))))))
+                 (pid pid))))
+    (stop #~(make-kill-destructor))
+    (respawn? #t)))
+
+;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/keybase.service
+(define %keybase-user-service
+  (shepherd-service
+    (documentation "Provide access to Keybase™")
+    (provision '(keybase))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "keybase") "/bin/keybase")
+                     "service")
+               #:log-file (string-append %logdir "/keybase.log")
+               #:directory #~(string-append
+                               (getenv "XDG_RUNTIME_DIR")
+                               "/keybase")))
+    (stop #~(make-system-destructor
+              (string-append #$(file-append (S "keybase")
+                                            "/bin/keybase")
+                             " ctl stop")))
+    (respawn? #t)))
+
+;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/kbfs.service
+(define %keybase-fuse-user-service
+  (shepherd-service
+    (documentation "Provide access to Keybase™ fuse store")
+    (requirement '(keybase))
+    (provision '(kbfs))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "keybase") "/bin/kbfsfuse")
+                     ;"-debug"
+                     "-log-to-file")
+               #:log-file (string-append %logdir "/kbfs.log")))
+    (stop #~(make-kill-destructor))
+    (respawn? #t)))
+
+;; kdeconnect-indicator must not be running when it it started
+(define %kdeconnect-user-service
+  (shepherd-service
+    (documentation "Run the KDEconnect daemon")
+    (provision '(kdeconnect))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
+                     "-platform" "offscreen")
+               #:log-file (string-append %logdir "/kdeconnect.log")))
+    (stop #~(make-kill-destructor))))
+
+(define %parcimonie-user-service
+  (shepherd-service
+    (documentation "Incrementally refresh gnupg keyring")
+    (provision '(parcimonie))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "parcimonie") "/bin/parcimonie")
+                     ;; Can I use compose and find or a list to make this work?
+                     "--gnupg_extra_args"
+                     "--keyring=/home/efraim/.config/guix/upstream/trustedkeys.kbx"
+                     "--gnupg_extra_args"
+                     "--keyring=/home/efraim/.config/guix/gpg/trustedkeys.kbx")
+               #:log-file (string-append %logdir "/parcimonie.log")))
+    (stop #~(make-kill-destructor))
+    (respawn? #t)))
+
+;;;
+
+(define my-home-environment
   (home-environment
-    (packages transformed-package-list)
-    ;; TODO: adjust services based on machine type.
+    (packages package-list)
     (services
       (list
         (service home-bash-service-type
@@ -503,15 +613,13 @@
                      `(("QT_QPA_PLATFORM" . "wayland")
                        ("ECORE_EVAS_ENGINE" . "wayland_egl")
                        ("ELM_ENGINE" . "wayland_egl")
-                       ;; TODO: enable after sdl >= 2.0.14
-                       ;; Apparently only a problem on enlightenment/wayland.
                        ("SDL_VIDEODRIVER" . "wayland")
                        ;; ("MOZ_ENABLE_WAYLAND" . "1")
                        ("EDITOR" . ,(file-append (S "vim") "/bin/vim"))
                        ("GPG_TTY" . "$(tty)")
                        ("HISTSIZE" . "3000")
                        ("HISTFILESIZE" . "10000")
-                       ("HISTCONTROL" . "ignorespace")
+                       ("HISTCONTROL" . "ignoreboth")
                        ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
                        ("PROMPT_COMMAND" . "\"history -a; $PROMPT_COMMAND\"")))
                    (bash-profile
@@ -545,6 +653,22 @@ alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 #alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
 alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --no-grafts --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'
 alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'")))))
+
+        (service home-shepherd-service-type
+                 (home-shepherd-configuration
+                   (services
+                     (list
+                       %syncthing-user-service
+                       %dropbox-user-service
+                       %vdirsyncer-user-service
+                       %uthsc-vpn-user-service
+                       %mbsync-user-service
+
+                       %keybase-user-service
+                       %keybase-fuse-user-service
+
+                       %kdeconnect-user-service
+                       %parcimonie-user-service))))
 
         (simple-service 'aria2-config
                         home-files-service-type
@@ -598,6 +722,32 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
         ;                (list `("mailcap"
         ;                        ,%mailcap)))
 
+        (simple-service 'mpv-mpris
+                        home-files-service-type
+                        (list `("config/mpv/scripts/mpris.so"
+                                ,(file-append (S "mpv-mpris") "/lib/mpris.so"))))
+
+        (simple-service 'mpv-sponsorblock
+                        home-files-service-type
+                        (list `("config/mpv/scripts/sponsorblock_minimal.lua"
+                                ,(file-append
+                                   (false-if-exception
+                                     (S "mpv-sponsorblock-minimal"))
+                                   "/lib/sponsorblock_minimal.lua"))))
+
+        (simple-service 'mpv-twitch-chat
+                        home-files-service-type
+                        (list `("config/mpv/scripts/twitch-chat/main.lua"
+                                ,(file-append
+                                   (false-if-exception
+                                     (S "mpv-twitch-chat"))
+                                   "/lib/main.lua"))))
+
+        (simple-service 'mpv-conf
+                        home-files-service-type
+                        (list `("config/mpv/conf"
+                                ,%mpv-conf)))
+
         (simple-service 'pbuilderrc
                         home-files-service-type
                         (list `("pbuilderrc"
@@ -613,6 +763,11 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                         (list `("signature"
                                 ,%signature)))
 
+        (simple-service 'streamlink-conf
+                        home-files-service-type
+                        (list `("config/streamlink/config"
+                                ,%streamlink-config)))
+
         (simple-service 'wcalcrc
                         home-files-service-type
                         (list `("wcalcrc"
@@ -621,205 +776,15 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
         (simple-service 'wgetpaste-conf
                         home-files-service-type
                         (list `("wgetpaste.conf"
-                                ,%wgetpaste.conf)))))))
+                                ,%wgetpaste.conf)))
 
-(define my-home-environment
-  (home-environment
-    (inherit work-home-environment)
-    (services
-      (append
-        (home-environment-user-services work-home-environment)
-        (list
-          (service home-shepherd-service-type
-            (home-shepherd-configuration
-              (services
-                (list
-                  (shepherd-service
-                    (documentation "Run `syncthing' without calling the browser")
-                    (provision '(syncthing))
-                    (start #~(make-forkexec-constructor
-                               (list #$(file-append (S "syncthing") "/bin/syncthing")
-                                     "-no-browser")
-                               #:log-file (string-append %logdir "/syncthing.log")))
-                    (stop #~(make-kill-destructor))
-                    (respawn? #t))
+        (simple-service 'youtubedl-conf
+                        home-files-service-type
+                        (list `("config/youtube-dl/config"
+                                ,%ytdl-config)))
+        (simple-service 'yt-dlp-conf
+                        home-files-service-type
+                        (list `("config/yt-dlp/config"
+                                ,%ytdl-config)))))))
 
-                  (shepherd-service
-                    (documentation "Provide access to Dropbox™")
-                    (provision '(dropbox dbxfs))
-                    (start #~(make-forkexec-constructor
-                               (list #$(file-append (S "dbxfs") "/bin/dbxfs")
-                                     "--foreground"
-                                     "--verbose"
-                                     "/home/efraim/Dropbox")
-                               #:log-file (string-append %logdir "/dbxfs.log")))
-                    ;; Perhaps I want to use something like this?
-                    ;(stop (or #~(make-system-destructor
-                    ;              (string-append
-                    ;                #$(file-append (S "fuse") "/bin/fusermount")
-                    ;                " -u /home/efraim/Dropbox"))
-                    ;          #~(make-system-destructor
-                    ;              "fusermount -u /home/efraim/Dropbox")))
-                    (stop #~(make-system-destructor
-                              "fusermount -u /home/efraim/Dropbox"))
-                    (respawn? #f))
-
-                  ;; This can probably be moved to an mcron service.
-                  (shepherd-service
-                    (documentation "Run vdirsyncer hourly")
-                    (provision '(vdirsyncer))
-                    (start
-                      #~(lambda args
-                          (match (primitive-fork)
-                                 (0 (begin
-                                      (while #t
-                                             (system* #$(file-append (S "vdirsyncer")
-                                                                     "/bin/vdirsyncer")
-                                                      "sync")
-                                             ;; Random time between 30 and 45 minutes.
-                                             (sleep (+ (* 30 60)
-                                                       (random
-                                                         (* 15 60)))))))
-                                 (pid pid))))
-                    (stop #~(make-kill-destructor))
-                    (respawn? #t))
-
-                  (shepherd-service
-                    (documentation "Connect to UTHSC VPN")
-                    (provision '(uthsc-vpn openconnect))
-                    (start #~(make-forkexec-constructor
-                              (list #$(file-append (S "openconnect-sso")
-                                                   "/bin/openconnect-sso")
-                                    "--server"
-                                    "uthscvpn1.uthsc.edu")
-                              #:log-file (string-append %logdir "/uthsc-vpn.log")))
-                    (auto-start? #f)
-                    (respawn? #f))
-
-                  (shepherd-service
-                    (documentation "Sync mail to the local system")
-                    (provision '(mbsync))
-                    (start
-                      #~(lambda args
-                          (match (primitive-fork)
-                                 (0 (begin
-                                      (while #t
-                                             (system* #$(file-append (S "isync")
-                                                                     "/bin/mbsync")
-                                                      "--config" #$%mbsyncrc
-                                                      "--all")
-                                             ;; Random time between 45 and 60 seconds
-                                             (sleep (+ 45 (random 15))))))
-                                 (pid pid))))
-                    (stop #~(make-kill-destructor))
-                    (respawn? #t))
-
-                  ;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/keybase.service
-                  (shepherd-service
-                    (documentation "Provide access to Keybase™")
-                    (provision '(keybase))
-                    (start #~(make-forkexec-constructor
-                               (list #$(file-append (S "keybase") "/bin/keybase")
-                                     "service")
-                               #:log-file (string-append %logdir "/keybase.log")
-                               #:directory #~(string-append
-                                               "/run/user/"
-                                               (number->string
-                                                 (passwd:uid (getpw "efraim")))
-                                               "/keybase")))
-                    (stop #~(make-system-destructor
-                              (string-append #$(file-append (S "keybase")
-                                                            "/bin/keybase")
-                                             " ctl stop")))
-                    (respawn? #t))
-
-                  ;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/kbfs.service
-                  (shepherd-service
-                    (documentation "Provide access to Keybase™ fuse store")
-                    (requirement '(keybase))
-                    (provision '(kbfs))
-                    (start #~(make-forkexec-constructor
-                               (list #$(file-append (S "keybase") "/bin/kbfsfuse")
-                                     ;"-debug"
-                                     "-log-to-file")
-                               #:log-file (string-append %logdir "/kbfs.log")))
-                    (stop #~(make-kill-destructor))
-                    (respawn? #t))
-
-                  ;; kdeconnect-indicator must not be running when it it started
-                  (shepherd-service
-                    (documentation "Run the KDEconnect daemon")
-                    (provision '(kdeconnect))
-                    (start #~(make-forkexec-constructor
-                               (list #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
-                                     "-platform" "offscreen")
-                               #:log-file (string-append %logdir "/kdeconnect.log")))
-                    (stop #~(make-kill-destructor)))
-
-                  (shepherd-service
-                    (documentation "Incrementally refresh gnupg keyring")
-                    (provision '(parcimonie))
-                    (start #~(make-forkexec-constructor
-                               (list #$(file-append (S "parcimonie") "/bin/parcimonie")
-                                     "--gnupg_extra_args"
-                                     "--keyring=/home/efraim/.config/guix/upstream/trustedkeys.kbx"
-                                     "--gnupg_extra_args"
-                                     "--keyring=/home/efraim/.config/guix/gpg/trustedkeys.kbx")
-                               #:log-file (string-append %logdir "/parcimonie.log")))
-                    (stop #~(make-kill-destructor))
-                    (respawn? #t))))))
-
-          ;(simple-service 'enlightenment-background
-          ;                home-files-service-type
-          ;                (list `("e/e/backgrounds/guix-checkered-16-9.edj"
-          ;                        %guix-background)))
-
-          ;; TODO: Make this work
-          ;(simple-service 'lagrange-fonts
-          ;                home-files-service-type
-          ;                (list `("config/lagrange/fonts")
-          ;                      ,"guix-profile/share/fonts/truetype"))
-
-          (simple-service 'mpv-mpris
-                          home-files-service-type
-                          (list `("config/mpv/scripts/mpris.so"
-                                  ,(file-append (S "mpv-mpris") "/lib/mpris.so"))))
-
-          (simple-service 'mpv-sponsorblock
-                          home-files-service-type
-                          (list `("config/mpv/scripts/sponsorblock_minimal.lua"
-                                  ,(file-append
-                                     (false-if-exception
-                                       (S "mpv-sponsorblock-minimal"))
-                                     "/lib/sponsorblock_minimal.lua"))))
-
-          (simple-service 'mpv-twitch-chat
-                          home-files-service-type
-                          (list `("config/mpv/scripts/twitch-chat/main.lua"
-                                  ,(file-append
-                                     (false-if-exception
-                                       (S "mpv-twitch-chat"))
-                                     "/lib/main.lua"))))
-
-          (simple-service 'mpv-conf
-                          home-files-service-type
-                          (list `("config/mpv/conf"
-                                  ,%mpv-conf)))
-
-          (simple-service 'streamlink-conf
-                          home-files-service-type
-                          (list `("config/streamlink/config"
-                                  ,%streamlink-config)))
-
-          (simple-service 'youtubedl-conf
-                          home-files-service-type
-                          (list `("config/youtube-dl/config"
-                                  ,%ytdl-config)))
-          (simple-service 'yt-dlp-conf
-                          home-files-service-type
-                          (list `("config/yt-dlp/config"
-                                  ,%ytdl-config))))))))
-
-(if work-machine?
-  work-home-environment
-  my-home-environment)
+my-home-environment
