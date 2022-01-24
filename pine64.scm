@@ -1,5 +1,6 @@
 (define-module (pine64))
 (use-modules (guix packages)
+             (guix utils)       ; for alternate guix package
              (gnu)
              (gnu bootloader u-boot)
              (gnu system locale)
@@ -8,12 +9,10 @@
              (srfi srfi-1))
 (use-service-modules
   linux
-  ;mcron
+  mcron
   networking
   ssh)
 (use-package-modules
-  certs
-  connman
   linux)
 
 (operating-system
@@ -25,25 +24,30 @@
                              (name "en_US.UTF-8"))
           (locale-definition (source "he_IL")
                              (name "he_IL.UTF-8"))))
+  (keyboard-layout
+    (keyboard-layout "us" "altgr-intl"))
 
-  (bootloader (bootloader-configuration
-                (bootloader u-boot-pine64-plus-bootloader)
-                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+  (bootloader
+    (bootloader-configuration
+      (bootloader u-boot-pine64-plus-bootloader)
+      (targets '("/dev/mmcblk0"))))     ; SD card/eMMC (SD priority) storage
 
   (initrd-modules '())
   ;; The board fails to boot with stock linux-libre
   (kernel linux-libre-arm64-generic)
+  (firmware '())
 
-  ;(swap-space
-  ;  (target "/swapfile"))
-  (swap-devices (list "/swapfile"))
+  (swap-devices
+    (list (swap-space
+            (target "/swapfile"))))
 
-  (file-systems (cons* (file-system
-                         (device (file-system-label "root"))
-                         (mount-point "/")
-                         (type "ext4"))
-                       %guix-temproots
-                       %base-file-systems))
+  (file-systems
+    (cons* (file-system
+             (device (file-system-label "root"))
+             (mount-point "/")
+             (type "ext4"))
+           %guix-temproots
+           %base-file-systems))
 
   (users (cons (user-account
                 (name "efraim")
@@ -55,75 +59,73 @@
                %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
-  (packages (cons* nss-certs         ;for HTTPS access
-                   btrfs-progs compsize
-                   %base-packages))
+  (packages
+    (cons* (specification->package "nss-certs")     ; for HTTPS access
+           ;(specification->package "btrfs-progs")
+           ;(specification->package "compsize")
+           %base-packages))
 
-  (services (cons* ;(service agetty-service-type
-                   ;         (agetty-configuration
-                   ;           (extra-options '("-L")) ; no carrier detect
-                   ;           (baud-rate "115200")
-                   ;           (term "vt100")
-                   ;           (tty "ttyS0")))
+  (services
+    (cons* (service openssh-service-type
+                    (openssh-configuration
+                      (authorized-keys
+                        `(("efraim" ,(local-file "Extras/efraim.pub"))))))
 
-                   (service guix-publish-service-type
-                            (guix-publish-configuration
-                              (host "0.0.0.0")
-                              (port 3000)))
-                   (service openssh-service-type
-                            (openssh-configuration
-                              (x11-forwarding? #t)
-                              (extra-content "StreamLocalBindUnlink yes")))
+           (service mcron-service-type
+                    (mcron-configuration
+                      ;; Image created with ext4
+                      ;(jobs (%btrfs-maintenance-jobs "/"))
+                      (jobs
+                        (list
+                          #~(job '(next-hour '(3))
+                                 "guix gc")
+                          ;; The board powers up at unix date 0.
+                          ;; Restart ntpd to set the clock.
+                          #~(job "1-5 0 * * *"
+                                 "herd restart ntpd")))))
 
-                   (service tor-service-type)
-                   (tor-hidden-service "ssh"
-                                       '((22 "127.0.0.1:22")))
-                   (tor-hidden-service "guix-publish"
-                                       '((3000 "127.0.0.1:3000")))
+           (service openntpd-service-type
+                    (openntpd-configuration
+                      (listen-on '("127.0.0.1" "::1"))
+                      ;; Prevent moving to year 2116.
+                      (constraints-from '("https://www.google.com/"))))
 
-                   ;; Image created with ext4
-                   ;(service mcron-service-type
-                   ;         (mcron-configuration
-                   ;           (jobs (%btrfs-maintenance-jobs "/"))))
+           (service connman-service-type)
+           (service wpa-supplicant-service-type)
 
-                   (service openntpd-service-type
-                            (openntpd-configuration
-                              (listen-on '("127.0.0.1" "::1"))
-                              ;; Prevent moving to year 2116.
-                              (constraints-from '("https://www.google.com/"))))
+           (service earlyoom-service-type
+                    (earlyoom-configuration
+                      (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
+                      (avoid-regexp "guile")))
 
-                   (service connman-service-type)
-                   (service wpa-supplicant-service-type)
+           ;; Not supported by linux-libre-arm64-generic
+           ;(service zram-device-service-type
+           ;         (zram-device-configuration
+           ;           (size (* 2 (expt 2 30)))
+           ;           (compression-algorithm 'zstd)
+           ;           (priority 250)))
 
-                   ;; Needs no-manual version, depends on pandoc.
-                   ;(service earlyoom-service-type
-                   ;         (earlyoom-configuration
-                   ;           (earlyoom
-                   ;             (let ((base earlyoom))
-                   ;               (package
-                   ;                 (inherit base)
-                   ;                 (native-inputs
-                   ;                   (alist-delete "pandoc"
-                   ;                                 (package-native-inputs base))))))))
-
-                   ;; Not supported by linux-libre-arm64-generic
-                   ;(service zram-device-service-type
-                   ;         (zram-device-configuration
-                   ;           (size (* 2 (expt 2 30)))
-                   ;           (compression-algorithm 'zstd)
-                   ;           (priority 250)))
-
-                   (modify-services
-                     %base-services
-                     (guix-service-type
-                       config =>
-                       (guix-configuration
-                         (inherit config)
-                         (discover? #t)
-                         (substitute-urls %substitute-urls)
-                         (authorized-keys %authorized-keys)
-                         (extra-options
-                           (cons* "--cores=2" "--cache-failures" %extra-options)))))))
+           (modify-services
+             %base-services
+             (guix-service-type
+               config =>
+               (guix-configuration
+                 (inherit config)
+                 ;; Only until the tests are fixed
+                 (guix
+                   (let ((base (specification->package "guix")))
+                     (package
+                       (inherit base)
+                       (arguments
+                        (substitute-keyword-arguments (package-arguments base)
+                          ((#:tests? #f #f) #f))))))
+                 (discover? #t)
+                 (substitute-urls %substitute-urls)
+                 (authorized-keys %authorized-keys)
+                 (extra-options
+                   (cons* "--cores=2" "--cache-failures" %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
+
+;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --system=aarch64-linux
