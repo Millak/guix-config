@@ -159,6 +159,7 @@
 
 (define S specification->package)
 
+;; TODO: Use fold-packages to remove ones without package-supported-system.
 (define package-list
   (map (compose list specification->package+output)
        (append
@@ -184,7 +185,10 @@
 (define %mpv-conf
   (plain-file
     "mpv.conf"
-    "no-audio-display\n"))
+    (string-append
+      "no-audio-display\n"
+      ;; Upscaling from 720 causes fewer dropped frames.
+      "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n")))
 
 (define %inputrc
   (plain-file
@@ -392,6 +396,7 @@
     "ignore"
     (string-append
       "*~\n"
+      ".exrc\n"
       "*sw?\n"
       ".vimrc\n"
       "gtags.files\n"
@@ -702,7 +707,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
 
         (simple-service 'hgrc-config
                         home-files-service-type
-                        (list `("hgrc"
+                        (list `("config/hg/hgrc"
                                 ,%hgrc)))
 
         (simple-service 'inputrc-config
@@ -745,7 +750,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
 
         (simple-service 'mpv-conf
                         home-files-service-type
-                        (list `("config/mpv/conf"
+                        (list `("config/mpv/mpv.conf"
                                 ,%mpv-conf)))
 
         (simple-service 'pbuilderrc
