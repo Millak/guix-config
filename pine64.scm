@@ -68,6 +68,7 @@
   (services
     (cons* (service openssh-service-type
                     (openssh-configuration
+                      (openssh (specification->package "openssh-sans-x"))
                       (authorized-keys
                         `(("efraim" ,(local-file "Extras/efraim.pub"))))))
 
