@@ -192,7 +192,7 @@
 
 (define %inputrc
   (plain-file
-    "inputrc"
+    "dot-inputrc"
     (string-append
       "set show-mode-in-prompt on\n"
       "set enable-bracketed-paste on\n"
@@ -202,7 +202,7 @@
 
 (define %screenrc
   (plain-file
-    "screenrc"
+    "dot-screenrc"
     (string-append
       "startup_message off\n"
       "term screen-256color\n"
@@ -213,13 +213,13 @@
 
 (define %wcalcrc
   (plain-file
-    "wcalcrc"
+    "dot-wcalcrc"
     (string-append
       "color=yes\n")))
 
 (define %wgetpaste.conf
   (plain-file
-    "wgetpaste.conf"
+    "dot-wgetpaste-conf"
     (string-append
       "DEFAULT_NICK=efraim\n"
       "DEFAULT_EXPIRATION=1month\n")))
@@ -234,12 +234,12 @@
 
 (define %mailcap
   (mixed-text-file
-    "mailcap"
+    "dot-mailcap"
     "text/html; " (S "links") "/bin/links -dump %s; nametemplate=%s.html; copiousoutput\n"))
 
 (define %signature
   (plain-file
-    "signature"
+    "dot-signature"
     (string-append
       ;"Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
       "Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
@@ -248,7 +248,7 @@
 
 (define %cvsrc
   (plain-file
-    "cvsrc"
+    "dot-cvsrc"
     (string-append
       "CVS configuration file from the pkgsrc guide\n"
       "cvs -q -z2\n"
@@ -291,7 +291,7 @@
 
 (define %pbuilderrc
   (mixed-text-file
-    "pbuilderrc"
+    "dot-pbuilderrc"
     "MIRRORSITE=http://deb.debian.org/debian-ports\n"
     "DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
     "EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
@@ -342,17 +342,35 @@
     "    name = Efraim Flashner\n"
     "    email = efraim@flashner.co.il\n"
     "    signingkey = 0xca3d8351\n"
+    #~(if #$work-machine?
+        ""
+        (string-append "[commit]\n"
+                       "    gpgSign = true\n"))
+    "[color]\n"
+    "    ui = auto\n"
+    "    branch = auto\n"
+    "    diff = auto\n"
+    "    status = auto\n"
     "[core]\n"
     "    editor = " (S "vim") "/bin/vim\n"
-    "[submodule]\n"
-    "    fetchJobs = 5\n"
+    "[diff]\n"
+    "    algorithm = patience\n"
+    "[fetch]\n"
+    "    prune = true\n"
     "[format]\n"
     "    coverletter = auto\n"
     "    useAutoBase = true\n"
     "    signature-file = " %signature "\n"
     "    thread = shallow\n"
-    "[diff]\n"
-    "    algorithm = patience\n"
+    #~(if #$work-machine?
+        ""
+        (string-append "[gpg]\n"
+                       "    program = " #$(file-append (S "gnupg") "/bin/gpg") "\n"))
+    "[imap]\n"
+    "    folder = Drafts\n"
+    "    tunnel = \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
+    "[pull]\n"
+    "    rebase = true\n"
     "[sendemail]\n"
     "    smtpEncryption = ssl\n"
     #~(if #$work-machine?
@@ -366,34 +384,18 @@
     "    supresscc = self\n"
     "    transferEncoding = 8bit\n"
     "    annotate = yes\n"
-    "[color]\n"
-    "    ui = auto\n"
-    "    branch = auto\n"
-    "    diff = auto\n"
-    "    status = auto\n"
-    "[imap]\n"
-    "    folder = Drafts\n"
-    "    tunnel = \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
+    "[submodule]\n"
+    "    fetchJobs = 5\n"
     "[transfer]\n"
     "    fsckObjects = true\n"
-    #~(if #$work-machine?
-        ""
-        (string-append "[gpg]\n"
-                       "    program = " #$(file-append (S "gnupg") "/bin/gpg") "\n"
-                       "[commit]\n"
-                       "    gpgSign = true\n"))
     "[web]\n"
     #~(if (or #$headless? #$work-machine?)
         (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
-        (string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n"))
-    "[pull]\n"
-    "    rebase = true\n"
-    "[fetch]\n"
-    "    prune = true\n"))
+        (string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n"))))
 
 (define %git-ignore
   (plain-file
-    "ignore"
+    "git-ignore"
     (string-append
       "*~\n"
       ".exrc\n"
@@ -429,6 +431,51 @@
 ;  (computed-file "guix-checkered-16-9.edj"
 ;    #~(begin
 ;        (system* #+(file-append (S "efl") "/bin/edje_cc") "-id" #$(file-append (@ (gnu artwork) %artwork-repository) "/backgrounds") #$%bg.edc "-o" #$output))))
+
+(define %gdbinit
+  (plain-file "dot-gdbinit" "\
+# Tell GDB where to look for separate debugging files.
+guile
+(use-modules (gdb))
+(execute (string-append \"set debug-file-directory \"
+                        (or (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
+                            \"~/.guix-profile/lib/debug\")))
+end
+
+# Authorize extensions found in the store, such as the
+# pretty-printers of libstdc++.
+set auto-load safe-path /gnu/store/*/lib\n"))
+
+(define %guile
+  (plain-file "dot-guile"
+              "(cond ((false-if-exception (resolve-interface '(ice-9 readline)))
+       =>
+       (lambda (module)
+         ;; Enable completion and input history at the REPL.
+         ((module-ref module 'activate-readline))))
+      (else
+       (display \"Consider installing the 'guile-readline' package for
+convenient interactive line editing and input history.\\n\\n\")))
+
+      (unless (getenv \"INSIDE_EMACS\")
+        (cond ((false-if-exception (resolve-interface '(ice-9 colorized)))
+               =>
+               (lambda (module)
+                 ;; Enable completion and input history at the REPL.
+                 ((module-ref module 'activate-colorized))))
+              (else
+               (display \"Consider installing the 'guile-colorized' package
+for a colorful Guile experience.\\n\\n\"))))\n"))
+
+(define %nanorc
+  (plain-file "nanorc" "\
+# Include all the syntax highlighting modules.
+include /run/current-system/profile/share/nano/*.nanorc\n"))
+
+(define %xdefaults
+  (plain-file "dot-Xdefaults" "\
+XTerm*utf8: always
+XTerm*metaSendsEscape: true\n"))
 
 ;;;
 
@@ -618,6 +665,7 @@
                      `(("QT_QPA_PLATFORM" . "wayland")
                        ("ECORE_EVAS_ENGINE" . "wayland_egl")
                        ("ELM_ENGINE" . "wayland_egl")
+                       ;; Not necessary after sdl2@2.0.22
                        ("SDL_VIDEODRIVER" . "wayland")
                        ;; ("MOZ_ENABLE_WAYLAND" . "1")
                        ("EDITOR" . ,(file-append (S "vim") "/bin/vim"))
@@ -685,6 +733,11 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                         (list `("cvsrc"
                                 ,%cvsrc)))
 
+        (simple-service 'gdbinit
+                        home-files-service-type
+                        (list `("gdbinit"
+                                ,%gdbinit)))
+
         (simple-service 'git-config
                         home-files-service-type
                         (list `("config/git/config"
@@ -704,6 +757,11 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                         home-files-service-type
                         (list `("gnupg/gpg-agent.conf"
                                 ,%gpg-agent.conf)))
+
+        (simple-service 'guile
+                        home-files-service-type
+                        (list `("guile"
+                                ,%guile)))
 
         (simple-service 'hgrc-config
                         home-files-service-type
@@ -753,6 +811,11 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                         (list `("config/mpv/mpv.conf"
                                 ,%mpv-conf)))
 
+        (simple-service 'nanorc
+                        home-files-service-type
+                        (list `("config/nano/nanorc"
+                                ,%nanorc)))
+
         (simple-service 'pbuilderrc
                         home-files-service-type
                         (list `("pbuilderrc"
@@ -782,6 +845,11 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                         home-files-service-type
                         (list `("wgetpaste.conf"
                                 ,%wgetpaste.conf)))
+
+        (simple-service 'xdefaults
+                        home-files-service-type
+                        (list `("Xdefaults"
+                                ,%xdefaults)))
 
         (simple-service 'youtubedl-conf
                         home-files-service-type
