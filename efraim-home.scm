@@ -63,7 +63,7 @@
         "pavucontrol"
         "pinentry-efl"
         "qtwayland"
-        "quassel"
+        "quasselclient"
         "qutebrowser"
         "terminology"
         "viewnior"
