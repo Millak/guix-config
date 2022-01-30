@@ -138,6 +138,8 @@
                                config =>
                                (guix-configuration
                                  (inherit config)
+                                 ;; Rely on btrfs compression.
+                                 (log-compression 'none)
                                  (discover? #t)
                                  (substitute-urls %substitute-urls)
                                  (authorized-keys %authorized-keys)
