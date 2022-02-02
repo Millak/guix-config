@@ -685,16 +685,9 @@ fi
 #if [ -d ${HOME}/.cache/efreet ]; then
 #    rm -rf -- ${HOME}/.cache/efreet
 #fi
-if [ -d ${HOME}/.cache/tilda/locks ]; then
-    rm -rf -- ${HOME}/.cache/tilda/locks
-fi
 if [ -d ${HOME}/.local/share/flatpak/exports/share ]; then
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${HOME}/.local/share/flatpak/exports/share
-fi
-# This seems to be covered in guix-home-service.
-#if [ $(which fc-cache 2>/dev/null) ]; then
-#    fc-cache -frv &>/dev/null;
-#fi")))
+fi")))
                    (bashrc
                      (list
                        (mixed-text-file "bashrc" "\
@@ -723,141 +716,40 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        %kdeconnect-user-service
                        %parcimonie-user-service))))
 
-        (simple-service 'aria2-config
-                        home-files-service-type
-                        (list `("config/aria2/aria2.conf"
-                                ,%aria2-config)))
-
-        (simple-service 'cvsrc-config
-                        home-files-service-type
-                        (list `("cvsrc"
-                                ,%cvsrc)))
-
-        (simple-service 'gdbinit
-                        home-files-service-type
-                        (list `("gdbinit"
-                                ,%gdbinit)))
-
-        (simple-service 'git-config
-                        home-files-service-type
-                        (list `("config/git/config"
-                                ,%git-config)))
-
-        (simple-service 'git-ignore
-                        home-files-service-type
-                        (list `("config/git/ignore"
-                                ,%git-ignore)))
-
-        (simple-service 'gnupg-conf
-                      home-files-service-type
-                      (list `("gnupg/gpg.conf"
-                              ,%gpg.conf)))
-
-        (simple-service 'gnupg-agent-conf
-                        home-files-service-type
-                        (list `("gnupg/gpg-agent.conf"
-                                ,%gpg-agent.conf)))
-
-        (simple-service 'guile
-                        home-files-service-type
-                        (list `("guile"
-                                ,%guile)))
-
-        (simple-service 'hgrc-config
-                        home-files-service-type
-                        (list `("config/hg/hgrc"
-                                ,%hgrc)))
-
-        (simple-service 'inputrc-config
-                        home-files-service-type
-                        (list `("inputrc"
-                                ,%inputrc)))
-
-        ;; This clears the defaults, do not use.
-        ;(simple-service 'less-config
-        ;                home-files-service-type
-        ;                (list `("config/lesskey"
-        ;                        ,%lesskey)))
-
-        ;; Not sure about using this one.
-        ;(simple-service 'mailcap-config
-        ;                home-files-service-type
-        ;                (list `("mailcap"
-        ;                        ,%mailcap)))
-
-        (simple-service 'mpv-mpris
-                        home-files-service-type
-                        (list `("config/mpv/scripts/mpris.so"
-                                ,(file-append (S "mpv-mpris") "/lib/mpris.so"))))
-
-        (simple-service 'mpv-sponsorblock
-                        home-files-service-type
-                        (list `("config/mpv/scripts/sponsorblock_minimal.lua"
-                                ,(file-append
-                                   (false-if-exception
-                                     (S "mpv-sponsorblock-minimal"))
-                                   "/lib/sponsorblock_minimal.lua"))))
-
-        (simple-service 'mpv-twitch-chat
-                        home-files-service-type
-                        (list `("config/mpv/scripts/twitch-chat/main.lua"
-                                ,(file-append
-                                   (false-if-exception
-                                     (S "mpv-twitch-chat"))
-                                   "/lib/main.lua"))))
-
-        (simple-service 'mpv-conf
-                        home-files-service-type
-                        (list `("config/mpv/mpv.conf"
-                                ,%mpv-conf)))
-
-        (simple-service 'nanorc
-                        home-files-service-type
-                        (list `("config/nano/nanorc"
-                                ,%nanorc)))
-
-        (simple-service 'pbuilderrc
-                        home-files-service-type
-                        (list `("pbuilderrc"
-                                ,%pbuilderrc)))
-
-        (simple-service 'screenrc
-                        home-files-service-type
-                        (list `("screenrc"
-                                ,%screenrc)))
-
-        (simple-service 'signature
-                        home-files-service-type
-                        (list `("signature"
-                                ,%signature)))
-
-        (simple-service 'streamlink-conf
-                        home-files-service-type
-                        (list `("config/streamlink/config"
-                                ,%streamlink-config)))
-
-        (simple-service 'wcalcrc
-                        home-files-service-type
-                        (list `("wcalcrc"
-                                ,%wcalcrc)))
-
-        (simple-service 'wgetpaste-conf
-                        home-files-service-type
-                        (list `("wgetpaste.conf"
-                                ,%wgetpaste.conf)))
-
-        (simple-service 'xdefaults
-                        home-files-service-type
-                        (list `("Xdefaults"
-                                ,%xdefaults)))
-
-        (simple-service 'youtubedl-conf
-                        home-files-service-type
-                        (list `("config/youtube-dl/config"
-                                ,%ytdl-config)))
-        (simple-service 'yt-dlp-conf
-                        home-files-service-type
-                        (list `("config/yt-dlp/config"
-                                ,%ytdl-config)))))))
+        (service home-files-service-type
+         `(("cvsrc" ,%cvsrc)
+           ("config/aria2/aria2.conf" ,%aria2-config)
+           ("config/git/config" ,%git-config)
+           ("config/git/ignore" ,%git-ignore)
+           ("config/hg/hgrc" ,%hgrc)
+           ;; This clears the defaults, do not use.
+           ; ("config/lesskey" ,%lesskey)
+           ("config/mpv/scripts/mpris.so"
+            ,(file-append (S "mpv-mpris")
+                          "/lib/mpris.so"))
+           ("config/mpv/scripts/sponsorblock_minimal.lua"
+            ,(file-append (S "mpv-sponsorblock-minimal")
+                          "/lib/sponsorblock_minimal.lua"))
+           ("config/mpv/scripts/twitch-chat/main.lua"
+            ,(file-append (S "mpv-twitch-chat")
+                          "/lib/main.lua"))
+           ("config/mpv/mpv.conf" ,%mpv-conf)
+           ("config/nano/nanorc" ,%nanorc)
+           ("config/streamlink/config" ,%streamlink-config)
+           ("config/youtube-dl/config" ,%ytdl-config)
+           ("config/yt-dlp/config" ,%ytdl-config)
+           ("gdbinit" ,%gdbinit)
+           ("gnupg/gpg.conf" ,%gpg.conf)
+           ("gnupg/gpg-agent.conf" ,%gpg-agent.conf)
+           ("guile" ,%guile)
+           ("inputrc" ,%inputrc)
+           ;; Not sure about using this one.
+           ; ("mailcap" ,%mailcap)
+           ("pbuilderrc" ,%pbuilderrc)
+           ("screenrc" ,%screenrc)
+           ("signature" ,%signature)
+           ("wcalcrc" ,%wcalcrc)
+           ("wgetpaste.conf" ,%wgetpaste.conf)
+           ("Xdefaults" ,%xdefaults)))))))
 
 my-home-environment
