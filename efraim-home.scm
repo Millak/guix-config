@@ -516,7 +516,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "syncthing") "/bin/syncthing")
                      "-no-browser")
-               #:log-file (string-append %logdir "/syncthing.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/syncthing.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
@@ -529,7 +529,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--foreground"
                      "--verbose"
                      "/home/efraim/Dropbox")
-               #:log-file (string-append %logdir "/dbxfs.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/dbxfs.log")))
     ;; Perhaps I want to use something like this?
     ;(stop (or #~(make-system-destructor
     ;              (string-append
@@ -571,7 +571,7 @@ XTerm*metaSendsEscape: true\n"))
                                     "/bin/openconnect-sso")
                      "--server"
                      "uthscvpn1.uthsc.edu")
-               #:log-file (string-append %logdir "/uthsc-vpn.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/uthsc-vpn.log")))
     (auto-start? #f)
     (respawn? #f)))
 
@@ -602,7 +602,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append %logdir "/keybase.log")
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/keybase.log")
                #:directory #~(string-append
                                (getenv "XDG_RUNTIME_DIR")
                                "/keybase")))
@@ -622,7 +622,7 @@ XTerm*metaSendsEscape: true\n"))
                (list #$(file-append (S "keybase") "/bin/kbfsfuse")
                      ;"-debug"
                      "-log-to-file")
-               #:log-file (string-append %logdir "/kbfs.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/kbfs.log")))
     (stop #~(make-kill-destructor))
     (auto-start? #f)
     (respawn? #t)))
@@ -635,7 +635,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
                      "-platform" "offscreen")
-               #:log-file (string-append %logdir "/kdeconnect.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/kdeconnect.log")))
     (stop #~(make-kill-destructor))))
 
 (define %parcimonie-user-service
@@ -649,7 +649,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--keyring=/home/efraim/.config/guix/upstream/trustedkeys.kbx"
                      "--gnupg_extra_args"
                      "--keyring=/home/efraim/.config/guix/gpg/trustedkeys.kbx")
-               #:log-file (string-append %logdir "/parcimonie.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/parcimonie.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
@@ -704,21 +704,22 @@ alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
 alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --no-grafts --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'
 alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'")))))
 
-        (service home-shepherd-service-type
-                 (home-shepherd-configuration
-                   (services
-                     (list
-                       %syncthing-user-service
-                       %dropbox-user-service
-                       %vdirsyncer-user-service
-                       %uthsc-vpn-user-service
-                       %mbsync-user-service
+        ;(service home-shepherd-service-type
+        ;         (home-shepherd-configuration
+        ;           (services
+        ;             (list
+        ;               ;%syncthing-user-service
+        ;               ;%dropbox-user-service
+        ;               ;%vdirsyncer-user-service
+        ;               ;%uthsc-vpn-user-service
+        ;               ;%mbsync-user-service
 
-                       %keybase-user-service
-                       %keybase-fuse-user-service
+        ;               ;%keybase-user-service
+        ;               ;%keybase-fuse-user-service
 
-                       %kdeconnect-user-service
-                       %parcimonie-user-service))))
+        ;               ;%kdeconnect-user-service
+        ;               ;%parcimonie-user-service
+        ;               ))))
 
         (service home-files-service-type
          `(("cvsrc" ,%cvsrc)
