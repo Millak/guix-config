@@ -604,8 +604,8 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append #$(getenv "XDG_LOG_HOME") "/keybase.log")
-               #:directory (string-append #$%logdir "/keybase")))
+               #:log-file (string-append #$%logdir "/keybase.log")
+               #:directory (string-append #$(getenv "XDG_RUNTIME_DIR") "/keybase")))
     (stop #~(make-system-destructor
               (string-append #$(file-append (S "keybase")
                                             "/bin/keybase")
@@ -717,8 +717,8 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        ;%uthsc-vpn-user-service     ; untested
                        ;%mbsync-user-service        ; error with 'match'
 
-                       %keybase-user-service
-                       %keybase-fuse-user-service
+                       ;%keybase-user-service       ; won't stay up
+                       ;%keybase-fuse-user-service
 
                        ;%kdeconnect-user-service    ; starts too fast
                        %parcimonie-user-service))))
