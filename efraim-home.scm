@@ -241,6 +241,7 @@
   (plain-file
     "dot-signature"
     (string-append
+      ;; It shouldn't be this hard to always display correctly.
       ;"Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
       "Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
       "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
@@ -623,6 +624,7 @@ XTerm*metaSendsEscape: true\n"))
                      "-log-to-file")
                #:log-file (string-append %logdir "/kbfs.log")))
     (stop #~(make-kill-destructor))
+    (auto-start? #f)
     (respawn? #t)))
 
 ;; kdeconnect-indicator must not be running when it it started
@@ -668,6 +670,8 @@ XTerm*metaSendsEscape: true\n"))
                        ;; Not necessary after sdl2@2.0.22
                        ("SDL_VIDEODRIVER" . "wayland")
                        ;; ("MOZ_ENABLE_WAYLAND" . "1")
+                       ;; Work around old qtwebengine and new glibc:
+                       ("QTWEBENGINE_CHROMIUM_FLAGS" . "\"--disable-seccomp-filter-sandbox\"")
                        ("EDITOR" . ,(file-append (S "vim") "/bin/vim"))
                        ("GPG_TTY" . "$(tty)")
                        ("HISTSIZE" . "3000")
