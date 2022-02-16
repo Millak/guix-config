@@ -680,7 +680,7 @@ XTerm*metaSendsEscape: true\n"))
                        ;; ("MOZ_ENABLE_WAYLAND" . "1")
                        ;; Work around old qtwebengine and new glibc:
                        ("QTWEBENGINE_CHROMIUM_FLAGS" . "\"--disable-seccomp-filter-sandbox\"")
-                       ("EDITOR" . ,(file-append (S "vim") "/bin/vim"))
+                       ("EDITOR" . "vim")
                        ("GPG_TTY" . "$(tty)")
                        ("HISTSIZE" . "3000")
                        ("HISTFILESIZE" . "10000")
