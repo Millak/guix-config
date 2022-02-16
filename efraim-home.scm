@@ -319,12 +319,15 @@
       "keyserver-options no-honor-keyserver-url\n"
       "list-options show-uid-validity\n"
       "verify-options show-uid-validity\n"
+      ;"photo-viewer \"catimg $i\"\n"
       "keyid-format 0xlong\n"
-      "auto-key-locate wkd cert pka ldap hkp://keys.gnupg.net\n"
+      "use-agent\n"
+      "auto-key-locate wkd cert pka ldap hkp://keys.gnupg.net hkp://keys.openpgp.org hkp://keyserver.ubuntu.com\n"
       "personal-cipher-preferences AES256 AES192 AES CAST5\n"
       "personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"
       "cert-digest-algo SHA512\n"
       "default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
+      ;"default-cache-ttl 900\n"
       "trust-model tofu+pgp\n")))
 
 (define %gpg-agent.conf
@@ -334,7 +337,9 @@
         (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
         (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))
     ;"enable-ssh-support\n"
-    "ignore-cache-for-signing\n"))
+    ;; This makes me sign each commit individually.
+    ;"ignore-cache-for-signing\n"
+    ))
 
 (define %git-config
   (mixed-text-file
