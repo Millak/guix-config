@@ -82,8 +82,10 @@
                                  "guix gc")
                           ;; The board powers up at unix date 0.
                           ;; Restart ntpd to set the clock.
-                          #~(job "2 0 * * *"
-                                 "herd restart ntpd")))))
+                          ;; TODO: This job doesn't work.
+                          ;#~(job "2 0 * * *"
+                          ;       "herd restart ntpd")
+                          ))))
 
            (service openntpd-service-type
                     (openntpd-configuration
