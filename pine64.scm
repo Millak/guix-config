@@ -1,6 +1,5 @@
 (define-module (pine64))
 (use-modules (guix packages)
-             (guix utils)       ; for alternate guix package
              (gnu)
              (gnu bootloader u-boot)
              (gnu system locale)
@@ -114,14 +113,6 @@
                config =>
                (guix-configuration
                  (inherit config)
-                 ;; Only until the tests are fixed
-                 (guix
-                   (let ((base (specification->package "guix")))
-                     (package
-                       (inherit base)
-                       (arguments
-                        (substitute-keyword-arguments (package-arguments base)
-                          ((#:tests? #f #f) #f))))))
                  (discover? #t)
                  (substitute-urls %substitute-urls)
                  (authorized-keys %authorized-keys)
