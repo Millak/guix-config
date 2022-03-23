@@ -63,9 +63,11 @@ XTerm*metaSendsEscape: true\n"))
         (service home-zsh-service-type)
 
         (service home-files-service-type
-         `(("config/nano/nanorc" ,%nanorc)
-           ("gdbinit" ,%gdbinit)
+         `(("gdbinit" ,%gdbinit)
            ("guile" ,%guile)
-           ("Xdefaults" ,%xdefaults)))))))
+           ("Xdefaults" ,%xdefaults)))
+
+        (service home-xdg-configuration-files-service-type
+         `(("nano/nanorc" ,%nanorc)))))))
 
 etc-skel

@@ -381,7 +381,6 @@
     "    smtpEncryption = ssl\n"
     #~(if #$work-machine?
         (string-append "    smtpServer = flashner.co.il\n"
-                       "    smtpUser = efraim\n"
                        ;"    smtpsslcertpath = \"\"\n"
         )
         (string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtpq") "\n"))
@@ -694,9 +693,9 @@ unset SSH_AGENT_PID
 if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
     export SSH_AUTH_SOCK=\"$(" (S "gnupg") "/bin/gpgconf --list-dirs agent-ssh-socket)\"
 fi
-#if [ -d ${HOME}/.cache/efreet ]; then
-#    rm -rf -- ${HOME}/.cache/efreet
-#fi
+if [ -d ${HOME}/.cache/efreet ]; then
+    rm -rf -- ${HOME}/.cache/efreet
+fi
 if [ -d ${HOME}/.local/share/flatpak/exports/share ]; then
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${HOME}/.local/share/flatpak/exports/share
 fi")))
@@ -730,26 +729,6 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
 
         (service home-files-service-type
          `(("cvsrc" ,%cvsrc)
-           ("config/aria2/aria2.conf" ,%aria2-config)
-           ("config/git/config" ,%git-config)
-           ("config/git/ignore" ,%git-ignore)
-           ("config/hg/hgrc" ,%hgrc)
-           ;; This clears the defaults, do not use.
-           ; ("config/lesskey" ,%lesskey)
-           ("config/mpv/scripts/mpris.so"
-            ,(file-append (S "mpv-mpris")
-                          "/lib/mpris.so"))
-           ("config/mpv/scripts/sponsorblock_minimal.lua"
-            ,(file-append (S "mpv-sponsorblock-minimal")
-                          "/lib/sponsorblock_minimal.lua"))
-           ("config/mpv/scripts/twitch-chat/main.lua"
-            ,(file-append (S "mpv-twitch-chat")
-                          "/lib/main.lua"))
-           ("config/mpv/mpv.conf" ,%mpv-conf)
-           ("config/nano/nanorc" ,%nanorc)
-           ("config/streamlink/config" ,%streamlink-config)
-           ("config/youtube-dl/config" ,%ytdl-config)
-           ("config/yt-dlp/config" ,%ytdl-config)
            ("gdbinit" ,%gdbinit)
            ("gnupg/gpg.conf" ,%gpg.conf)
            ("gnupg/gpg-agent.conf" ,%gpg-agent.conf)
@@ -762,6 +741,28 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            ("signature" ,%signature)
            ("wcalcrc" ,%wcalcrc)
            ("wgetpaste.conf" ,%wgetpaste.conf)
-           ("Xdefaults" ,%xdefaults)))))))
+           ("Xdefaults" ,%xdefaults)))
+
+        (service home-xdg-configuration-files-service-type
+         `(("aria2/aria2.conf" ,%aria2-config)
+           ("git/config" ,%git-config)
+           ("git/ignore" ,%git-ignore)
+           ("hg/hgrc" ,%hgrc)
+           ;; This clears the defaults, do not use.
+           ; ("config/lesskey" ,%lesskey)
+           ("mpv/scripts/mpris.so"
+            ,(file-append (S "mpv-mpris")
+                          "/lib/mpris.so"))
+           ("mpv/scripts/sponsorblock_minimal.lua"
+            ,(file-append (S "mpv-sponsorblock-minimal")
+                          "/lib/sponsorblock_minimal.lua"))
+           ("mpv/scripts/twitch-chat/main.lua"
+            ,(file-append (S "mpv-twitch-chat")
+                          "/lib/main.lua"))
+           ("mpv/mpv.conf" ,%mpv-conf)
+           ("nano/nanorc" ,%nanorc)
+           ("streamlink/config" ,%streamlink-config)
+           ("youtube-dl/config" ,%ytdl-config)
+           ("yt-dlp/config" ,%ytdl-config)))))))
 
 my-home-environment
