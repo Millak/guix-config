@@ -88,7 +88,7 @@
                       (config-file
                         (plain-file "extra-torrc-bits"
                                     (string-append
-                                      "# NumCPUs only affects relays, but we want to silence the warnings"
+                                      "# NumCPUs only affects relays, but we want to silence the warnings\n"
                                       "NumCPUs 2\n")))))
            (tor-hidden-service "ssh"
                                '((22 "127.0.0.1:22")))
@@ -123,8 +123,8 @@
                     (qemu-binfmt-configuration
                       ;; We get i386 for free from the architecture.
                       (platforms
-                        (delete (@@ (gnu services virtualization) %i386)
-                                %qemu-platforms))))
+                        (fold delete %qemu-platforms
+                              (lookup-qemu-platforms "i386")))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
