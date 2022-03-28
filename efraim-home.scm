@@ -80,6 +80,7 @@
   (list "btrfs-progs"
         "catimg"
         "ffmpeg"
+        "git-annex"
         "isync"
         "keybase"
         "khal"
@@ -87,6 +88,7 @@
         "libhdate"
         "msmtp"
         "mutt"
+        "newsboat"
         "parcimonie"
         "sshfs"
         "syncthing"
@@ -94,15 +96,6 @@
         "vdirsyncer"
         "weechat"
         "yt-dlp"))
-
-(define %not-for-work-ghc
-  (list "git-annex"))
-
-(define %not-for-work-rust
-  (list "newsboat"))
-
-(define %not-for-work-no-rust
-  (list))
 
 (define %headless
   (list "pinentry-tty"))
@@ -132,7 +125,10 @@
         "hunspell-dict-en"
         "links"
         "myrepos"
-        "ncdu"
+        (if (package-transitive-supported-systems
+              (specification->package "ncdu2"))
+          "ncdu2"
+          "ncdu")
         "nmap"
         "nss-certs"
         "openssh"
@@ -159,26 +155,25 @@
 
 (define S specification->package)
 
-;; TODO: Use fold-packages to remove ones without package-supported-system.
 (define package-list
   (map (compose list specification->package+output)
-       (append
-         (if (or headless?
-                 (not guix-system))
-           %headless
-           %GUI-only)
-         (if work-machine?
-           %work-applications
-           (append
-             %not-for-work
-             (match (utsname:machine (uname))
-                    ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
-                    ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
-                    (_ %not-for-work-no-rust))))
-         (if guix-system
-           '()
-           %guix-system-apps)
-         %cli-apps)))
+       (filter (lambda (pkg)
+                 (member (or (%current-system)
+                             (%current-target-system))
+                         (package-transitive-supported-systems
+                           (specification->package+output pkg))))
+              (append
+                (if (or headless?
+                        (not guix-system))
+                  %headless
+                  %GUI-only)
+                (if work-machine?
+                  %work-applications
+                  %not-for-work)
+                (if guix-system
+                  '()
+                  %guix-system-apps)
+                %cli-apps))))
 
 ;;;
 
