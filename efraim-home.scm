@@ -287,15 +287,27 @@
 (define %pbuilderrc
   (mixed-text-file
     "dot-pbuilderrc"
-    "MIRRORSITE=http://deb.debian.org/debian-ports\n"
-    "DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
-    "EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
+    ;; TODO:
+    ;; https://wiki.debian.org/PbuilderTricks#How_to_build_for_different_distributions
+    ;"# Create a default for building with multiple bases\n"
+    ;"DISTRIBUTION=${DIST:-sid}\n"
+    ;"ARCHITECTURE=${ARCH:-$(dpkg --print-architecture)}\n"
+    ;"BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
+
+    ;; These are only needed when it's a ports architecture.
+    ;"MIRRORSITE=http://deb.debian.org/debian-ports\n"
+    ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
+    ;"EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
+
+    ;; This is the default in the package
     ;"PBUILDERSATISFYDEPENDSCMD=" (S "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
-    "PBUILDERSATISFYDEPENDSCMD=/usr/lib/pbuilder/pbuilder-satisfydepends-apt\n"
-    ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
     "APTCACHE=\"/var/cache/apt/archives\"\n"
+    ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
     "AUTO_DEBSIGN=yes\n"
     "CCACHEDIR=/var/cache/pbuilder/ccache\n"
+    #~(if #$guix-system?
+        "PBUILDERROOTCMD=\"/run/setuid-programs/sudo -E\"\n"
+        "")
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
 (define %gpg.conf
