@@ -28,7 +28,7 @@
         "tux03"
         "octopus01"))
 
-(define guix-system
+(define guix-system?
   (file-exists? "/run/current-system/provenance"))
 
 (define work-machine?
@@ -163,13 +163,13 @@
                            (specification->package+output pkg))))
               (append
                 (if (or headless?
-                        (not guix-system))
+                        (not guix-system?))
                   %headless
                   %GUI-only)
                 (if work-machine?
                   %work-applications
                   %not-for-work)
-                (if guix-system
+                (if guix-system?
                   '()
                   %guix-system-apps)
                 %cli-apps))))
@@ -496,6 +496,7 @@ XTerm*metaSendsEscape: true\n"))
     "# Global values\n"
     "Expunge Both\n"
     "Create Near\n"
+    "\n"
     "MaildirStore local\n"
     "Path ~/Maildir/\n"
     "Inbox ~/Maildir/INBOX\n"
@@ -773,4 +774,51 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
 
-my-home-environment
+(define foreign-home-environment
+  (home-environment
+    (packages package-list)
+    (services
+      (list
+        (service home-files-service-type
+         `((".cvsrc" ,%cvsrc)
+           (".gdbinit" ,%gdbinit)
+           ;(".gnupg/gpg.conf" ,%gpg.conf)
+           ;(".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
+           (".guile" ,%guile)
+           (".inputrc" ,%inputrc)
+           ;; Not sure about using this one.
+           ; (".mailcap" ,%mailcap)
+           (".mbsyncrc" ,%mbsyncrc)
+           ;(".pbuilderrc" ,%pbuilderrc)
+           (".screenrc" ,%screenrc)
+           (".signature" ,%signature)
+           (".wcalcrc" ,%wcalcrc)
+           (".wgetpaste.conf" ,%wgetpaste.conf)
+           ;(".Xdefaults" ,%xdefaults)
+           ))
+
+        (service home-xdg-configuration-files-service-type
+         `(("aria2/aria2.conf" ,%aria2-config)
+           ("git/config" ,%git-config)
+           ("git/ignore" ,%git-ignore)
+           ("hg/hgrc" ,%hgrc)
+           ;; This clears the defaults, do not use.
+           ; ("config/lesskey" ,%lesskey)
+           ("mpv/scripts/mpris.so"
+            ,(file-append (S "mpv-mpris")
+                          "/lib/mpris.so"))
+           ("mpv/scripts/sponsorblock_minimal/main.lua"
+            ,(file-append (S "mpv-sponsorblock-minimal")
+                          "/lib/sponsorblock_minimal.lua"))
+           ("mpv/scripts/twitch-chat/main.lua"
+            ,(file-append (S "mpv-twitch-chat")
+                          "/lib/main.lua"))
+           ("mpv/mpv.conf" ,%mpv-conf)
+           ("nano/nanorc" ,%nanorc)
+           ("streamlink/config" ,%streamlink-config)
+           ("youtube-dl/config" ,%ytdl-config)
+           ("yt-dlp/config" ,%ytdl-config)))))))
+
+(if guix-system?
+  my-home-environment
+  foreign-home-environment)
