@@ -339,10 +339,13 @@
 (define %gpg-agent.conf
   (mixed-text-file
     "gpg-agent.conf"
-    #~(if #$headless?
-        (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
-        (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))
+    #~(if #$guix-system?
+        (if #$headless?
+          (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
+          (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))
+        "pinentry-program /usr/bin/pinentry\n")
     ;"enable-ssh-support\n"
+    ;"allow-emacs-pinentry\n"
     ;; This makes me sign each commit individually.
     ;"ignore-cache-for-signing\n"
     ))
