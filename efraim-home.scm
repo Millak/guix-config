@@ -743,6 +743,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            (".inputrc" ,%inputrc)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
+           (".mbsyncrc" ,%mbsyncrc)
            (".pbuilderrc" ,%pbuilderrc)
            (".screenrc" ,%screenrc)
            (".signature" ,%signature)
@@ -760,7 +761,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            ("mpv/scripts/mpris.so"
             ,(file-append (S "mpv-mpris")
                           "/lib/mpris.so"))
-           ("mpv/scripts/sponsorblock_minimal.lua"
+           ("mpv/scripts/sponsorblock_minimal/main.lua"
             ,(file-append (S "mpv-sponsorblock-minimal")
                           "/lib/sponsorblock_minimal.lua"))
            ("mpv/scripts/twitch-chat/main.lua"
