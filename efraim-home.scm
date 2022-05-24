@@ -104,10 +104,7 @@
   ;; These packages are provided by Guix System.
   (list "guile"
         "guile-colorized"
-        "guile-readline"
-        ;"mcron"
-        ;"shepherd"
-        ))
+        "guile-readline"))
 
 (define %cli-apps
   (list "aria2"
@@ -125,8 +122,10 @@
         "hunspell-dict-en"
         "links"
         "myrepos"
-        (if (package-transitive-supported-systems
-              (specification->package "ncdu2"))
+        ;; Currently zig only builds on x86_64-linux but isn't gated.
+        ;(if (package-transitive-supported-systems
+        ;      (specification->package "ncdu2"))
+        (if (equal? "x86_64-linux" (%current-system))
           "ncdu2"
           "ncdu")
         "nmap"
