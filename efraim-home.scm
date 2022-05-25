@@ -305,9 +305,6 @@
     ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
     "AUTO_DEBSIGN=yes\n"
     "CCACHEDIR=/var/cache/pbuilder/ccache\n"
-    #~(if #$guix-system?
-        "PBUILDERROOTCMD=\"/run/setuid-programs/sudo -E\"\n"
-        "")
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
 (define %gpg.conf
