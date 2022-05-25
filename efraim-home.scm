@@ -287,23 +287,27 @@
 (define %pbuilderrc
   (mixed-text-file
     "dot-pbuilderrc"
-    ;; TODO:
     ;; https://wiki.debian.org/PbuilderTricks#How_to_build_for_different_distributions
-    ;"# Create a default for building with multiple bases\n"
-    ;"DISTRIBUTION=${DIST:-sid}\n"
-    ;"ARCHITECTURE=${ARCH:-$(dpkg --print-architecture)}\n"
-    ;"BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
+    "DISTRIBUTION=${DIST:-sid}\n"
+    ;; Replace with (%current-system) -> (%debian-system) ?
+    "ARCHITECTURE=${ARCH:-$(" (S "dpkg") "/bin/dpkg --print-architecture)}\n"
+    "BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
+    "DEBOOTSTRAPOPTS=( '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
 
+    "if [ $ARCHITECTURE == powerpc ]; then\n"
     ;; These are only needed when it's a ports architecture.
-    ;"MIRRORSITE=http://deb.debian.org/debian-ports\n"
-    ;"DEBOOTSTRAPOPTS=( '--variant=buildd' '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' )\n"
-    ;"EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
+    "    MIRRORSITE=http://deb.debian.org/debian-ports\n"
+    ;; These two courtesy of John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+    ;; deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main
+    ;; contrib and non-free arch:all packages (i.e. firmware)
+    ;; deb [arch=all] http://deb.debian.org/debian/ sid contrib non-free
+    "    OTHERMIRROR=\"deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main\"\n"
+    "    DEBOOTSTRAPOPTS=( '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' ${DEBOOTSTRAPOPTS[@]} )\n"
+    "    EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
+    "fi\n"
 
-    ;; This is the default in the package
-    ;"PBUILDERSATISFYDEPENDSCMD=" (S "pbuilder") "/lib/pbuilder/pbuilder-satisfydepends-apt\n"
-    "APTCACHE=\"/var/cache/apt/archives\"\n"
-    ;"HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
-    "AUTO_DEBSIGN=yes\n"
+    "APTCACHE=/var/cache/apt/archives\n"
+    "HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
     "CCACHEDIR=/var/cache/pbuilder/ccache\n"
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
