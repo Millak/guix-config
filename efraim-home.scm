@@ -282,7 +282,9 @@
   (plain-file
     "aria2.conf"
     (string-append
-      "check-integrity=true\n")))
+      "check-integrity=true\n"
+      "max-connection-per-server=5\n"
+      "http-accept-gzip=true\n")))
 
 (define %pbuilderrc
   (mixed-text-file
