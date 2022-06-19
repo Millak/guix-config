@@ -151,6 +151,7 @@
         "translate-shell"
         "tree"
         "urlscan"
+        "vifm"
         "vim"
         "vim-airline"
         "vim-dispatch"
