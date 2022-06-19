@@ -276,7 +276,7 @@
 (define %streamlink-config
   (mixed-text-file
     "streamlink-config"
-    "default-stream 720p,1080p,best\n"
+    "default-stream 720p,720p60,1080p,best\n"
     "player=" (S "mpv") "/bin/mpv\n"))
 
 (define %aria2-config
