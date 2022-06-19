@@ -423,6 +423,28 @@
       "GRTAGS\n"
       "GTAGS\n")))
 
+(define %qutebrowser-config-py
+  (mixed-text-file
+    "qutebrowser-config-py"
+    "config.load_autoconfig(True)\n"
+    "config.bind('<Ctrl-Shift-u>', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='insert')\n"
+    "config.bind('pw', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='normal')\n"
+    "config.bind(',m', 'spawn mpv {url}')\n"
+    "config.bind(',M', 'hint links spawn mpv {hint-url}')\n"
+    "c.auto_save.session = True\n"
+    "c.content.cookies.accept = 'no-3rdparty'\n"
+    "c.content.default_encoding = 'utf-8'\n"
+    ;"c.content.proxy = 'socks://localhost:9050/'\n"
+    ;"c.editor.command = ['terminology', '--exec', 'vim', '-f', '{file}', '-c', 'normal +{line}G+{column0}l']\n"
+    "c.editor.command = ['terminology', '--exec', 'vim', '-f', '{file}']\n"
+    ;"c.fileselect.folder.command = ['terminology', '--exec', 'ranger', '--choosedir={}']\n"
+    ;"c.fileselect.multiple_files.command = ['xterm', '--exec', 'ranger', '--choosefiles={}']\n"
+    ;"c.fileselect.single_file.command = ['xterm', '--exec', 'ranger', '--choosefile={}']\n"
+    "c.fileselect.folder.command = ['terminology', '--exec', 'vifm', '{}']\n"
+    "c.fileselect.multiple_files.command = ['terminology', '--exec', 'vifm', '{}']\n"
+    "c.fileselect.single_file.command = ['terminology', '--exec', 'vifm', '{}']\n"
+    "c.spellcheck.languages = [\"en-US\", \"he-IL\"]\n"))
+
 ;; This part does not work yet.
 ;(define %bg.edc
 ;  (plain-file
