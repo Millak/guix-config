@@ -276,6 +276,7 @@
 (define %streamlink-config
   (mixed-text-file
     "streamlink-config"
+    "verbose"
     "default-stream 720p,720p60,1080p,best\n"
     "player=" (S "mpv") "/bin/mpv\n"))
 
@@ -408,7 +409,9 @@
     "[web]\n"
     #~(if (or #$headless? #$work-machine?)
         (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
-        (string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n"))))
+        ;(string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n")
+        "    browser = \"qutebrowser --target window\"\n"
+        )))
 
 (define %git-ignore
   (plain-file
@@ -713,6 +716,7 @@ XTerm*metaSendsEscape: true\n"))
                        ("SDL_VIDEODRIVER" . "wayland")
                        ;; ("MOZ_ENABLE_WAYLAND" . "1")
                        ;; Work around old qtwebengine and new glibc:
+                       ;; Does not seem to be necessary with qtwebengine-5.15.4.
                        ("QTWEBENGINE_CHROMIUM_FLAGS" . "\"--disable-seccomp-filter-sandbox\"")
                        ("CVS_RSH" . "ssh")
                        ("EDITOR" . "vim")
@@ -798,6 +802,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("nano/nanorc" ,%nanorc)
+           ;("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
@@ -843,6 +848,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("nano/nanorc" ,%nanorc)
+           ;("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
