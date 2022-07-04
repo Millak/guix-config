@@ -122,7 +122,8 @@
         "hunspell-dict-en"
         "links"
         "myrepos"
-        ;; Currently zig only builds on x86_64-linux but isn't gated.
+        ;; Currently zig only builds on x86_64-linux but
+        ;; is only gated to 64-bit architectures.
         ;(if (package-transitive-supported-systems
         ;      (specification->package "ncdu2"))
         (if (equal? "x86_64-linux" (%current-system))
@@ -429,6 +430,7 @@
 (define %qutebrowser-config-py
   (mixed-text-file
     "qutebrowser-config-py"
+    ;; "autoconfig.yml is ignored unless it's explicitly loaded\n"
     "config.load_autoconfig(True)\n"
     "config.bind('<Ctrl-Shift-u>', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='insert')\n"
     "config.bind('pw', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='normal')\n"
@@ -802,7 +804,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("nano/nanorc" ,%nanorc)
-           ;("qutebrowser/config.py" ,%qutebrowser-config-py)
+           ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
