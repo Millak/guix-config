@@ -61,7 +61,6 @@
         "my-moreutils"
         "netsurf"
         "pavucontrol"
-        "pinentry-efl"
         "qtwayland"
         "quasselclient"
         "qutebrowser"
@@ -98,7 +97,7 @@
         "yt-dlp"))
 
 (define %headless
-  (list "pinentry-tty"))
+  (list ))
 
 (define %guix-system-apps
   ;; These packages are provided by Guix System.
