@@ -540,9 +540,10 @@ XTerm*metaSendsEscape: true\n"))
     "\n"
     "IMAPStore flashner\n"
     "Host flashner.co.il\n"
-    "#PassCmd \"" (S "gnupg") "/bin/gpg --quiet --for-your-eyes-only --decrypt $HOME/.msmtp.password.gpg\"\n"
-    "#SSLType IMAPS\n"
-    "#CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
+    ;; Use the tunnel instead.
+    ;"PassCmd \"" (S "gnupg") "/bin/gpg --quiet --for-your-eyes-only --decrypt $HOME/.msmtp.password.gpg\"\n"
+    ;"SSLType IMAPS\n"
+    ;"CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
     "Timeout 120 # 25 * 8 / 2\n"
     "Tunnel \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il 'MAIL=maildir:~/Maildir exec /usr/lib/dovecot/imap'\"\n"
     "\n"
