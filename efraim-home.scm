@@ -551,6 +551,44 @@ XTerm*metaSendsEscape: true\n"))
     "Near :local:\n"
     "Patterns * !work\n"))
 
+(define %msmtp-config
+  (mixed-text-file
+    "msmtp-config"
+    "defaults\n"
+    "auth            on\n"
+    ;"proxy_host     127.0.0.1\n"
+    ;"proxy_port     9050\n"
+    "tls             on\n"
+    "tls_starttls off\n"
+    "\n"
+    ;"flashner.co.il\n"
+    "account         flashner.co.il\n"
+    "host            flashner.co.il\n"
+    "port            465\n"
+    "from            efraim@flashner.co.il\n"
+    "user            efraim\n"
+    ;"passwordeval gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.gpg\n"
+    "passwordeval " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.gpg\n"
+    "tls_fingerprint 49:08:49:DF:A5:E9:73:8F:72:DA:BD:2D:2C:C4:C0:24:34:2B:66:D6\n"
+    "\n"
+    ;"gmail efraim.flashner\n"
+    "account         gmail-efraim\n"
+    "host            smtp.gmail.com\n"
+    "port            587\n"
+    "from            efraim.flashner@gmail.com\n"
+    "user            efraim.flashner\n"
+    "tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
+    "\n"
+    ;"gmail themillak\n"
+    "account         gmail-themillak\n"
+    "host            smtp.gmail.com\n"
+    "port            587\n"
+    "from            themillak@gmail.com\n"
+    "user            themillak\n"
+    "tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
+
+    "account default: flashner.co.il\n"))
+
 ;;;
 
 (define %syncthing-user-service
@@ -803,6 +841,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
             ,(file-append (S "mpv-twitch-chat")
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
+           ;("msmtp/config" ,%msmtp-config)
            ("nano/nanorc" ,%nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
@@ -849,6 +888,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
             ,(file-append (S "mpv-twitch-chat")
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
+           ;("msmtp/config" ,%msmtp-config)
            ("nano/nanorc" ,%nanorc)
            ;("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
