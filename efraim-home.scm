@@ -371,7 +371,8 @@
     "    diff = auto\n"
     "    status = auto\n"
     "[core]\n"
-    "    editor = " (S "vim") "/bin/vim\n"
+    ;"    editor = " (S "vim") "/bin/vim\n"
+    "    editor = vim\n"
     "[diff]\n"
     "    algorithm = patience\n"
     "[fetch]\n"
@@ -767,7 +768,7 @@ XTerm*metaSendsEscape: true\n"))
                        ("HISTFILESIZE" . "10000")
                        ("HISTCONTROL" . "ignoreboth")
                        ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
-                       ("PROMPT_COMMAND" . "\"history -a; $PROMPT_COMMAND\"")))
+                       ("PROMPT_COMMAND" . "history -a; $PROMPT_COMMAND")))
                    (bash-profile
                      (list
                        (mixed-text-file "bash-profile" "\
