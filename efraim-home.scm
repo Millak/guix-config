@@ -316,29 +316,29 @@
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
 (define %gpg.conf
-  (plain-file
+  (mixed-text-file
     "gpg.conf"
-    (string-append
-      "default-key CA3D8351\n"
-      "charset utf-8\n"
-      "with-fingerprint\n"
-      ;"keyserver hkp://keys.openpgp.org\n"
-      "keyserver hkp://keyserver.ubuntu.com\n"
-      "keyserver-options auto-key-retrieve\n"
-      "keyserver-options include-revoked\n"
-      "keyserver-options no-honor-keyserver-url\n"
-      "list-options show-uid-validity\n"
-      "verify-options show-uid-validity\n"
-      ;"photo-viewer \"catimg $i\"\n"
-      "keyid-format 0xlong\n"
-      "use-agent\n"
-      "auto-key-locate wkd cert pka ldap hkp://keys.openpgp.org hkp://keyserver.ubuntu.com\n"
-      "personal-cipher-preferences AES256 AES192 AES CAST5\n"
-      "personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"
-      "cert-digest-algo SHA512\n"
-      "default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
-      ;"default-cache-ttl 900\n"
-      "trust-model tofu+pgp\n")))
+    "default-key CA3D8351\n"
+    "charset utf-8\n"
+    "with-fingerprint\n"
+    ;"keyserver hkp://keys.openpgp.org\n"
+    ;"keyserver hkp://keyserver.ubuntu.com\n"
+    "keyserver hkp://keyserver.computer42.org\n"
+    "keyserver-options auto-key-retrieve\n"
+    "keyserver-options include-revoked\n"
+    "keyserver-options no-honor-keyserver-url\n"
+    "list-options show-uid-validity\n"
+    "verify-options show-uid-validity\n"
+    ;"photo-viewer \"" #$(file-append (S "catimg") "/bin/catimg $i\"\n"
+    "keyid-format 0xlong\n"
+    "use-agent\n"
+    "auto-key-locate wkd cert pka ldap hkp://keys.openpgp.org hkp://keyserver.computer42.org\n"
+    "personal-cipher-preferences AES256 AES192 AES CAST5\n"
+    "personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"
+    "cert-digest-algo SHA512\n"
+    "default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
+    ;"default-cache-ttl 900\n"
+    "trust-model tofu+pgp\n"))
 
 (define %gpg-agent.conf
   (mixed-text-file
