@@ -578,7 +578,7 @@ XTerm*metaSendsEscape: true\n"))
     "port            587\n"
     "from            efraim.flashner@gmail.com\n"
     "user            efraim.flashner\n"
-    "passwordeval    " (S "gpg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.efraimflashnergmail.gpg\n"
+    "passwordeval    " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.efraimflashnergmail.gpg\n"
     "tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
     "\n"
     ;"gmail themillak\n"
@@ -587,7 +587,7 @@ XTerm*metaSendsEscape: true\n"))
     ;"port            587\n"
     ;"from            themillak@gmail.com\n"
     ;"user            themillak\n"
-    ;"passwordeval    " (S "gpg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.themillakgmail.gpg\n"
+    ;"passwordeval    " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.themillakgmail.gpg\n"
     ;"tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
 
     "account default: flashner.co.il\n"))
