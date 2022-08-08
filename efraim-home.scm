@@ -193,7 +193,9 @@
       "set enable-bracketed-paste on\n"
       "set editing-mode vi\n"
       "Control-l: clear-screen\n"
-      "set bell-style visible\n")))
+      "set bell-style visible\n"
+      "set colored-completion-prefix on\n"
+      "set colored-stats on\n")))
 
 (define %screenrc
   (plain-file
