@@ -763,6 +763,10 @@ XTerm*metaSendsEscape: true\n"))
                        ;; Work around old qtwebengine and new glibc:
                        ;; Does not seem to be necessary with qtwebengine-5.15.4.
                        ("QTWEBENGINE_CHROMIUM_FLAGS" . "\"--disable-seccomp-filter-sandbox\"")
+                       ;; Append guix-home directories to bash completion dirs.
+                       ("BASH_COMPLETION_USER_DIR" . (string-append "$BASH_COMPLETION_USER_DIR:"
+                                                                    "$HOME/.guix-home/profile/share/bash-completion/completions:"
+                                                                    "$HOME/.guix-home/profile/etc/bash_completion.d"))
                        ("CVS_RSH" . "ssh")
                        ("EDITOR" . "vim")
                        ("GPG_TTY" . "$(tty)")
