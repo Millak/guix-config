@@ -323,8 +323,6 @@
     "default-key CA3D8351\n"
     "charset utf-8\n"
     "with-fingerprint\n"
-    ;"keyserver hkp://keys.openpgp.org\n"
-    ;"keyserver hkp://keyserver.ubuntu.com\n"
     "keyserver hkp://keyserver.computer42.org\n"
     "keyserver-options auto-key-retrieve\n"
     "keyserver-options include-revoked\n"
@@ -334,7 +332,8 @@
     ;"photo-viewer \"" #$(file-append (S "catimg") "/bin/catimg $i\"\n"
     "keyid-format 0xlong\n"
     "use-agent\n"
-    "auto-key-locate wkd cert pka ldap hkp://keys.openpgp.org hkp://keyserver.computer42.org\n"
+    ;; For use with 'gpg --locate-external-key'
+    "auto-key-locate wkd cert pka ldap hkp://keys.openpgp.org hkp://keyserver.ubuntu.com hkp://keyserver.computer42.org\n"
     "personal-cipher-preferences AES256 AES192 AES CAST5\n"
     "personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"
     "cert-digest-algo SHA512\n"
