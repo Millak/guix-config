@@ -1,10 +1,14 @@
 (define-module (config guix-daemon)
+  #:use-module (sqlite3)
   #:use-module (guix gexp)
   #:use-module (gnu services base)
+  #:use-module (gnu services mcron)
+  #:use-module (gnu packages guile)
   #:export (%guix-configuration
             %substitute-urls
             %authorized-keys
-            %extra-options))
+            %extra-options
+            %vacuum-database))
 
 (define %substitute-urls
   (list "https://ci.guix.gnu.org"
@@ -37,3 +41,16 @@
     (substitute-urls %substitute-urls)
     (authorized-keys %authorized-keys)
     (extra-options %extra-options)))
+
+;; Can't be imported for some reason.
+(define %vacuum-database
+  (let ((vacuum-store
+          (gexp->derivation "vacuum-store"
+            (with-extensions (list guile-sqlite3)
+              (begin
+                (use-modules (sqlite3))
+                (let ((db (sqlite-open "/var/guix/db/db.sqlite")))
+                  (sqlite-exec db "VACUUM;")
+                  (sqlite-close db)))))))
+    #~(job '(next-hour '(2))
+           #~vacuum-store)))
