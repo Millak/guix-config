@@ -558,6 +558,7 @@ XTerm*metaSendsEscape: true\n"))
     "msmtp-config"
     "defaults\n"
     "auth            on\n"
+    ;; For tor proxy.
     ;"proxy_host     127.0.0.1\n"
     ;"proxy_port     9050\n"
     "tls             on\n"
@@ -591,7 +592,7 @@ XTerm*metaSendsEscape: true\n"))
     ;"passwordeval    " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.themillakgmail.gpg\n"
     ;"tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
 
-    "account default: flashner.co.il\n"))
+    "account default: gmail-efraim\n"))
 
 ;;;
 
