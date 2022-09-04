@@ -60,6 +60,7 @@
         "mupdf"
         "my-moreutils"
         "netsurf"
+        "nheko"
         "pavucontrol"
         "qtwayland"
         "quasselclient"

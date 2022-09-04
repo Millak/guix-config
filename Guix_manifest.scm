@@ -26,11 +26,12 @@
 
 (define UTenn_machines
   (list "lily"
+        "octopus01"
         "penguin2"
+        "space"
         "tux01"
         "tux02"
-        "tux03"
-        "octopus01"))
+        "tux03"))
 
 (define guix-system
   (file-exists? "/run/current-system/provenance"))
@@ -65,6 +66,7 @@
         "mupdf"
         "my-moreutils"
         "netsurf"
+        "nheko"
         "pavucontrol"
         "pinentry-efl"
         "qtwayland"
@@ -77,7 +79,7 @@
         "zathura-pdf-poppler"))
 
 (define %work-applications
-  (list "diffoscope"
+  (list ;"diffoscope"
         "mercurial"
         "strace"))
 
@@ -110,7 +112,8 @@
   (list))
 
 (define %headless
-  (list "pinentry-tty"))
+  (list))
+  ;(list "pinentry-tty"))
 
 (define %guix-system-apps
   ;; These packages are provided by Guix System.
