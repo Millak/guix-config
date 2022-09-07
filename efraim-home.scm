@@ -755,7 +755,7 @@ XTerm*metaSendsEscape: true\n"))
                  (home-bash-configuration
                    (guix-defaults? #t)
                    (environment-variables
-                     `(("QT_QPA_PLATFORM" . "wayland")
+                     `(;("QT_QPA_PLATFORM" . "wayland")
                        ("ECORE_EVAS_ENGINE" . "wayland_egl")
                        ("ELM_ENGINE" . "wayland_egl")
                        ;; Not necessary after sdl2@2.0.22
@@ -775,7 +775,8 @@ XTerm*metaSendsEscape: true\n"))
                        ("HISTFILESIZE" . "10000")
                        ("HISTCONTROL" . "ignoreboth")
                        ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
-                       ("PROMPT_COMMAND" . "history -a; $PROMPT_COMMAND")))
+                       ;("PROMPT_COMMAND" . "'history -a; $PROMPT_COMMAND'")
+                       ))
                    (bash-profile
                      (list
                        (mixed-text-file "bash-profile" "\
