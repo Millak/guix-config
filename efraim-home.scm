@@ -322,25 +322,25 @@
   (mixed-text-file
     "gpg.conf"
     "default-key CA3D8351\n"
-    "charset utf-8\n"
+    "display-charset utf-8\n"
     "with-fingerprint\n"
     "keyserver hkp://keyserver.computer42.org\n"
     "keyserver-options auto-key-retrieve\n"
     "keyserver-options include-revoked\n"
-    "keyserver-options no-honor-keyserver-url\n"
-    "list-options show-uid-validity\n"
-    "verify-options show-uid-validity\n"
     ;"photo-viewer \"" #$(file-append (S "catimg") "/bin/catimg $i\"\n"
     "keyid-format 0xlong\n"
-    "use-agent\n"
     ;; For use with 'gpg --locate-external-key'
-    "auto-key-locate wkd cert pka ldap hkp://keys.openpgp.org hkp://keyserver.ubuntu.com hkp://keyserver.computer42.org\n"
-    "personal-cipher-preferences AES256 AES192 AES CAST5\n"
-    "personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"
-    "cert-digest-algo SHA512\n"
-    "default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
+    "auto-key-locate wkd cert pka dane hkp://keys.openpgp.org hkp://keyserver.ubuntu.com hkp://keyserver.computer42.org\n"
+    ;; Some of these settings can be seen in g10/keygen.c in gnupg's source code, in keygen_set_std_prefs
+    ;; or in the output of `gpg --version`
+    ;"personal-cipher-preferences AES256 AES192 AES\n"               ; Drop 3DES
+    ;"personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"     ; Drop SHA1
+    ;"cert-digest-algo SHA512\n"
+    ;"default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
     ;"default-cache-ttl 900\n"
     "trust-model tofu+pgp\n"))
+
+;; todo: build gnupg with configure-flags --disable-gpg-idea --disable-gpg-cast5 --disable-gpg-md5 --disable-gpg-rmd160
 
 (define %gpg-agent.conf
   (mixed-text-file
