@@ -13,7 +13,6 @@
 (define %substitute-urls
   (list "https://ci.guix.gnu.org"
         ;"http://bp7o7ckwlewr4slm.onion" ; ci.guix.gnu.org
-        "https://bayfront.guix.gnu.org"
         "https://bordeaux.guix.gnu.org"
         "http://guix.genenetwork.org"
         "https://guix.tobias.gr"))
@@ -27,7 +26,6 @@
         (local-file "../Extras/unmatched_publish.pub")
         (local-file "../Extras/starfive-vision1.pub")
         (local-file "../Extras/ci.guix.gnu.org.pub")
-        (local-file "../Extras/bayfront.guix.gnu.org.pub")
         (local-file "../Extras/bordeaux.guix.gnu.org.pub")
         (local-file "../Extras/guix.genenetwork.org.pub")
         (local-file "../Extras/guix.tobias.gr.pub")))
