@@ -36,12 +36,18 @@
   (bootloader
     (bootloader-configuration
       (bootloader u-boot-pinebook-pro-rk3399-bootloader)
-      (targets '("/dev/mmcblk0"))       ; SD card/eMMC (SD priority) storage
+      (targets '("/dev/vda"))           ; for creating the disk image
+      ;(targets '("/dev/mmcblk0"))      ; SD card/eMMC (SD priority) storage
       (keyboard-layout keyboard-layout)))
 
-  (initrd-modules '())
+  (initrd-modules '())                  ; By default none.
   (kernel linux-libre-arm64-generic)
   ;(firmware '())
+
+  ;; Remove after zram?
+  ;(swap-devices
+  ;  (list (swap-space
+  ;          (target "/swapfile"))))
 
   (file-systems
     (cons* (file-system
@@ -57,6 +63,7 @@
                   (comment "Efraim Flashner")
                   (group "users")
                   (home-directory "/home/efraim")
+                  (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
                       ;"lp" "lpadmin"       ; CUPS
@@ -75,14 +82,11 @@
   (services
     (cons* (service enlightenment-desktop-service-type)
 
-           ;(service guix-publish-service-type
-           ;         (guix-publish-configuration
-           ;           (host "0.0.0.0")
-           ;           (port 3000)
-           ;           (advertise? #t)))
            (service openssh-service-type
                     (openssh-configuration
-                      (password-authentication? #t)))
+                      (password-authentication? #t)
+                      (authorized-keys
+                       `(("efraim" ,(local-file "Extras/efraim.pub"))))))
 
            (service tor-service-type)
            (tor-hidden-service "ssh"
@@ -124,7 +128,7 @@
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
                       (avoid-regexp "enlightenment")))
 
-           ;; Not supported by linux-libre-arm64-generic
+           ;; Not yet supported by linux-libre-arm64-generic
            ;(service zram-device-service-type
            ;         (zram-device-configuration
            ;           (size (* 4 (expt 2 30)))
