@@ -15,7 +15,9 @@
                           #$mount-point))
     #~(job '(next-hour '(5))
            (string-append #$btrfs-progs "/bin/btrfs "
-                          "balance " "start "  "-dusage=70 " "-musage=80 "
+                          "balance " "start "
+                          "-dusage=50,limit=3 "
+                          "-musage=50,limit=1 "
                           #$mount-point))))
 
 ;; 10MiB should be enough, but 'guix lint -c derivations' needs much more.
