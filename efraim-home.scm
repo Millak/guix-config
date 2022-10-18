@@ -420,8 +420,7 @@
     #~(if (or #$headless? #$work-machine?)
         (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
         ;(string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n")
-        "    browser = \"qutebrowser --target window\"\n"
-        )))
+        "    browser = \"qutebrowser --target window\"\n")))
 
 (define %git-ignore
   (plain-file
@@ -863,7 +862,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        %syncthing-user-service
                        %dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
-                       ;%uthsc-vpn-user-service     ; untested
+                       ;%uthsc-vpn-user-service     ; needs a terminal
                        ;%mbsync-user-service        ; error with 'match'
 
                        ;%keybase-user-service       ; won't stay up
