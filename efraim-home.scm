@@ -260,8 +260,14 @@
 (define %hgrc
   (mixed-text-file
     "hgrc"
+    "[defaults]\n"
+    "log = -v\n"
+    "[diff]\n"
+    "git = True\n"
     "[ui]\n"
     "username = Efraim Flashner <efraim@flashner.co.il\n"
+    "verbose = True\n"
+    "merge = meld\n"
     "[web]\n"
     ;"cacerts = " (ca-certificate-bundle (packages->manifest (list nss-certs))) " \n"))
     "cacerts = /etc/ssl/certs/ca-certificates.crt\n"))
