@@ -3,6 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services shepherd)
+  #:use-module (gnu home services ssh)
   #:use-module (gnu services)
   #:use-module (gnu packages)
   #:use-module (guix packages)
@@ -601,6 +602,53 @@ XTerm*metaSendsEscape: true\n"))
 
     "account default: gmail-efraim\n"))
 
+(define %home-openssh-configuration-hosts
+  ;; RemoteForward is "there" to "here".
+  (list
+    (openssh-host (name "do1-tor")
+                  (host-name "ohpdsn5yv7g4gqm3rsz6a323q4ta5vgzptwaje6vkwhobhfwhknd2had.onion"))
+    (openssh-host (name "g4-tor")
+                  (host-name "km2merla7rtcgknbxk7oiavzh3w6jwmonfgxnruj57tocj3evy4vapad.onion")
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+    (openssh-host (name "E5400-tor")
+                  (host-name "k27pjetdse4otw2l6qkn5qdqzv3ucuky7jsn4fmibnkxqeleec3yelad.onion")
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+    (openssh-host (name "3900xt-tor")
+                  (host-name "edvqnpr5a2jjuswveoy63k3jxthqpgqatwzk53up5k6ve2rjwgd4jgqd.onion")
+                  (extra-content
+                    (string-append "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"
+                                   "\n\n"
+                                   "Include config-work\n")))
+    (openssh-host (name "git.sv.gnu.org git.savannah.gnu.org")
+                  (identity-file "~/.ssh/id_ed25519_savannah"))
+    (openssh-host (name "gitlab.com gitlab.inria.fr")
+                  (identity-file "~/.ssh/id_ed25519_gitlab"))
+    (openssh-host (name "salsa.debian.org")
+                  (identity-file " ~/.ssh/id_ed25519_debian"))
+    (openssh-host (name "gitlab.gnome.org")
+                  (identity-file " ~/.ssh/id_ed25519_gnome"))
+    (openssh-host (name "bayfront")
+                  (host-name "bayfront.guix.gnu.org")
+                  (identity-file "~/.ssh/id_ed25519_overdrive")
+                  (compression? #t)
+                  (extra-content "  RemoteForward /home/efraim/.gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+    (openssh-host (name "guixp9")
+                  (host-name "p9.tobias.gr")
+                  (identity-file "~/.ssh/id_ed25519_overdrive"))
+    (openssh-host (name "*.onion *-tor")
+                  (compression? #t)
+                  (extra-content
+                    ;; Either this or we always need to prefix with torsocks.
+                    (string-append
+                      ;"  ProxyCommand " (file-append (S "netcat-openbsd") "/bin/nc") " -X 5 -x localhost:9050 %h %p\n"
+                      "  ControlPath ${XDG_RUNTIME_DIR}/%r@%k-%p\n")))
+    (openssh-host (name "*")
+                  (user "efraim")
+                  (extra-content
+                    (string-append "  ControlMaster auto\n"
+                                   "  ControlPath ${XDG_RUNTIME_DIR}/%r@%h-%p\n"
+                                   "  ControlPersist 600\n")))))
+
 ;;;
 
 (define %syncthing-user-service
@@ -823,6 +871,10 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
 
                        ;%kdeconnect-user-service    ; starts too fast
                        %parcimonie-user-service))))
+
+        ;(service home-openssh-service-type
+        ;         (home-openssh-configuration
+        ;           (hosts %home-openssh-configuration-hosts)))
 
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
