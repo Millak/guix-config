@@ -652,6 +652,20 @@ XTerm*metaSendsEscape: true\n"))
 
 ;;;
 
+;; Executables for the $HOME/bin folder.
+
+(define %connect-to-UTHSC-VPN
+  (program-file
+    "GN_vpn_connect"
+    #~(system*
+        #$(file-append (S "dbus") "/bin/dbus-launch")
+        #$(file-append (S "openconnect-sso") "/bin/openconnect-sso")
+        "--server" "uthscvpn1.uthsc.edu" "--authgroup" "UTHSC"
+        "--" "--script"
+        #$(file-append (S "vpn-slice") "/bin/vpn-slice") "128.169.0.0/16")))
+
+;;;
+
 (define %syncthing-user-service
   (shepherd-service
     (documentation "Run `syncthing' without calling the browser")
@@ -898,7 +912,10 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            (".signature" ,%signature)
            (".wcalcrc" ,%wcalcrc)
            (".wgetpaste.conf" ,%wgetpaste.conf)
-           (".Xdefaults" ,%xdefaults)))
+           (".Xdefaults" ,%xdefaults)
+
+           ;; Also files into the bin directory.
+           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
@@ -945,7 +962,9 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            (".wcalcrc" ,%wcalcrc)
            (".wgetpaste.conf" ,%wgetpaste.conf)
            ;(".Xdefaults" ,%xdefaults)
-           ))
+
+           ;; Also files into the bin directory.
+           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
