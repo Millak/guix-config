@@ -100,12 +100,11 @@
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
                       (avoid-regexp "guile")))
 
-           ;; Not supported by linux-libre-arm64-generic
-           ;(service zram-device-service-type
-           ;         (zram-device-configuration
-           ;           (size (* 2 (expt 2 30)))
-           ;           (compression-algorithm 'zstd)
-           ;           (priority 250)))
+           (service zram-device-service-type
+                    (zram-device-configuration
+                      (size (* 2 (expt 2 30)))
+                      (compression-algorithm 'zstd)
+                      (priority 100)))
 
            (modify-services
              %base-services
