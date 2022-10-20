@@ -414,6 +414,8 @@
     "    annotate = yes\n"
     "[submodule]\n"
     "    fetchJobs = 5\n"
+    "[tag]\n"
+    "    gpgSign = true\n"
     "[transfer]\n"
     "    fsckObjects = true\n"
     "[web]\n"
@@ -657,7 +659,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "syncthing") "/bin/syncthing")
                      "-no-browser")
-               #:log-file (string-append #$%logdir "/syncthing.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/syncthing.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
@@ -670,11 +672,11 @@ XTerm*metaSendsEscape: true\n"))
                      "--foreground"
                      "--verbose"
                      "/home/efraim/Dropbox")
-               #:log-file (string-append #$%logdir "/dbxfs.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/dbxfs.log")))
     ;; Perhaps I want to use something like this?
     ;(stop (or #~(make-system-destructor
     ;              (string-append
-    ;                #$(file-append (S "fuse") "/bin/fusermount")
+    ;                "/run/setuid-programs/fusermount"
     ;                " -u " (getenv "HOME") "/Dropbox"))
     ;          #~(make-system-destructor
     ;              "fusermount -u /home/efraim/Dropbox")))
@@ -684,13 +686,17 @@ XTerm*metaSendsEscape: true\n"))
     (auto-start? #f)
     (respawn? #f)))
 
-;; This can probably be moved to an mcron service.
+;; This needs more work with user shepherd services.
 (define %vdirsyncer-user-service
+ ;; Doesn't get imported into the gexp.
+ ;(with-imported-modules '((ice-9 match))
   (shepherd-service
     (documentation "Run vdirsyncer hourly")
     (provision '(vdirsyncer))
     (start
       #~(lambda args
+          ;; Doesn't go in the background.
+          (use-modules (ice-9 match))
           (match (primitive-fork)
                  (0 (begin
                       (while #t
@@ -703,7 +709,7 @@ XTerm*metaSendsEscape: true\n"))
                                          (* 15 60)))))))
                  (pid pid))))
     (stop #~(make-kill-destructor))
-    (respawn? #t)))
+    (respawn? #t)));)
 
 (define %uthsc-vpn-user-service
   (shepherd-service
@@ -714,7 +720,7 @@ XTerm*metaSendsEscape: true\n"))
                                     "/bin/openconnect-sso")
                      "--server"
                      "uthscvpn1.uthsc.edu")
-               #:log-file (string-append #$%logdir "/uthsc-vpn.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/uthsc-vpn.log")))
     (auto-start? #f)
     (respawn? #f)))
 
@@ -745,7 +751,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append #$%logdir "/keybase.log")
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/keybase.log")
                #:directory (string-append #$(getenv "XDG_RUNTIME_DIR") "/keybase")))
     (stop #~(make-system-destructor
               (string-append #$(file-append (S "keybase")
@@ -763,9 +769,8 @@ XTerm*metaSendsEscape: true\n"))
     (provision '(kbfs))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/kbfsfuse")
-                     ;"-debug"
                      "-log-to-file")
-               #:log-file (string-append #$%logdir "/kbfs.log")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/kbfs.log")))
     (stop #~(make-kill-destructor))
     ;; Depends on keybase
     (auto-start? #f)
@@ -777,9 +782,12 @@ XTerm*metaSendsEscape: true\n"))
     (documentation "Run the KDEconnect daemon")
     (provision '(kdeconnect))
     (start #~(make-forkexec-constructor
-               (list #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
+               (list #$(file-append (S "dbus") "/bin/dbus-launch")
+                     #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
                      "-platform" "offscreen")
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/kdeconnect.log")))
+    ;; TODO: Enable autostart
+    (auto-start? #f)
     (stop #~(make-kill-destructor))))
 
 (define %parcimonie-user-service
@@ -811,11 +819,11 @@ XTerm*metaSendsEscape: true\n"))
                      `(;("QT_QPA_PLATFORM" . "wayland")
                        ("ECORE_EVAS_ENGINE" . "wayland_egl")
                        ("ELM_ENGINE" . "wayland_egl")
-                       ;; Not necessary after sdl2@2.0.22
+                       ;; Still necessary for sdl2@2.0.14
                        ("SDL_VIDEODRIVER" . "wayland")
-                       ;; ("MOZ_ENABLE_WAYLAND" . "1")
-                       ;; Work around old qtwebengine and new glibc:
-                       ;; Does not seem to be necessary with qtwebengine-5.15.4.
+                       ("MOZ_ENABLE_WAYLAND" . "1")
+                       ;; Work around qtwebengine and glibc issues:
+                       ;; Still necessary with qtwebengine-5.15.5, no text on ci.guix.gnu.org.
                        ("QTWEBENGINE_CHROMIUM_FLAGS" . "--disable-seccomp-filter-sandbox")
                        ;; Append guix-home directories to bash completion dirs.
                        ("BASH_COMPLETION_USER_DIR" . (string-append "$BASH_COMPLETION_USER_DIR:"
