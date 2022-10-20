@@ -14,11 +14,12 @@
 
 (define* (with-ghc? #:optional (system (or (%current-target-system)
                                            (%current-system))))
-         (or (target-x86-64? target) (target-x86-32? target)))
+         (target-x86? target))
 
 (define* (with-go? #:optional (system (or (%current-target-system)
                                           (%current-system))))
-         (not (target-ppc32? target)))
+         (not (or (target-ppc32? target)
+                  (target-riscv64? target))))
 
 
 (define headless?
