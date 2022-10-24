@@ -63,7 +63,7 @@
         "netsurf"
         "nheko"
         "pavucontrol"
-        "qtwayland"
+        "qtwayland@5"
         "quasselclient"
         "qutebrowser"
         "terminology"
@@ -406,7 +406,7 @@
         (string-append "    smtpServer = flashner.co.il\n"
                        ;"    smtpsslcertpath = \"\"\n"
         )
-        (string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtpq") "\n"))
+        (string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtp") "\n"))
     "    smtpUser = efraim\n"
     "    smtpPort = 465\n"
     "    supresscc = self\n"
