@@ -150,6 +150,7 @@
         "vim-fugitive"
         "vim-gnupg"
         "vim-guix-vim"
+        "editorconfig-vim"
         "wcalc"
         "wget"
         "wgetpaste"))
