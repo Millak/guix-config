@@ -125,10 +125,10 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      ;; We get i386 for free from the architecture.
+                      ;; We get some architectures for free.
                       (platforms
                         (fold delete %qemu-platforms
-                              (lookup-qemu-platforms "i386")))))
+                              (lookup-qemu-platforms "i386" "x86_64")))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
