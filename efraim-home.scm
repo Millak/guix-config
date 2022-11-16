@@ -322,7 +322,7 @@
     "fi\n"
 
     "APTCACHE=/var/cache/apt/archives\n"
-    "HOOKDIR=/home/efraim/.config/pbuilder/hooks\n"
+    "HOOKDIR=" (getenv "XDG_CONFIG_HOME") "/pbuilder/hooks\n"
     "CCACHEDIR=/var/cache/pbuilder/ccache\n"
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
@@ -684,17 +684,10 @@ XTerm*metaSendsEscape: true\n"))
                (list #$(file-append (S "dbxfs") "/bin/dbxfs")
                      "--foreground"
                      "--verbose"
-                     "/home/efraim/Dropbox")
+                     (string-append (getenv "HOME") "/Dropbox"))
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/dbxfs.log")))
-    ;; Perhaps I want to use something like this?
-    ;(stop (or #~(make-system-destructor
-    ;              (string-append
-    ;                "/run/setuid-programs/fusermount"
-    ;                " -u " (getenv "HOME") "/Dropbox"))
-    ;          #~(make-system-destructor
-    ;              "fusermount -u /home/efraim/Dropbox")))
     (stop #~(make-system-destructor
-              "fusermount -u /home/efraim/Dropbox"))
+              (string-append "fusermount -u " (getenv "HOME") "/Dropbox")))
     ;; Needs gpg key to unlock
     (auto-start? #f)
     (respawn? #f)))
@@ -798,9 +791,13 @@ XTerm*metaSendsEscape: true\n"))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
                      ;; Can I use compose and find or a list to make this work?
                      "--gnupg_extra_args"
-                     "--keyring=/home/efraim/.config/guix/upstream/trustedkeys.kbx"
+                     (string-append "--keyring="
+                                    (getenv "XDG_CONFIG_HOME")
+                                    "/guix/upstream/trustedkeys.kbx")
                      "--gnupg_extra_args"
-                     "--keyring=/home/efraim/.config/guix/gpg/trustedkeys.kbx")
+                     (string-append "--keyring="
+                                    (getenv "XDG_CONFIG_HOME")
+                                    "/guix/gpg/trustedkeys.kbx"))
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/parcimonie.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
