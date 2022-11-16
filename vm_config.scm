@@ -2,23 +2,17 @@
 (use-modules (guix store)
              (gnu)
              (srfi srfi-1))
-(use-service-modules admin networking ssh sysctl)
-(use-package-modules certs)
+(use-service-modules
+  admin
+  linux
+  networking
+  ssh)
+(use-package-modules
+  certs)
 
 (define %efraim-ssh-key
-  (plain-file "id_ecdsa.pub"
-              "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBkVckSY5TpAONmDG8Hy+vvxbIwr9gcLVPexFjgwS/BKsSn4GR/rqPvyYJdeJeMvAiaOJsNz8M3z6nGvoFe32I4= efraim@flashner.co.il"))
-
-(define %ci.guix.gnu.org.pub
-  (plain-file "ci.guix.gnu.org.pub"
-              "(public-key
-                 (ecc
-                   (curve Ed25519)
-                   (q #8D156F295D24B0D9A86FA5741A840FF2D24F60F7B6C4134814AD55625971B394#)))"))
-
-;(define this-file
-;  (local-file (basename (assoc-ref (current-source-location) 'filename))
-;              "config.scm"))
+  (plain-file "id_ed25519.pub"
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3PkIpyUbnAtS8B5oO1rDm2vW5xhArIVjaRJrZzHVkX efraim@flashner.co.il"))
 
 (operating-system
   (host-name "guix_vm")
@@ -36,33 +30,36 @@
 
   (firmware '())
 
-  (kernel-arguments '("zswap.enabled=1"))
-
-  (file-systems (cons* (file-system
-                         (mount-point "/")
-                         ;; lsblk --output MOUNTPOINT,UUID
-                         (device (uuid "0000-0000" 'fat))
-                         (type "ext4"))
-                       ;; This is only necessary if you're using EFI.
-                       ;(file-system
-                       ;  (device (uuid "0000-0000" 'fat))
-                       ;  (mount-point "/boot/efi")
-                       ;  (type "vfat"))
-                       (file-system
-                         (device "none")
-                         (mount-point "/var/guix/temproots")
-                         (type "tmpfs")
-                         (check? #f))
-                       %base-file-systems))
+  (file-systems
+    (cons* (file-system
+             (mount-point "/")
+             ;; lsblk --output MOUNTPOINT,UUID
+             (device (uuid "0000-0000" 'fat))
+             (type "ext4"))
+           ;; This is only necessary if you're using EFI.
+           ;(file-system
+           ;  (device (uuid "0000-0000" 'fat))
+           ;  (mount-point "/boot/efi")
+           ;  (type "vfat"))
+           (file-system
+             (device "tmpfs")
+             (mount-point "/var/guix/temproots")
+             (type "tmpfs")
+             (flags '(no-suid no-dev no-exec))
+             (check? #f))
+           %base-file-systems))
 
   ;; Be sure you create the swpfile first!
-  ;(swap-devices '("/swapfile"))
+  ;(swap-devices
+  ;  (list (swap-space
+  ;          (target "/swapfile"))))
 
   (users (cons (user-account
                 (name "efraim")
                 (comment "Efraim")
                 (group "users")
                 (supplementary-groups '("wheel" "netdev" "kvm"))
+                (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
                 (home-directory "/home/efraim"))
                %base-user-accounts))
 
@@ -70,50 +67,44 @@
   (packages (cons* nss-certs         ;for HTTPS access
                    %base-packages))
 
-  (services (cons* ;; Copy this file to /etc/config.scm in the OS.
-                   ;(simple-service 'config-file etc-service-type
-                   ;                `(("config.scm" ,this-file)))
+  (services
+    (cons* (service openssh-service-type
+                    (openssh-configuration
+                      (openssh (specification->package "openssh-sans-x"))
+                      (authorized-keys
+                        `(("efraim" ,%efraim-ssh-key)))
+                      (extra-content "StreamLocalBindUnlink yes")))
 
-                   (service openssh-service-type
-                            (openssh-configuration
-                              ;; Remove this after setting a password.
-                              (allow-empty-passwords? #t)
-                              (password-authentication? #f)
-                              (authorized-keys
-                                `(("efraim" ,%efraim-ssh-key)))))
-
-                   (service sysctl-service-type
-                            (sysctl-configuration
-                              (settings '(("zswap.compressor" . "lz4")
-                                          ("zswap.zpool" . "z3fold")))))
-
-                   ;(service tor-service-type)
-                   ;(tor-hidden-service "ssh"
-                   ;                    '((22 "127.0.0.1:22")))
+           ;(service tor-service-type)
+           ;(tor-hidden-service "ssh"
+           ;                    '((22 "127.0.0.1:22")))
 
 
-                   (service openntpd-service-type
-                            (openntpd-configuration
-                              (listen-on '("127.0.0.1" "::1"))
-                              (constraints-from '("https://www.google.com/"))))
+           (service openntpd-service-type
+                    (openntpd-configuration
+                      (listen-on '("127.0.0.1" "::1"))
+                      (constraints-from '("https://www.google.com/"))))
 
-                   ;; For networking
-                   (service dhcp-client-service-type)
+           (service zram-device-service-type
+                    (zram-device-configuration
+                      (size (* 1 (expt 2 30)))
+                      (compression-algorithm 'zstd)
+                      (priority 100)))
 
-                   (modify-services %base-services
-                     ;; The default udev rules are not needed in a VM.
-                     (udev-service-type config =>
-                                        (udev-configuration
-                                          (inherit config)
-                                          (rules '())))
-                     (guix-service-type config =>
-                                        (guix-configuration
-                                          (inherit config)
-                                          (substitute-urls
-                                            (list "https://ci.guix.gnu.org"
-                                                  "https://bayfront.guixsd.org"))
-                                          (authorized-keys
-                                            (list %ci.guix.gnu.org.pub)))))))
+           ;; For networking
+           (service dhcp-client-service-type)
+
+           (modify-services %base-services
+                            ;; The default udev rules are not needed in a VM.
+                            (udev-service-type config =>
+                                               (udev-configuration
+                                                 (inherit config)
+                                                 (rules '())))
+                            ;(guix-service-type config =>
+                            ;                   (guix-configuration
+                            ;                     (inherit config)
+                            ;                     ))
+                            )))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
