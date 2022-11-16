@@ -6,7 +6,6 @@
   (config filesystems)
   (config guix-daemon)
   (srfi srfi-1))
-;(use-modules (nongnu packages linux))
 (use-service-modules
   cups
   desktop
