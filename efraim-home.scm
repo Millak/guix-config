@@ -651,9 +651,7 @@ XTerm*metaSendsEscape: true\n"))
                                    "  ControlPath ${XDG_RUNTIME_DIR}/%r@%h-%p\n"
                                    "  ControlPersist 600\n")))))
 
-;;;
-
-;; Executables for the $HOME/bin folder.
+;;; Executables for the $HOME/bin folder.
 
 (define %connect-to-UTHSC-VPN
   (program-file
@@ -665,7 +663,7 @@ XTerm*metaSendsEscape: true\n"))
         "--" "--script"
         #$(file-append (S "vpn-slice") "/bin/vpn-slice") "128.169.0.0/16")))
 
-;;;
+;;; Extra services.
 
 (define %syncthing-user-service
   (shepherd-service
@@ -725,19 +723,6 @@ XTerm*metaSendsEscape: true\n"))
                  (pid pid))))
     (stop #~(make-kill-destructor))
     (respawn? #t)));)
-
-(define %uthsc-vpn-user-service
-  (shepherd-service
-    (documentation "Connect to UTHSC VPN")
-    (provision '(uthsc-vpn openconnect))
-    (start #~(make-forkexec-constructor
-               (list #$(file-append (S "openconnect-sso")
-                                    "/bin/openconnect-sso")
-                     "--server"
-                     "uthscvpn1.uthsc.edu")
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/uthsc-vpn.log")))
-    (auto-start? #f)
-    (respawn? #f)))
 
 (define %mbsync-user-service
   (shepherd-service
@@ -885,7 +870,6 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        %syncthing-user-service
                        %dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
-                       ;%uthsc-vpn-user-service     ; needs a terminal
                        ;%mbsync-user-service        ; error with 'match'
 
                        ;%keybase-user-service       ; won't stay up
