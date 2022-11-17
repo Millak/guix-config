@@ -788,8 +788,11 @@ XTerm*metaSendsEscape: true\n"))
     (documentation "Incrementally refresh gnupg keyring")
     (provision '(parcimonie))
     (start #~(make-forkexec-constructor
+               ;(use-modules (srfi srfi-26))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
                      ;; Can I use compose and find or a list to make this work?
+                     ;(map (cut "--gnupg_extra_args" string-append "--keyring=" <>)
+                     ;     (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
                      "--gnupg_extra_args"
                      (string-append "--keyring="
                                     (getenv "XDG_CONFIG_HOME")
@@ -869,8 +872,8 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
 
-                       ;%keybase-user-service       ; won't stay up
-                       ;%keybase-fuse-user-service
+                       %keybase-user-service        ; won't stay up?
+                       %keybase-fuse-user-service
 
                        ;%kdeconnect-user-service    ; starts too fast
                        %parcimonie-user-service))))
