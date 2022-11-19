@@ -612,6 +612,10 @@ XTerm*metaSendsEscape: true\n"))
     (openssh-host (name "g4-tor")
                   (host-name "km2merla7rtcgknbxk7oiavzh3w6jwmonfgxnruj57tocj3evy4vapad.onion")
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+    (openssh-host (name "ct-tor")
+                  (host-name "teiefezsytzpsennj3ramwqaroh6thqyzdvbu3fxktonvxguqt3rxsid.onion")
+                  (identity-file "~/.ssh/id_ed25519")
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "E5400-tor")
                   (host-name "k27pjetdse4otw2l6qkn5qdqzv3ucuky7jsn4fmibnkxqeleec3yelad.onion")
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
@@ -639,11 +643,11 @@ XTerm*metaSendsEscape: true\n"))
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
     (openssh-host (name "*.onion *-tor")
                   (compression? #t)
-                  (extra-content
-                    ;; Either this or we always need to prefix with torsocks.
-                    (string-append
-                      ;"  ProxyCommand " (file-append (S "netcat-openbsd") "/bin/nc") " -X 5 -x localhost:9050 %h %p\n"
-                      "  ControlPath ${XDG_RUNTIME_DIR}/%r@%k-%p\n")))
+                  ;; Either this or we always need to prefix with torsocks.
+                  ;; TODO: Replace the custom ~/bin/openbsd-netcat with the line below:
+                  ;(proxy-command (string-append (S "netcat-openbsd") "/bin/nc -X 5 -x localhost:9050 %h %p"))
+                  (proxy-command (string-append (getenv "HOME") "/bin/openbsd-netcat -X 5 -x localhost:9050 %h %p"))
+                  (extra-content "  ControlPath ${XDG_RUNTIME_DIR}/%r@%k-%p\n"))
     (openssh-host (name "*")
                   (user "efraim")
                   (extra-content
@@ -872,15 +876,15 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
 
-                       %keybase-user-service        ; won't stay up?
+                       %keybase-user-service
                        %keybase-fuse-user-service
 
                        ;%kdeconnect-user-service    ; starts too fast
                        %parcimonie-user-service))))
 
-        ;(service home-openssh-service-type
-        ;         (home-openssh-configuration
-        ;           (hosts %home-openssh-configuration-hosts)))
+        (service home-openssh-service-type
+                 (home-openssh-configuration
+                   (hosts %home-openssh-configuration-hosts)))
 
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
@@ -900,7 +904,8 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            (".Xdefaults" ,%xdefaults)
 
            ;; Also files into the bin directory.
-           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)))
+           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
+           ("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
@@ -949,7 +954,9 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
            ;(".Xdefaults" ,%xdefaults)
 
            ;; Also files into the bin directory.
-           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)))
+           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
+           ;("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))
+           ))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
