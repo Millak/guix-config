@@ -66,6 +66,7 @@
   (packages
     (append
       (list (specification->package "nss-certs")
+            (specification->package "git-minimal")  ; git-upload-pack
             (specification->package "compsize")
             (specification->package "econnman")
             (specification->package "virt-manager"))
