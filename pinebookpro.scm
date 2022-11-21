@@ -115,12 +115,13 @@
            ;           (unix-sock-group "libvirt")))
            ;(service virtlog-service-type)
 
-           (service qemu-binfmt-service-type
-                    (qemu-binfmt-configuration
-                      ;; We get some architectures for free.
-                      (platforms
-                        (fold delete %qemu-platforms
-                              (lookup-qemu-platforms "arm" "aarch64")))))
+           ;; This one seems to cause the boot process to hang.
+           ;(service qemu-binfmt-service-type
+           ;         (qemu-binfmt-configuration
+           ;           ;; We get some architectures for free.
+           ;           (platforms
+           ;             (fold delete %qemu-platforms
+           ;                   (lookup-qemu-platforms "arm" "aarch64")))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
