@@ -43,14 +43,9 @@
   (kernel linux-libre-arm64-generic)
   ;(firmware '())
 
-  ;; Remove after zram?
-  ;(swap-devices
-  ;  (list (swap-space
-  ;          (target "/swapfile"))))
-
   (file-systems
     (cons* (file-system
-             (device (file-system-label "root"))
+             (device (file-system-label "Guix_image"))
              (mount-point "/")
              (type "ext4"))
            ;%tmp-tmpfs
@@ -71,9 +66,9 @@
                 %base-user-accounts))
   (packages
     (append
-      (list (specification->package "nss-certs")
-            ;(specification->package "compsize")
+      (list ;(specification->package "compsize")
             (specification->package "econnman")
+            (specification->package "nss-certs")
             ;(specification->package "virt-manager")
             )
       %base-packages))
@@ -166,3 +161,8 @@
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
+
+;; guix system image --image-type=pinebook-pro-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pinebookpro.scm --system=aarch64-linux
+;; sudo cfdisk /dev/sdX to resize /dev/sdX1 to use the remaining space left at the end of the µSD card
+;; guix shell e2fsprogs -- sudo resize2fs /dev/sdX1
+;; guix shell e2fsck-static -- sudo -E e2fsck /dev/sdX1
