@@ -615,7 +615,8 @@ XTerm*metaSendsEscape: true\n"))
     (openssh-host (name "ct-tor")
                   (host-name "teiefezsytzpsennj3ramwqaroh6thqyzdvbu3fxktonvxguqt3rxsid.onion")
                   (identity-file "~/.ssh/id_ed25519")
-                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+                  ;(extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n")
+                  )
     (openssh-host (name "E5400-tor")
                   (host-name "k27pjetdse4otw2l6qkn5qdqzv3ucuky7jsn4fmibnkxqeleec3yelad.onion")
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
@@ -882,9 +883,9 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        ;%kdeconnect-user-service    ; starts too fast
                        %parcimonie-user-service))))
 
-        (service home-openssh-service-type
-                 (home-openssh-configuration
-                   (hosts %home-openssh-configuration-hosts)))
+        ;(service home-openssh-service-type
+        ;         (home-openssh-configuration
+        ;           (hosts %home-openssh-configuration-hosts)))
 
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
