@@ -65,10 +65,10 @@
                 %base-user-accounts))
   (packages
     (append
-      (list (specification->package "nss-certs")
-            (specification->package "git-minimal")  ; git-upload-pack
-            (specification->package "compsize")
+      (list (specification->package "compsize")
             (specification->package "econnman")
+            (specification->package "git-minimal")  ; git-upload-pack
+            (specification->package "nss-certs")
             (specification->package "virt-manager"))
       %base-packages))
 
