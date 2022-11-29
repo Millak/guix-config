@@ -1,7 +1,6 @@
 (define-module (pinebookpro))
 (use-modules
   (gnu)
-  (gnu bootloader u-boot)
   (gnu system locale)
   (config filesystems)
   (config guix-daemon)
@@ -18,6 +17,7 @@
   xorg)
 (use-package-modules
   cups
+  firmware
   linux)
 
 (operating-system
@@ -34,20 +34,24 @@
 
   (bootloader
     (bootloader-configuration
-      (bootloader u-boot-pinebook-pro-rk3399-bootloader)
-      (targets '("/dev/vda"))           ; for creating the disk image
-      ;(targets '("/dev/mmcblk0"))      ; SD card/eMMC (SD priority) storage
+      (bootloader grub-efi-bootloader)
+      (targets '("/boot/efi"))
       (keyboard-layout keyboard-layout)))
 
-  (initrd-modules '())                  ; By default none.
+  (initrd-modules (list "nvme"))        ; By default none.
   (kernel linux-libre-arm64-generic)
-  ;(firmware '())
+  (firmware (list ath9k-htc-firmware))  ; By default none.
 
   (file-systems
     (cons* (file-system
              (device (file-system-label "Guix_image"))
              (mount-point "/")
              (type "ext4"))
+           (file-system
+             (mount-point "/boot/efi")
+             ;(device (uuid "9146-2C77" 'fat32))
+             (device "/dev/mmcblk1p1")
+             (type "vfat"))
            ;%tmp-tmpfs
            %guix-temproots
            %base-file-systems))
@@ -70,7 +74,7 @@
             (specification->package "econnman")
             (specification->package "nss-certs")
             ;(specification->package "virt-manager")
-            )
+            (specification->package "xterm"))
       %base-packages))
 
   (services
@@ -162,7 +166,7 @@
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
 
-;; guix system image --image-type=pinebook-pro-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pinebookpro.scm --system=aarch64-linux
-;; sudo cfdisk /dev/sdX to resize /dev/sdX1 to use the remaining space left at the end of the µSD card
-;; guix shell e2fsprogs -- sudo resize2fs /dev/sdX1
-;; guix shell e2fsck-static -- sudo -E e2fsck /dev/sdX1
+;; guix system image --image-type=efi-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pinebookpro.scm --system=aarch64-linux
+;; sudo cfdisk /dev/sdX to resize /dev/sdX2 to use the remaining space left at the end of the µSD card
+;; guix shell e2fsprogs -- sudo resize2fs /dev/sdX2
+;; guix shell e2fsck-static -- sudo -E e2fsck /dev/sdX2
