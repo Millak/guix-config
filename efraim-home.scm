@@ -749,8 +749,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/keybase.log")
-               #:directory (string-append #$(getenv "XDG_RUNTIME_DIR") "/keybase")))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/keybase.log")))
     (stop #~(make-system-destructor
               (string-append #$(file-append (S "keybase")
                                             "/bin/keybase")
