@@ -5,17 +5,13 @@
 ;;
 
 (define-module (gparted))
-(use-modules (gnu) (guix) (srfi srfi-1))
-(use-service-modules desktop networking xorg)
-(use-package-modules
+(use-modules (gnu) (guix) (srfi srfi-1) (dfsg main nilfs))
+(use-service-modules
   admin
-  bootloaders
-  certs
-  disk
-  gnome
+  xorg)
+(use-package-modules
   linux
   package-management
-  wm
   xorg)
 
 (operating-system
@@ -39,40 +35,62 @@
 
   (users %base-user-accounts)
 
-  (packages (append (list
-                      adwaita-icon-theme
-                      lvm2
-                      neofetch
-                      nss-certs
-                      fluxbox)
-                    %base-packages-disk-utilities
+  (packages (append (map specification->package
+                         (list
+                           "adwaita-icon-theme"
+                           "fluxbox"
+                           "neofetch"
+                           "nss-certs"
+
+                           "gparted"
+                           "xterm"
+
+                           "cryptsetup"
+                           "lvm2"
+                           "mdadm"
+
+                           "btrfs-progs"
+                           "dosfstools"
+                           "e2fsprogs"
+                           "exfatprogs"
+                           "f2fs-tools"
+                           "jfsutils"
+                           "nilfs-utils"
+                           "ntfs-3g"
+                           "udftools"
+                           "xfsprogs"))
                     %base-packages))
 
   (services
-   (append (list (service slim-service-type
-                          (slim-configuration
-                            (auto-login? #t)
-                            (default-user "root")
-                            (xorg-configuration
-                              (xorg-configuration
-                                (keyboard-layout keyboard-layout)))))
+   (append
+     (list (service slim-service-type
+                    (slim-configuration
+                      (auto-login? #t)
+                      (default-user "root")
+                      (xorg-configuration
+                        (xorg-configuration
+                          (keyboard-layout keyboard-layout)))))
 
-                 (service special-files-service-type
-                          `(("/root/.fluxbox/startup"
-                             ,(mixed-text-file "fluxbox-startup"
-                                               "exec " gparted "/bin/gparted &\n"
-                                               "exec " xterm "/bin/xterm &\n"
-                                               "exec fluxbox\n")))))
+           (service special-files-service-type
+                    `(("/root/.fluxbox/startup"
+                       ,(mixed-text-file
+                          "fluxbox-startup"
+                          "exec " (specification->package "gparted") "/bin/gparted &\n"
+                          "exec " (specification->package "xterm") "/bin/xterm &\n"
+                          "exec fluxbox\n")))))
 
-           (remove (lambda (service)
-                     (let ((type (service-kind service)))
-                       (or (memq type
-                                 (list gdm-service-type
-                                       cups-pk-helper-service-type
-                                       modem-manager-service-type))
-                           (eq? 'network-manager-applet
-                                (service-type-name type)))))
-                   %desktop-services)))
+     (remove (lambda (service)
+               (let ((type (service-kind service)))
+                 (memq type
+                       (list
+                         log-cleanup-service-type
+                         rottlog-service-type))))
+             (modify-services
+               %base-services
+               (udev-service-type
+                 config =>
+                 (udev-configuration
+                   (rules (list lvm2 fuse))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
