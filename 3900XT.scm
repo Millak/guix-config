@@ -69,7 +69,8 @@
             (specification->package "econnman")
             (specification->package "git-minimal")  ; git-upload-pack
             (specification->package "nss-certs")
-            (specification->package "virt-manager"))
+            (specification->package "virt-manager")
+            (specification->package "xterm"))
       %base-packages))
 
   (services
