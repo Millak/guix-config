@@ -5,14 +5,40 @@
 ;;
 
 (define-module (gparted))
-(use-modules (gnu) (guix) (srfi srfi-1) (dfsg main nilfs))
+(use-modules (gnu) (guix) (srfi srfi-1) (guix build-system trivial) (dfsg main nilfs))
 (use-service-modules
   admin
   xorg)
 (use-package-modules
   linux
   package-management
+  wm
   xorg)
+
+;;
+
+(define fluxbox-custom
+  (package
+    (name "fluxbox-custom")
+    (version (package-version fluxbox))
+    (source #f)
+    (build-system trivial-build-system)
+    (arguments
+     `(#:modules ((guix build utils))
+       #:builder
+       (begin (use-modules (guix build utils))
+              (let* ((source (assoc-ref %build-inputs "fluxbox"))
+                     (out    (assoc-ref %outputs "out")))
+                (copy-recursively source out)
+                (substitute* (string-append out "/share/fluxbox/menu")
+                  (("\\(firefox.*") "(gparted) {gparted}\n"))))))
+    (native-inputs (list fluxbox))
+    (home-page (package-home-page fluxbox))
+    (synopsis (package-synopsis fluxbox))
+    (description (package-description fluxbox))
+    (license (package-license fluxbox))))
+
+;;
 
 (operating-system
   (host-name "gnu")
@@ -38,7 +64,6 @@
   (packages (append (map specification->package
                          (list
                            "adwaita-icon-theme"
-                           "fluxbox"
                            "neofetch"
                            "nss-certs"
 
@@ -59,6 +84,7 @@
                            "ntfs-3g"
                            "udftools"
                            "xfsprogs"))
+                    (list fluxbox-custom)
                     %base-packages))
 
   (services
