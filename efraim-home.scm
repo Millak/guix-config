@@ -126,10 +126,10 @@
         ;; Currently zig only builds on x86_64-linux but
         ;; is only gated to 64-bit architectures.
         ;(if (package-transitive-supported-systems
-        ;      (specification->package "ncdu2"))
+        ;      (specification->package "ncdu@2"))
         (if (equal? "x86_64-linux" (%current-system))
-          "ncdu2"
-          "ncdu")
+          "ncdu@2"
+          "ncdu@1")
         "nmap"
         "nss-certs"
         "openssh"
@@ -266,6 +266,8 @@
     "log = -v\n"
     "[diff]\n"
     "git = True\n"
+    ;"[email]\n"
+    ;"method = \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
     "[ui]\n"
     "username = Efraim Flashner <efraim@flashner.co.il\n"
     "verbose = True\n"
@@ -381,7 +383,6 @@
     "    diff = auto\n"
     "    status = auto\n"
     "[core]\n"
-    ;"    editor = " (S "vim") "/bin/vim\n"
     "    editor = vim\n"
     "[diff]\n"
     "    algorithm = patience\n"
@@ -795,7 +796,7 @@ XTerm*metaSendsEscape: true\n"))
                ;(use-modules (srfi srfi-26))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
                      ;; Can I use compose and find or a list to make this work?
-                     ;(map (cut "--gnupg_extra_args" string-append "--keyring=" <>)
+                     ;(map (cut compose list "--gnupg_extra_args" string-append "--keyring=" <>)
                      ;     (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
                      "--gnupg_extra_args"
                      (string-append "--keyring="
@@ -825,7 +826,8 @@ XTerm*metaSendsEscape: true\n"))
                        ("ELM_ENGINE" . "wayland_egl")
                        ;; Still necessary for sdl2@2.0.14
                        ("SDL_VIDEODRIVER" . "wayland")
-                       ("MOZ_ENABLE_WAYLAND" . "1")
+                       ;; Still causing trouble :/
+                       ;("MOZ_ENABLE_WAYLAND" . "1")
                        ;; Work around qtwebengine and glibc issues:
                        ;; Still necessary with qtwebengine-5.15.5, no text on ci.guix.gnu.org.
                        ("QTWEBENGINE_CHROMIUM_FLAGS" . "--disable-seccomp-filter-sandbox")
