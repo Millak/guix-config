@@ -5,7 +5,7 @@
 ;;
 
 (define-module (gparted))
-(use-modules (gnu) (guix) (srfi srfi-1) (guix build-system trivial) (dfsg main nilfs))
+(use-modules (gnu) (guix) (srfi srfi-1) (guix build-system trivial))
 (use-service-modules
   admin
   xorg)
