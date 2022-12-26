@@ -881,7 +881,7 @@ alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure
                        %keybase-user-service
                        %keybase-fuse-user-service
 
-                       ;%kdeconnect-user-service    ; starts too fast
+                       %kdeconnect-user-service
                        %parcimonie-user-service))))
 
         ;(service home-openssh-service-type
