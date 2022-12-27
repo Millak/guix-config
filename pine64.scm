@@ -78,7 +78,7 @@
                       (jobs
                         (list
                           #~(job '(next-hour '(3))
-                                 "guix gc")
+                                 "guix gc --free-space=20G")
                           ;; The board powers up at unix date 0.
                           ;; Restart ntpd to set the clock.
                           ;; TODO: This job doesn't work.
