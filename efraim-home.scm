@@ -821,29 +821,43 @@ XTerm*metaSendsEscape: true\n"))
                  (home-bash-configuration
                    (guix-defaults? #t)
                    (environment-variables
-                     `(;("QT_QPA_PLATFORM" . "wayland")
-                       ("ECORE_EVAS_ENGINE" . "wayland_egl")
-                       ("ELM_ENGINE" . "wayland_egl")
-                       ;; Still necessary for sdl2@2.0.14
-                       ("SDL_VIDEODRIVER" . "wayland")
-                       ;; Still causing trouble :/
-                       ;("MOZ_ENABLE_WAYLAND" . "1")
-                       ;; Work around qtwebengine and glibc issues:
-                       ;; Still necessary with qtwebengine-5.15.5, no text on ci.guix.gnu.org.
-                       ("QTWEBENGINE_CHROMIUM_FLAGS" . "--disable-seccomp-filter-sandbox")
-                       ;; Append guix-home directories to bash completion dirs.
-                       ("BASH_COMPLETION_USER_DIR" . (string-append "$BASH_COMPLETION_USER_DIR:"
-                                                                    "$HOME/.guix-home/profile/share/bash-completion/completions:"
-                                                                    "$HOME/.guix-home/profile/etc/bash_completion.d"))
-                       ("CVS_RSH" . "ssh")
-                       ("EDITOR" . "vim")
-                       ("GPG_TTY" . "$(tty)")
-                       ("HISTSIZE" . "3000")
-                       ("HISTFILESIZE" . "10000")
-                       ("HISTCONTROL" . "ignoreboth")
-                       ("HISTIGNORE" . "'pwd:exit:fg:bg:top:clear:history:ls:uptime:df'")
-                       ;("PROMPT_COMMAND" . "'history -a; $PROMPT_COMMAND'")
-                       ))
+                    `(;("QT_QPA_PLATFORM" . "wayland")
+                      ("ECORE_EVAS_ENGINE" . "wayland_egl")
+                      ("ELM_ENGINE" . "wayland_egl")
+                      ;; Still necessary for sdl2@2.0.14
+                      ("SDL_VIDEODRIVER" . "wayland")
+                      ;; Still causing trouble :/
+                      ;("MOZ_ENABLE_WAYLAND" . "1")
+                      ;; Work around qtwebengine and glibc issues:
+                      ;; Still necessary with qtwebengine-5.15.5, no text on ci.guix.gnu.org.
+                      ("QTWEBENGINE_CHROMIUM_FLAGS" . "--disable-seccomp-filter-sandbox")
+                      ;; Append guix-home directories to bash completion dirs.
+                      ("BASH_COMPLETION_USER_DIR" .
+                       ,(string-append "$BASH_COMPLETION_USER_DIR:"
+                                       "$HOME/.guix-home/profile/share/bash-completion/completions:"
+                                       "$HOME/.guix-home/profile/etc/bash_completion.d"))
+                      ("CVS_RSH" . "ssh")
+                      ("EDITOR" . "vim")
+                      ("GPG_TTY" . "$(tty)")
+                      ("HISTSIZE" . "3000")
+                      ("HISTFILESIZE" . "10000")
+                      ("HISTCONTROL" . "ignoreboth")
+                      ("HISTIGNORE" . "pwd:exit:fg:bg:top:clear:history:ls:uptime:df")
+                      ("PROMPT_COMMAND" . "history -a; $PROMPT_COMMAND")))
+                   (aliases
+                    `(("cp" . "cp --reflink=auto")
+                      ("exitexit" . "exit")
+                      ("clear" . "printf '\\E[H\\E[J\\E[0m'")
+                      ("guix-home-build" .
+                       ,(string-append "~/workspace/guix/pre-inst-env guix home "
+                                       "build --no-grafts --fallback "
+                                       "-L ~/workspace/my-guix/ "
+                                       "~/workspace/guix-config/efraim-home.scm"))
+                      ("guix-home-reconfigure" .
+                       ,(string-append "~/workspace/guix/pre-inst-env guix home "
+                                       "reconfigure --fallback "
+                                       "-L ~/workspace/my-guix/ "
+                                       "~/workspace/guix-config/efraim-home.scm"))))
                    (bash-profile
                      (list
                        (mixed-text-file "bash-profile" "\
@@ -856,18 +870,7 @@ if [ -d ${HOME}/.cache/efreet ]; then
 fi
 if [ -d ${HOME}/.local/share/flatpak/exports/share ]; then
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${HOME}/.local/share/flatpak/exports/share
-fi")))
-                   (bashrc
-                     (list
-                       (mixed-text-file "bashrc" "\
-alias cp='cp --reflink=auto'
-alias exitexit='exit'
-alias clear=\"printf '\\E[H\\E[J\\E[0m'\"
-
-#alias guix-u='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -u . '
-#alias guix-m='~/workspace/guix/pre-inst-env guix package --fallback -L ~/workspace/my-guix/ -m ~/workspace/guix-config/Guix_manifest.scm'
-alias guix-home-build='~/workspace/guix/pre-inst-env guix home build --no-grafts --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'
-alias guix-home-reconfigure='~/workspace/guix/pre-inst-env guix home reconfigure --fallback -L ~/workspace/my-guix/ ~/workspace/guix-config/efraim-home.scm'")))))
+fi")))))
 
         (service home-shepherd-service-type
                  (home-shepherd-configuration
