@@ -399,8 +399,9 @@
     "[imap]\n"
     "    folder = Drafts\n"
     "    tunnel = \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
-    "[log]\n"
-    "    showSignature = true\n"
+    ;; This breaks tig
+    ;"[log]\n"
+    ;"    showSignature = true\n"
     "[pull]\n"
     "    rebase = true\n"
     ;"[push]\n"
