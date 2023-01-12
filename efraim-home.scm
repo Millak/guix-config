@@ -385,7 +385,7 @@
     "    algorithm = patience\n"
     "[fetch]\n"
     "    prune = true\n"
-    "    pruneTags = true\n"
+    ;"    pruneTags = true\n"
     "    parallel = 0\n"
     "[format]\n"
     "    coverLetter = auto\n"
