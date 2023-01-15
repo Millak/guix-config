@@ -5,11 +5,16 @@
 ;;
 
 (define-module (gparted))
-(use-modules (gnu) (guix) (srfi srfi-1) (guix build-system trivial))
+(use-modules (gnu)
+             (guix)
+             (srfi srfi-1)
+             (guix build-system trivial))
 (use-service-modules
   admin
   xorg)
 (use-package-modules
+  disk
+  gtk
   linux
   package-management
   wm
@@ -38,6 +43,67 @@
     (description (package-description fluxbox))
     (license (package-license fluxbox))))
 
+(define gtk+-minimal
+  (package
+    (inherit gtk+)
+    (arguments
+     (substitute-keyword-arguments (package-arguments gtk+)
+       ;; The tests need more of the inputs that we've stripped
+       ;; away in order to pass. Skip the tests for now.
+       ((#:tests? _ #t) #f)
+       ((#:configure-flags _ ''())
+        `(list "--disable-cups"
+               "--disable-introspection"
+               "--enable-x11-backend"
+               "--disable-gtk-doc-html"))))
+    (propagated-inputs
+     (modify-inputs (package-propagated-inputs gtk+)
+                    (prepend gdk-pixbuf)
+                    (delete "fontconfig"
+                            "freetype"
+                            "librsvg"   ; gdk-pixbuf
+                            "libcloudproviders-minimal"
+                            "libx11"
+                            "libxcomposite"
+                            "libxcursor"
+                            "libxdamage"
+                            "libxext"
+                            "libxfixes"
+                            "libxinerama"
+                            "libxkbcommon"
+                            "libxrandr"
+                            "libxrender"
+                            "mesa"
+                            "wayland"
+                            "wayland-protocols")))
+    (inputs
+     (modify-inputs (package-inputs gtk+)
+                    (delete "colord-minimal"
+                            "cups"
+                            "graphene"
+                            "harfbuzz")))))
+
+(define harfbuzz-minimal
+  (package
+    (inherit harfbuzz)
+    (arguments
+     (substitute-keyword-arguments (package-arguments harfbuzz)
+       ((#:configure-flags cf ''())
+        `(cons* "--with-icu=no"
+                (delete "--with-graphite2" ,cf)))))
+    (propagated-inputs
+     (modify-inputs (package-propagated-inputs harfbuzz)
+                    (delete "graphite2" "icu4c")))))
+
+(define use-minimal-gtk+
+  (package-input-rewriting/spec
+    `(("gtk+" . ,(const gtk+-minimal))
+      ("harfbuzz" . ,(const harfbuzz-minimal)))))
+
+(define gparted-custom
+  (package
+    (inherit (use-minimal-gtk+ gparted))))
+
 ;;
 
 (operating-system
@@ -63,29 +129,43 @@
 
   (packages (append (map specification->package
                          (list
-                           "adwaita-icon-theme"
-                           "neofetch"
-                           "nss-certs"
+                           "adwaita-icon-theme" ; guix-gc--references -> nothing
+                           "neofetch"           ; bash-minimal
+                           ;"nss-certs"         ; Actually not sure why we'd need this.
 
-                           "gparted"
-                           "xterm"
+                           ;"gparted"            ; all the things!
+                           "xterm"              ; actually, a lot
 
-                           "cryptsetup"
-                           "lvm2"
-                           "mdadm"
+                           "cryptsetup"         ; libgcrypt, util-linux:lib, eudev, json-c, argon2, libgpg-error, popt, lvm2
+                           ;"cryptsetup-static"  ; guix-gc--references -> nothing
+                           "lvm2"               ; lvm2-static has a larger size than lvm2 with the same closure
+                           "mdadm"              ; eudev
+                           ;"mdadm-static"       ; guix-gc--references -> nothing
 
-                           "btrfs-progs"
-                           "dosfstools"
-                           "e2fsprogs"
-                           "exfatprogs"
-                           "f2fs-tools"
-                           "jfsutils"
-                           "nilfs-utils"
-                           "ntfs-3g"
-                           "udftools"
+                           ;"bcachefs-tools-static"
+                           "btrfs-progs"        ; zstd:lib, e2fsprogs, eudev, zlib, lzo
+                           ;"btrfs-progs-static" ; guix-gc--references -> nothing
+                           "dosfstools"         ; only glibc, gcc:lib
+                           "mtools"             ; needed by fat16/fat32; glibc, gcc:lib, bash-minimal
+                           "e2fsprogs"          ; util-linux:lib
+                           "exfatprogs"         ; only glibc, gcc:lib
+                           "f2fs-tools"         ; util-linux:lib
+                           "jfsutils"           ; util-linux:lib
+                           "nilfs-utils"        ; util-linux:lib
+                           "ntfs-3g"            ; fuse-2
+                           ;"ntfs-3g-static"     ; only glibc
+                           "udftools"           ; only glibc, gcc:lib
                            "xfsprogs"))
-                    (list fluxbox-custom)
+                    (list gparted-custom
+                          fluxbox-custom)       ; also a lot :/
                     %base-packages))
+
+  ;; Use a modified list of setuid-programs.
+  ;; Are there any we need? We run as root.
+  (setuid-programs
+    (list
+  ;    (setuid-program (program (file-append foo "/bin/foo")))
+    ))
 
   (services
    (append
@@ -101,22 +181,26 @@
                     `(("/root/.fluxbox/startup"
                        ,(mixed-text-file
                           "fluxbox-startup"
-                          "exec " (specification->package "gparted") "/bin/gparted &\n"
-                          "exec " (specification->package "xterm") "/bin/xterm &\n"
+                          "exec /run/current-system/profile/bin/gparted &\n"
+                          "exec /run/current-system/profile/bin/xterm &\n"
                           "exec fluxbox\n")))))
 
      (remove (lambda (service)
                (let ((type (service-kind service)))
                  (memq type
                        (list
+                         guix-service-type          ; not actually needed?
                          log-cleanup-service-type
+                         nscd-service-type          ; no networking
                          rottlog-service-type))))
              (modify-services
                %base-services
                (udev-service-type
                  config =>
                  (udev-configuration
-                   (rules (list lvm2 fuse))))))))
+                   (rules (list lvm2 fuse mdadm))))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
-  (name-service-switch %mdns-host-lookup-nss))
+  ;; No network!
+  ;(name-service-switch %mdns-host-lookup-nss)
+  )
