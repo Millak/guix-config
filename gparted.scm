@@ -227,22 +227,16 @@
 
   (packages (append (map specification->package
                          (list
-                           "adwaita-icon-theme" ; guix-gc--references -> nothing
                            "neofetch"           ; bash-minimal
-                           ;"nss-certs"         ; Actually not sure why we'd need this.
 
-                           ;"gparted"            ; all the things!
                            "xterm"              ; actually, a lot
 
                            "cryptsetup"         ; libgcrypt, util-linux:lib, eudev, json-c, argon2, libgpg-error, popt, lvm2
-                           ;"cryptsetup-static"  ; guix-gc--references -> nothing
                            "lvm2"               ; lvm2-static has a larger size than lvm2 with the same closure
                            "mdadm"              ; eudev
-                           ;"mdadm-static"       ; guix-gc--references -> nothing
 
                            ;"bcachefs-tools-static"
                            "btrfs-progs"        ; zstd:lib, e2fsprogs, eudev, zlib, lzo
-                           ;"btrfs-progs-static" ; guix-gc--references -> nothing
                            "dosfstools"         ; only glibc, gcc:lib
                            "mtools"             ; needed by fat16/fat32; glibc, gcc:lib, bash-minimal
                            "e2fsprogs"          ; util-linux:lib
@@ -251,7 +245,6 @@
                            "jfsutils"           ; util-linux:lib
                            "nilfs-utils"        ; util-linux:lib
                            "ntfs-3g"            ; fuse-2
-                           ;"ntfs-3g-static"     ; only glibc
                            "udftools"           ; only glibc, gcc:lib
                            "xfsprogs"))
                     (list gparted-custom
@@ -287,7 +280,7 @@
                (let ((type (service-kind service)))
                  (memq type
                        (list
-                         guix-service-type          ; not actually needed?
+                         guix-service-type          ; not actually needed
                          log-cleanup-service-type
                          nscd-service-type          ; no networking
                          rottlog-service-type))))
@@ -296,9 +289,4 @@
                (udev-service-type
                  config =>
                  (udev-configuration
-                   (rules (list lvm2 fuse mdadm))))))))
-
-  ;; Allow resolution of '.local' host names with mDNS.
-  ;; No network!
-  ;(name-service-switch %mdns-host-lookup-nss)
-  )
+                   (rules (list lvm2 fuse mdadm)))))))))
