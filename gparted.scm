@@ -7,6 +7,7 @@
 (define-module (gparted))
 (use-modules (gnu)
              (guix)
+             (guix transformations)
              (srfi srfi-1)
              (guix build-system trivial))
 (use-service-modules
@@ -15,6 +16,7 @@
 (use-package-modules
   compression
   disk
+  fontutils
   gl
   gtk
   linux
@@ -39,10 +41,14 @@
                "--disable-gtk-doc-html"
                (string-append "--with-html-dir="
                               (assoc-ref %outputs "doc")
-                              "/share/gtk-doc/html")
-               (string-append "--localedir="
-                              (assoc-ref %outputs "doc")
-                              "/share/locale")))))
+                              "/share/gtk-doc/html")))
+       ((#:phases phases)
+        `(modify-phases ,phases
+           (add-after 'install 'remove-localizations
+             (lambda* (#:key outputs #:allow-other-keys)
+               (delete-file-recursively
+                 (string-append (assoc-ref outputs "out")
+                                "/share/locale"))))))))
     (propagated-inputs
      (modify-inputs (package-propagated-inputs gtk+)
                     (prepend gdk-pixbuf)
@@ -78,7 +84,7 @@
      (substitute-keyword-arguments (package-arguments harfbuzz)
        ((#:configure-flags cf ''())
         `(cons* "--with-icu=no"
-                "--disable-introspection"
+                ;"--disable-introspection"  ; causes pango to fail
                 "--disable-gtk-doc-html"
                 (string-append "--with-html-dir="
                                (assoc-ref %outputs "doc")
@@ -88,11 +94,21 @@
      (modify-inputs (package-propagated-inputs harfbuzz)
                     (delete "graphite2" "icu4c")))))
 
+;; freetype-config embeds a reference to pkg-config.
+(define freetype-minimal
+  (package
+    (inherit freetype)
+    (arguments
+     (substitute-keyword-arguments (package-arguments freetype)
+       ((#:configure-flags _)
+        ;`(list "--disable-static"))))))
+        `(list "--disable-freetype-config"))))))
+
 (define util-linux-minimal
   (package/inherit util-linux
     (arguments
      (substitute-keyword-arguments (package-arguments util-linux)
-       ((#:phases phases)
+       ((#:phases phases '%standard-phases)
         `(modify-phases ,phases
            (add-after 'install 'remove-localizations
              (lambda* (#:key outputs #:allow-other-keys)
@@ -100,6 +116,44 @@
                  ;; ~75% of the "lib" output.
                  (string-append (assoc-ref outputs "lib")
                                 "/share/locale"))))))))))
+
+(define (remove-static-libraries pkg)
+  (package/inherit pkg
+    ;(name (string-append (package-name pkg) "-smaller"))
+    (arguments
+     (substitute-keyword-arguments (package-arguments pkg)
+       ((#:phases phases '%standard-phases)
+        `(modify-phases ,phases
+           (add-after 'install 'delete-static-libraries
+             (lambda* (#:key outputs #:allow-other-keys)
+               (for-each delete-file
+                         (find-files
+                           (string-append (assoc-ref outputs "out") "/lib")
+                           "\\.a$"))))))))))
+
+(define libelf-smaller
+  (remove-static-libraries (specification->package "libelf")))
+
+(define elfutils-smaller
+  (remove-static-libraries (specification->package "elfutils")))
+
+(define ncurses-smaller
+  (remove-static-libraries (specification->package "ncurses")))
+
+(define readline-smaller
+  (remove-static-libraries (specification->package "readline")))
+
+(define parted-minimal
+  (package
+    (inherit parted)
+    (arguments
+     (substitute-keyword-arguments (package-arguments parted)
+       ((#:configure-flags cf ''())
+        `(cons* "--without-readline"
+                "--disable-static"
+                ,cf))))
+    (inputs (modify-inputs (package-inputs parted)
+                           (delete "readline")))))
 
 (define mesa-smaller
   (package/inherit mesa
@@ -133,6 +187,7 @@
   (package/inherit llvm-11
     ;; If we can separate out the include directory we'd save another 21MB.
     (outputs (list "out"))
+    (version (package-version llvm-11))
     (arguments
      (substitute-keyword-arguments (package-arguments llvm-11)
        ((#:build-type _) "MinSizeRel") ; decreases the size by ~25%
@@ -161,7 +216,8 @@
                (let ((out (assoc-ref outputs "out")))
                  (substitute*
                    "tools/llvm-config/CMakeFiles/llvm-config.dir/link.txt"
-                   (("/tmp/guix-build-llvm-11.0.0.drv-0/build/lib")
+                   (((string-append "/tmp/guix-build-llvm-"
+                                    ,version ".drv-0/build/lib"))
                     (string-append out "/lib")))
                  (invoke "make" "llvm-config")
                  (install-file "bin/llvm-config"
@@ -169,38 +225,44 @@
 
 (define use-minimized-inputs
   (package-input-rewriting/spec
-    `(("gtk+" . ,(const gtk+-minimal))
+    `(;("freetype" . ,(const freetype-minimal)) ; breaks python!?
+      ("gtk+" . ,(const gtk+-minimal))
       ("harfbuzz" . ,(const harfbuzz-minimal))
       ("llvm" . ,(const llvm-minimal))
       ("mesa" . ,(const mesa-smaller))
-      ("util-linux" . ,(const util-linux-minimal)))))
+      ("parted" . ,(const parted-minimal))
+      ;; These cause many rebuilds. Use a graft?
+      ("elfutils" . ,(const elfutils-smaller))
+      ;("libelf" . ,(const libelf-smaller))     ; breaks glib?
+      ;("ncurses" . ,(const ncurses-smaller))   ; breaks procpcs
+      ;("readline" . ,(const readline-smaller)) ; many rebuilds
+      ;("util-linux" . ,(const util-linux-minimal))  ; breaks python?
+      )))
 
 ;;
 
+;; This needs to be rebuilt, not just substituted.
 (define fluxbox-custom
-  (package
-    (name "fluxbox-custom")
-    (version (package-version fluxbox))
-    (source #f)
-    (build-system trivial-build-system)
-    (arguments
-     `(#:modules ((guix build utils))
-       #:builder
-       (begin (use-modules (guix build utils))
-              (let ((source (assoc-ref %build-inputs "fluxbox"))
-                    (out    (assoc-ref %outputs "out")))
-                (copy-recursively source out)
-                (substitute* (string-append out "/share/fluxbox/menu")
-                  (("\\(firefox.*") "(gparted) {gparted}\n"))))))
-    (native-inputs (list (use-minimized-inputs fluxbox)))
-    (home-page (package-home-page fluxbox))
-    (synopsis (package-synopsis fluxbox))
-    (description (package-description fluxbox))
-    (license (package-license fluxbox))))
+  (let ((base (use-minimized-inputs fluxbox)))
+    (package/inherit base
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:phases phases)
+          `(modify-phases ,phases
+             (delete 'install-vim-files)
+             (add-after 'install 'adjust-fluxbox-menu
+               (lambda* (#:key outputs #:allow-other-keys)
+                (let ((out (assoc-ref %outputs "out")))
+                  (substitute* (string-append out "/share/fluxbox/menu")
+                    (("\\(firefox.*") "(gparted) {gparted}\n"))))))))))))
 
 (define gparted-custom
   (package
-    (inherit (use-minimized-inputs gparted))))
+    (inherit (use-minimized-inputs gparted))
+    (arguments
+     (substitute-keyword-arguments (package-arguments gparted)
+       ((#:configure-flags cf ''())
+        `(cons* "--enable-libparted-dmraid" ,cf))))))
 
 ;;
 
@@ -222,6 +284,7 @@
                         (device "/dev/sda1")
                         (type "ext4"))
                       %base-file-systems))
+  (firmware '())
 
   (users %base-user-accounts)
 
@@ -235,7 +298,7 @@
                            "lvm2"               ; lvm2-static has a larger size than lvm2 with the same closure
                            "mdadm"              ; eudev
 
-                           ;"bcachefs-tools-static"
+                           ;"bcachefs-tools"
                            "btrfs-progs"        ; zstd:lib, e2fsprogs, eudev, zlib, lzo
                            "dosfstools"         ; only glibc, gcc:lib
                            "mtools"             ; needed by fat16/fat32; glibc, gcc:lib, bash-minimal
