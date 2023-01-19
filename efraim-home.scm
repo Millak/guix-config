@@ -671,7 +671,13 @@ XTerm*metaSendsEscape: true\n"))
         #$(file-append (S "openconnect-sso") "/bin/openconnect-sso")
         "--server" "uthscvpn1.uthsc.edu" "--authgroup" "UTHSC"
         "--" "--script"
-        #$(file-append (S "vpn-slice") "/bin/vpn-slice") "128.169.0.0/16")))
+        ;; This needs to be one string but I can't get it to work correctly.
+        ;#$(string-append "'"
+        ;                 (file-append (S "vpn-slice") "/bin/vpn-slice")
+                         #$(file-append (S "vpn-slice") "/bin/vpn-slice")
+                         "128.169.0.0/16"
+        ;                 "'")
+        )))
 
 ;;; Extra services.
 
@@ -852,6 +858,7 @@ XTerm*metaSendsEscape: true\n"))
                     `(("cp" . "cp --reflink=auto")
                       ("exitexit" . "exit")
                       ("clear" . "printf '\\E[H\\E[J\\E[0m'")
+                      ("ime" . "time")
                       ("guix-home-build" .
                        ,(string-append "~/workspace/guix/pre-inst-env guix home "
                                        "build --no-grafts --fallback "
