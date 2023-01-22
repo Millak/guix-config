@@ -119,7 +119,6 @@
 
 (define (remove-static-libraries pkg)
   (package/inherit pkg
-    ;(name (string-append (package-name pkg) "-smaller"))
     (arguments
      (substitute-keyword-arguments (package-arguments pkg)
        ((#:phases phases '%standard-phases)
@@ -136,9 +135,6 @@
 
 (define elfutils-smaller
   (remove-static-libraries (specification->package "elfutils")))
-
-(define ncurses-smaller
-  (remove-static-libraries (specification->package "ncurses")))
 
 (define readline-smaller
   (remove-static-libraries (specification->package "readline")))
@@ -225,19 +221,16 @@
 
 (define use-minimized-inputs
   (package-input-rewriting/spec
-    `(;("freetype" . ,(const freetype-minimal)) ; breaks python!?
+    `(("elfutils" . ,(const elfutils-smaller))
+      ("freetype" . ,(const freetype-minimal))
       ("gtk+" . ,(const gtk+-minimal))
       ("harfbuzz" . ,(const harfbuzz-minimal))
+      ("libelf" . ,(const libelf-smaller))
       ("llvm" . ,(const llvm-minimal))
       ("mesa" . ,(const mesa-smaller))
       ("parted" . ,(const parted-minimal))
-      ;; These cause many rebuilds. Use a graft?
-      ("elfutils" . ,(const elfutils-smaller))
-      ;("libelf" . ,(const libelf-smaller))     ; breaks glib?
-      ;("ncurses" . ,(const ncurses-smaller))   ; breaks procpcs
-      ;("readline" . ,(const readline-smaller)) ; many rebuilds
-      ;("util-linux" . ,(const util-linux-minimal))  ; breaks python?
-      )))
+      ("readline" . ,(const readline-smaller))
+      ("util-linux" . ,(const util-linux-minimal)))))
 
 ;;
 
