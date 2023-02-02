@@ -21,7 +21,11 @@
 (define headless?
   (eq? #f (getenv "DISPLAY")))
 
-(define UTenn_machines
+(define %Guix_machines
+  (list "bayfront"
+        "guixp9"))
+
+(define %UTenn_machines
   (list "lily"
         "penguin2"
         "tux01"
@@ -34,8 +38,8 @@
 
 (define work-machine?
   (not (eq? #f (member (gethostname)
-                       (cons "bayfront"
-                             UTenn_machines)))))
+                       (append %Guix_machines
+                               %UTenn_machines)))))
 
 (define %GUI-only
   (list "adwaita-icon-theme"
@@ -289,9 +293,9 @@
 (define %streamlink-config
   (mixed-text-file
     "streamlink-config"
-    "verbose"
+    "verbose\n"
     "default-stream 720p,720p60,1080p,best\n"
-    "player=" (S "mpv") "/bin/mpv\n"))
+    "player=mpv\n"))
 
 (define %aria2-config
   (plain-file
@@ -311,7 +315,7 @@
     "BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
     "DEBOOTSTRAPOPTS=( '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
 
-    "if [ $ARCHITECTURE == powerpc ]; then\n"
+    "if [ $ARCHITECTURE == powerpc -o $ARCHITECTURE == riscv64 ]; then\n"
     ;; These are only needed when it's a ports architecture.
     "    MIRRORSITE=http://deb.debian.org/debian-ports\n"
     ;; These two courtesy of John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
@@ -362,7 +366,7 @@
         "pinentry-program /usr/bin/pinentry\n")
     ;"enable-ssh-support\n"
     ;"allow-emacs-pinentry\n"
-    ;; This makes me sign each commit individually.
+    ;; This forces signing each commit individually.
     ;"ignore-cache-for-signing\n"
     ))
 
@@ -561,7 +565,7 @@ XTerm*metaSendsEscape: true\n"))
     ;"PassCmd \"" (S "gnupg") "/bin/gpg --quiet --for-your-eyes-only --decrypt $HOME/.msmtp.password.gpg\"\n"
     ;"SSLType IMAPS\n"
     ;"CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
-    "Timeout 120 # 25 * 8 / 2\n"
+    "Timeout 120\n" ; 25 * 8 / 2
     "Tunnel \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il 'MAIL=maildir:~/Maildir exec /usr/lib/dovecot/imap'\"\n"
     "\n"
     "Channel flashner\n"
@@ -823,7 +827,7 @@ XTerm*metaSendsEscape: true\n"))
 
 ;;;
 
-(define my-home-environment
+(define guix-system-home-environment
   (home-environment
     (packages package-list)
     (services
@@ -993,12 +997,13 @@ fi")))))
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("msmtp/config" ,%msmtp-config)
-           ("nano/nanorc" ,%nanorc)
+           ;; Specific to Guix System
+           ;("nano/nanorc" ,%nanorc)
            ;("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
 
 (if guix-system?
-  my-home-environment
+  guix-system-home-environment
   foreign-home-environment)
