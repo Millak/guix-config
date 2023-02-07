@@ -104,6 +104,20 @@
         ;`(list "--disable-static"))))))
         `(list "--disable-freetype-config"))))))
 
+(define btrfs-progs-minimal
+  (package
+    (inherit btrfs-progs)
+    (arguments
+     (substitute-keyword-arguments (package-arguments btrfs-progs)
+       ((#:configure-flags cf ''())
+        ;; texlive-bin FTBFS with the package changes.
+        `(cons* "--disable-documentation" ,cf))))
+    (native-inputs
+     (modify-inputs (package-native-inputs btrfs-progs)
+                    (delete "python-sphinx")))))
+
+;; Is it worth it? This is also pulled in by e2fsprogs which comes with the
+;; initramfs, meaning we effectively have two copies in the OS closure.
 (define util-linux-minimal
   (package/inherit util-linux
     (arguments
@@ -221,23 +235,25 @@
 
 (define use-minimized-inputs
   (package-input-rewriting/spec
-    `(("elfutils" . ,(const elfutils-smaller))
-      ("freetype" . ,(const freetype-minimal))
-      ("gtk+" . ,(const gtk+-minimal))
-      ("harfbuzz" . ,(const harfbuzz-minimal))
-      ("libelf" . ,(const libelf-smaller))
-      ("llvm" . ,(const llvm-minimal))
-      ("mesa" . ,(const mesa-smaller))
+    `(;("elfutils" . ,(const elfutils-smaller))
+      ;("freetype" . ,(const freetype-minimal))
+      ;("gtk+" . ,(const gtk+-minimal))
+      ;("harfbuzz" . ,(const harfbuzz-minimal))
+      ;("libelf" . ,(const libelf-smaller))
+      ;("llvm" . ,(const llvm-minimal))
+      ;("mesa" . ,(const mesa-smaller))
       ("parted" . ,(const parted-minimal))
-      ("readline" . ,(const readline-smaller))
-      ("util-linux" . ,(const util-linux-minimal)))))
+      ;("readline" . ,(const readline-smaller))
+      ;("util-linux" . ,(const util-linux-minimal))
+      )))
 
 ;;
 
 ;; This needs to be rebuilt, not just substituted.
 (define fluxbox-custom
   (let ((base (use-minimized-inputs fluxbox)))
-    (package/inherit base
+    (package
+      (inherit base)
       (arguments
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
@@ -281,31 +297,36 @@
 
   (users %base-user-accounts)
 
-  (packages (append (map specification->package
-                         (list
-                           "neofetch"           ; bash-minimal
+  (packages
+    (append
+      (map use-minimized-inputs
+           (map specification->package
+                (list
+                  "neofetch"           ; bash-minimal
 
-                           "xterm"              ; actually, a lot
+                  "xterm"              ; actually, a lot
 
-                           "cryptsetup"         ; libgcrypt, util-linux:lib, eudev, json-c, argon2, libgpg-error, popt, lvm2
-                           "lvm2"               ; lvm2-static has a larger size than lvm2 with the same closure
-                           "mdadm"              ; eudev
+                  "cryptsetup"         ; libgcrypt, util-linux:lib, eudev, json-c, argon2, libgpg-error, popt, lvm2
+                  "lvm2"               ; lvm2-static has a larger size than lvm2 with the same closure
+                  "mdadm"              ; eudev
 
-                           ;"bcachefs-tools"
-                           "btrfs-progs"        ; zstd:lib, e2fsprogs, eudev, zlib, lzo
-                           "dosfstools"         ; only glibc, gcc:lib
-                           "mtools"             ; needed by fat16/fat32; glibc, gcc:lib, bash-minimal
-                           "e2fsprogs"          ; util-linux:lib
-                           "exfatprogs"         ; only glibc, gcc:lib
-                           "f2fs-tools"         ; util-linux:lib
-                           "jfsutils"           ; util-linux:lib
-                           "nilfs-utils"        ; util-linux:lib
-                           "ntfs-3g"            ; fuse-2
-                           "udftools"           ; only glibc, gcc:lib
-                           "xfsprogs"))
-                    (list gparted-custom
-                          fluxbox-custom)       ; also a lot :/
-                    %base-packages))
+                  ;"bcachefs-tools"
+                  ;"btrfs-progs"        ; zstd:lib, e2fsprogs, eudev, zlib, lzo
+                  "dosfstools"         ; only glibc, gcc:lib
+                  "mtools"             ; needed by fat16/fat32; glibc, gcc:lib, bash-minimal
+                  ;; Already included from the filesystem type.
+                  ;"e2fsprogs"          ; util-linux:lib
+                  "exfatprogs"         ; only glibc, gcc:lib
+                  "f2fs-tools"         ; util-linux:lib
+                  "jfsutils"           ; util-linux:lib
+                  "nilfs-utils"        ; util-linux:lib
+                  "ntfs-3g"            ; fuse-2
+                  "udftools"           ; only glibc, gcc:lib
+                  "xfsprogs")))
+      (list btrfs-progs-minimal
+            gparted-custom
+            fluxbox-custom)       ; also a lot :/
+      %base-packages))
 
   ;; Use a modified list of setuid-programs.
   ;; Are there any we need? We run as root.
