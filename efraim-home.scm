@@ -124,7 +124,8 @@
         "glibc-locales"
         "global"
         "gnupg"
-        "hunspell-dict-en"
+        "hunspell-dict-en-us"
+        "hunspell-dict-he-il"
         "links"
         "myrepos"
         ;; Currently zig only builds on x86_64-linux but
