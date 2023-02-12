@@ -65,12 +65,14 @@
                 %base-user-accounts))
   (packages
     (append
-      (list (specification->package "compsize")
-            (specification->package "econnman")
-            (specification->package "git-minimal")  ; git-upload-pack
-            (specification->package "nss-certs")
-            (specification->package "virt-manager")
-            (specification->package "xterm"))
+      (map specification->package
+           (list "adwaita-icon-theme"
+                 "compsize"
+                 "econnman"
+                 "git-minimal"          ; git-upload-pack
+                 "nss-certs"
+                 "virt-manager"
+                 "xterm"))
       %base-packages))
 
   (services
