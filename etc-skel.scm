@@ -8,13 +8,14 @@
 ;;;
 
 (define %gdbinit
-  (plain-file "dot-gdbinit" "\
+  (plain-file "gdbinit" "\
 # Tell GDB where to look for separate debugging files.
 guile
 (use-modules (gdb))
 (execute (string-append \"set debug-file-directory \"
                         (or (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
-                            \"~/.guix-profile/lib/debug\")))
+                            \"~/.guix-profile/lib/debug\"
+                            \"~/.guix-home/profile/lib/debug\")))
 end
 
 # Authorize extensions found in the store, such as the
@@ -63,11 +64,11 @@ XTerm*metaSendsEscape: true\n"))
         (service home-zsh-service-type)
 
         (service home-files-service-type
-         `(("gdbinit" ,%gdbinit)
-           ("guile" ,%guile)
+         `(("guile" ,%guile)
            ("Xdefaults" ,%xdefaults)))
 
         (service home-xdg-configuration-files-service-type
-         `(("nano/nanorc" ,%nanorc)))))))
+         `(("gdb/gdbinit" ,%gdbinit)
+           ("nano/nanorc" ,%nanorc)))))))
 
 etc-skel
