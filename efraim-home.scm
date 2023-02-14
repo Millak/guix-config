@@ -499,13 +499,14 @@
 ;        (system* #+(file-append (S "efl") "/bin/edje_cc") "-id" #$(file-append (@ (gnu artwork) %artwork-repository) "/backgrounds") #$%bg.edc "-o" #$output))))
 
 (define %gdbinit
-  (plain-file "dot-gdbinit" "\
+  (plain-file "gdbinit" "\
 # Tell GDB where to look for separate debugging files.
 guile
 (use-modules (gdb))
 (execute (string-append \"set debug-file-directory \"
                         (or (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
-                            \"~/.guix-profile/lib/debug\")))
+                            \"~/.guix-profile/lib/debug\"
+                            \"~/.guix-home/profile/lib/debug\")))
 end
 
 # Authorize extensions found in the store, such as the
@@ -908,7 +909,6 @@ fi")))))
 
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
-           (".gdbinit" ,%gdbinit)
            (".gnupg/gpg.conf" ,%gpg.conf)
            (".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
            (".guile" ,%guile)
@@ -929,6 +929,7 @@ fi")))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
+           ("gdb/gdbinit" ,%gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
@@ -958,7 +959,6 @@ fi")))))
       (list
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
-           (".gdbinit" ,%gdbinit)
            ;(".gnupg/gpg.conf" ,%gpg.conf)
            ;(".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
            (".guile" ,%guile)
@@ -980,6 +980,7 @@ fi")))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
+           ("gdb/gdbinit" ,%gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
