@@ -191,7 +191,8 @@
     (string-append
       "no-audio-display\n"
       ;; Upscaling from 720 causes fewer dropped frames.
-      "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n")))
+      "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n"
+      "gpu-context=wayland\n")))
 
 (define %inputrc
   (plain-file
@@ -841,6 +842,7 @@ XTerm*metaSendsEscape: true\n"))
                       ("ELM_ENGINE" . "wayland_egl")
                       ;; Still necessary for sdl2@2.0.14
                       ("SDL_VIDEODRIVER" . "wayland")
+                      ("GDK_BACKEND" . "wayland")
                       ;; Still causing trouble :/
                       ;("MOZ_ENABLE_WAYLAND" . "1")
                       ;; Work around qtwebengine and glibc issues:
