@@ -459,6 +459,7 @@
     "config.bind('pw', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='normal')\n"
     "config.bind(',m', 'spawn mpv {url}')\n"
     "config.bind(',M', 'hint links spawn mpv {hint-url}')\n"
+    "config.bind(',j', 'jseval (function() {    location.href = \"https://12ft.io/\" + location.href;})();')\n"
     "c.auto_save.session = True\n"
     "c.content.cookies.accept = 'no-3rdparty'\n"
     "c.content.default_encoding = 'utf-8'\n"
