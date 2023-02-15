@@ -715,6 +715,21 @@ XTerm*metaSendsEscape: true\n"))
     (auto-start? #f)
     (respawn? #f)))
 
+(define %onedrive-user-service
+  (shepherd-service
+    (documentation "Provide access to Onedrive™")
+    (provision '(onedrive))
+    (start #~(make-forkexec-constructor
+               (list #$(file-append (S "onedrive") "/bin/onedrive")
+                     "--monitor"
+                     "--verbose"
+                     (string-append (getenv "HOME") "/Onedrive"))
+               #:log-file (string-append (getenv "XDG_LOG_HOME") "/onedrive.log")))
+    (stop #~(make-system-destructor
+              (string-append "fusermount -u " (getenv "HOME") "/Onedrive")))
+    (auto-start? #f)        ; Needs network.
+    (respawn? #f)))
+
 ;; This needs more work with user shepherd services.
 (define %vdirsyncer-user-service
  ;; Doesn't get imported into the gexp.
