@@ -558,10 +558,10 @@ XTerm*metaSendsEscape: true\n"))
     "MaildirStore local\n"
     "Path ~/Maildir/\n"
     "Inbox ~/Maildir/INBOX\n"
-    "#MapInbox INBOX\n"
-    "#Trash Trash\n"
+    ;"MapInbox INBOX\n"
+    ;"Trash Trash\n"
     "Flatten .\n"
-    "#SubFolders Verbatim\n"
+    ;"SubFolders Verbatim\n"
     "\n"
     "IMAPStore flashner\n"
     "Host flashner.co.il\n"
@@ -569,7 +569,7 @@ XTerm*metaSendsEscape: true\n"))
     ;"PassCmd \"" (S "gnupg") "/bin/gpg --quiet --for-your-eyes-only --decrypt $HOME/.msmtp.password.gpg\"\n"
     ;"SSLType IMAPS\n"
     ;"CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
-    "Timeout 120\n" ; 25 * 8 / 2
+    "Timeout 120\n" ; 25 MB * 8 (bytes to bits) / 2 Mb/s = 100 s, add 20% for safety.
     "Tunnel \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il 'MAIL=maildir:~/Maildir exec /usr/lib/dovecot/imap'\"\n"
     "\n"
     "Channel flashner\n"
