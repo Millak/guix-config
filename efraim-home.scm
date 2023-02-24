@@ -450,6 +450,28 @@
       "GRTAGS\n"
       "GTAGS\n")))
 
+(define %newsboat-config
+  (mixed-text-file
+    "newsboat-config"
+    "browser \"qutebrowser --target window %u\"\n"
+    "download-full-page yes\n"
+    "article-sort-order date-desc\n"
+    "save-path \"~/Downloads\"\n"
+    "auto-reload yes\n"
+    "reload-threads 3\n"
+    "download-retries 5\n"
+    ;"max-items 200\n"
+    ;"keep-articles-days 180\n"
+    "download-path \"~/Downloads/\"\n"
+    "max-downloads 2\n"
+    ;"bind-key ^R reload-all\n"
+    "prepopulate-query-feeds yes\n"
+    "suppress-first-reload yes\n"
+    ;"proxy localhost:9050\n"
+    ;"proxy-type socks5\n"
+    ;"use-proxy yes\n"
+    "download-timeout 90\n"))
+
 (define %qutebrowser-config-py
   (mixed-text-file
     "qutebrowser-config-py"
@@ -965,6 +987,7 @@ fi")))))
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("msmtp/config" ,%msmtp-config)
+           ("newsboat/config" ,%newsboat-config)
            ("nano/nanorc" ,%nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
