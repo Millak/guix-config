@@ -52,9 +52,10 @@
                 (name "efraim")
                 (comment "Efraim")
                 (group "users")
+                (home-directory "/home/efraim")
+                (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
                 (supplementary-groups '("wheel"
-                                        "netdev" "kvm"))
-                (home-directory "/home/efraim"))
+                                        "netdev" "kvm")))
                %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
@@ -78,12 +79,12 @@
                       (jobs
                         (list
                           #~(job '(next-hour '(3))
-                                 "guix gc --free-space=20G")
+                                 "guix gc --free-space=15G")
                           ;; The board powers up at unix date 0.
                           ;; Restart ntpd to set the clock.
-                          ;; TODO: This job doesn't work.
-                          ;#~(job "2 0 * * *"
-                          ;       "herd restart ntpd")
+                          ;; This will run (24 hours and) 5 minutes after bootup.
+                          ;#~(job '(next-minute-from '(next-day) '(5))
+                          ;       "/run/current-system/profile/bin/herd restart ntpd")
                           ))))
 
            (service openntpd-service-type
@@ -122,3 +123,4 @@
   (name-service-switch %mdns-host-lookup-nss))
 
 ;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --system=aarch64-linux
+;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --target=aarch64-linux-gnu
