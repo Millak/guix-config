@@ -857,8 +857,11 @@ XTerm*metaSendsEscape: true\n"))
                ;(use-modules (srfi srfi-26))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
                      ;; Can I use compose and find or a list to make this work?
-                     ;(map (cut compose list "--gnupg_extra_args" string-append "--keyring=" <>)
-                     ;     (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
+                     ;((@@ (gnu services telephony) flatten)
+                     ; (map (lambda (item)
+                     ;        (list "--gnupg_extra_options" "--keyring" item))
+                     ;      (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
+                     ;; returns: ("--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/gpg/trustedkeys.kbx" "--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/upstream/trustedkeys.kbx")
                      "--gnupg_extra_args"
                      (string-append "--keyring="
                                     (getenv "XDG_CONFIG_HOME")
