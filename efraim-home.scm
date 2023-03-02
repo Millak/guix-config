@@ -479,6 +479,7 @@
     "config.load_autoconfig(True)\n"
     "config.bind('<Ctrl-Shift-u>', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='insert')\n"
     "config.bind('pw', 'spawn --userscript qute-keepassxc --key 0xCA3D8351', mode='normal')\n"
+    "config.bind('pt', 'spawn --userscript qute-keepassxc --key 0xCA3D8351 --totp', mode='normal')\n"
     "config.bind(',m', 'spawn mpv {url}')\n"
     "config.bind(',M', 'hint links spawn mpv {hint-url}')\n"
     "config.bind(',j', 'jseval (function() {    location.href = \"https://12ft.io/\" + location.href;})();')\n"
@@ -974,6 +975,8 @@ fi")))))
            (".wgetpaste.conf" ,%wgetpaste.conf)
            (".Xdefaults" ,%xdefaults)
 
+           (".local/share/qutebrowser/pdfjs"
+            ,(file-append (S "pdfjs") "/share/pdfjs"))
            ;; Also files into the bin directory.
            ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))))
@@ -1025,6 +1028,8 @@ fi")))))
            (".wgetpaste.conf" ,%wgetpaste.conf)
            ;(".Xdefaults" ,%xdefaults)
 
+           (".local/share/qutebrowser/pdfjs"
+            ,(file-append (S "pdfjs") "/share/pdfjs"))
            ;; Also files into the bin directory.
            ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ;("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))
