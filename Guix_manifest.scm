@@ -7,21 +7,6 @@
              (ice-9 match)
              (srfi srfi-1))
 
-;; Define a couple of our own architecture groupings depending on which architectures support various features
-(define* (with-rust? #:optional (system (or (%current-target-system)
-                                            (%current-system))))
-         (target-x86-64? target))
-
-(define* (with-ghc? #:optional (system (or (%current-target-system)
-                                           (%current-system))))
-         (target-x86? target))
-
-(define* (with-go? #:optional (system (or (%current-target-system)
-                                          (%current-system))))
-         (not (or (target-ppc32? target)
-                  (target-riscv64? target))))
-
-
 (define headless?
   (eq? #f (getenv "DISPLAY")))
 
@@ -88,6 +73,7 @@
   (list "btrfs-progs"
         "catimg"
         "ffmpeg"
+        "git-annex"
         "isync"
         "keybase"
         "khal"
@@ -95,6 +81,7 @@
         "libhdate"
         "msmtp"
         "mutt"
+        "newsboat"
         "parcimonie"
         "sshfs"
         "syncthing"
@@ -103,27 +90,16 @@
         "weechat"
         "yt-dlp"))
 
-(define %not-for-work-ghc
-  (list "git-annex"))
-
-(define %not-for-work-rust
-  (list "newsboat"))
-
-(define %not-for-work-no-rust
-  (list))
-
 (define %headless
-  (list))
-  ;(list "pinentry-tty"))
+  (list "pinentry-tty"))
 
 (define %guix-system-apps
   ;; These packages are provided by Guix System.
   (list "guile"
         "guile-colorized"
         "guile-readline"
-        ;"mcron"
-        ;"shepherd"
-        ))
+        "mcron"
+        "shepherd"))
 
 (define %cli-apps
   (list "aria2"
@@ -193,29 +169,20 @@
 
 (packages->manifest
   (map (compose list specification->package+output)
-       (append
-         (if (or headless?
-                 ;(target-aarch64?)
-                 (not guix-system))
-           %headless
-           %GUI-only)
-         (if work-machine?
-           %work-applications
-           (append
-             %not-for-work
-             ;(match (utsname:machine (uname))
-             ;       ("x86_64" (append %not-for-work-ghc %not-for-work-rust))
-             ;       ("i686" (append %not-for-work-ghc %not-for-work-no-rust))
-             ;       (_ %not-for-work-no-rust))))
-             (cond
-               ((or (target-arm?) (target-powerpc?) (target-riscv64?))
-                %not-for-work-no-rust)
-               ((target-x86-64?)
-                (append %not-for-work-ghc %not-for-work-rust))
-               ((target-x86-32?)
-                (append %not-for-work-ghc %not-for-work-no-rust))
-               (else %not-for-work-no-rust))))
-         (if guix-system
-           '()
-           %guix-system-apps)
-         %cli-apps)))
+       (filter (lambda (pkg)
+                 (member (or (%current-system)
+                             (%current-target-system))
+                         (package-transitive-supported-systems
+                           (specification->package+output pkg))))
+              (append
+                (if (or headless?
+                        (not guix-system))
+                  %headless
+                  %GUI-only)
+                (if work-machine?
+                  %work-applications
+                  %not-for-work)
+                (if guix-system
+                  '()
+                  %guix-system-apps)
+                %cli-apps))))
