@@ -669,7 +669,7 @@ XTerm*metaSendsEscape: true\n"))
                   (extra-content
                     (string-append "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"
                                    "\n\n"
-                                   "Include config-work\n")))
+                                   "Include config-uthsc\n")))
     (openssh-host (name "git.sv.gnu.org git.savannah.gnu.org")
                   (identity-file "~/.ssh/id_ed25519_savannah"))
     (openssh-host (name "gitlab.com gitlab.inria.fr salsa.debian.org")
@@ -741,7 +741,7 @@ XTerm*metaSendsEscape: true\n"))
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/dbxfs.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Dropbox")))
-    ;; Needs gpg key to unlock
+    ;; Needs gpg key to unlock.
     (auto-start? #f)
     (respawn? #f)))
 
@@ -817,7 +817,7 @@ XTerm*metaSendsEscape: true\n"))
               (string-append #$(file-append (S "keybase")
                                             "/bin/keybase")
                              " ctl stop")))
-    ;; Starts too fast at login
+    ;; Starts too fast at login.
     (auto-start? #f)
     (respawn? #t)))
 
@@ -832,7 +832,7 @@ XTerm*metaSendsEscape: true\n"))
                      "-log-to-file")
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/kbfs.log")))
     (stop #~(make-kill-destructor))
-    ;; Depends on keybase
+    ;; Depends on keybase.
     (auto-start? #f)
     (respawn? #t)))
 
@@ -898,6 +898,7 @@ XTerm*metaSendsEscape: true\n"))
                       ;; Still necessary with qtwebengine-5.15.5, no text on ci.guix.gnu.org.
                       ("QTWEBENGINE_CHROMIUM_FLAGS" . "--disable-seccomp-filter-sandbox")
                       ;; Append guix-home directories to bash completion dirs.
+                      ;; TODO: Figure out if this is fixed elsewhere.
                       ("BASH_COMPLETION_USER_DIR" .
                        ,(string-append "$BASH_COMPLETION_USER_DIR:"
                                        "$HOME/.guix-home/profile/share/bash-completion/completions:"
@@ -933,10 +934,10 @@ unset SSH_AGENT_PID
 if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
     export SSH_AUTH_SOCK=\"$(" (S "gnupg") "/bin/gpgconf --list-dirs agent-ssh-socket)\"
 fi
-if [ -d ${HOME}/.cache/efreet ]; then
-    rm -rf -- ${HOME}/.cache/efreet
+if [ -d ${XDG_CACHE_HOME}/efreet ]; then
+    rm -rf -- ${XDG_CACHE_HOME}/efreet
 fi
-if [ -d ${HOME}/.local/share/flatpak/exports/share ]; then
+if [ -d ${XDG_DATA_HOME}/flatpak/exports/share ]; then
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${HOME}/.local/share/flatpak/exports/share
 fi")))))
 
