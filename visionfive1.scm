@@ -2,6 +2,7 @@
 (use-modules (guix packages)
              (gnu)
              (gnu bootloader grub)
+             (gnu bootloader u-boot)
              ;(gnu bootloader extlinux)
              (gnu system locale)
              (config filesystems)
@@ -24,6 +25,88 @@
 ;;    --new=3:0:-1M:    --attributes 3:set:2 -d 1 \
 ;;    [block device]
 
+(use-modules (gnu packages bootloaders)
+             (guix utils)
+             (guix git-download))
+
+(define u-boot-starfive-visionfive
+  (let ((base (make-u-boot-package "starfive_jh7100_visionfive_smode" "riscv64-linux-gnu")))
+    (package
+      (inherit base)
+      (version "VF_SDK_510_V1.2.1")
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/starfive-tech/u-boot")
+                       (commit version)))
+                (file-name (git-file-name "starfive-visionfive-u-boot" version))
+                (sha256
+                 (base32
+                  "0brywkh2ppqqhpjhr3n6w0flf31sbmbgy6rbpdczdl1mrav44l8n"))))
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:phases phases)
+          #~(modify-phases #$phases
+              (add-after 'unpack 'set-environment
+                (lambda* (#:key inputs #:allow-other-keys)
+                  (setenv "OPENSBI" (search-input-file inputs
+                                                       "fw_dynamic.bin"))))))))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (append (specification->package "opensbi-generic")
+                 ;(specification->package "openssl")
+                 ))))))
+
+;; This is a placeholder!!
+(define install-starfive-visionfive-u-boot
+  #~(lambda (bootloader root-index image)
+      (let ((spl (string-append bootloader "/libexec/spl/u-boot-spl.bin"))
+            (u-boot (string-append bootloader "/libexec/u-boot.itb")))
+        ;; https://source.denx.de/u-boot/u-boot/-/blob/master/doc/board/sifive/unmatched.rst
+        (write-file-on-device spl (stat:size (stat spl))
+                              image (* 34 512))
+        (write-file-on-device u-boot (stat:size (stat u-boot))
+                              image (* 2082 512)))))
+
+(define u-boot-starfive-visionfive-bootloader
+  (bootloader
+   (inherit u-boot-bootloader)
+   (package u-boot-starfive-visionfive)
+   (disk-image-installer install-starfive-visionfive-u-boot)))
+
+;;
+
+;; The kernel is based on the 5.15 branch, but it looks like by 5.19.* much of
+;; it has already been upstreamed. It's not clear how much a custom kernel is
+;; necessary.
+
+(define %starfive-visionfive1-kernel-version "SDK_v2.3.3")
+(define %starfive-visionfive1-kernel-hash
+  (base32 "060y4vbbg4x05g9749c2qpng0yl1wsq5rk79vs3njlf1nifbcpga"))
+(define %starfive-visionfive1-kernel-source
+  (origin
+    (method git-fetch)
+    (uri (git-reference
+           (url "https://github.com/starfive-tech/linux")
+           (commit %starfive-visionfive1-kernel-version)))
+    (file-name (git-file-name "linux-kernel-for-starfive-visionfive1"
+                              %starfive-visionfive1-kernel-version))
+    (sha256 %starfive-visionfive1-kernel-hash)))
+
+(define starfive-visionfive1-kernel
+  (let ((base ((@@ (gnu packages linux) make-linux-libre*)
+               linux-libre-5.15-version
+               "gnu"
+               %starfive-visionfive1-kernel-source
+               '("riscv64-linux")
+               #:defconfig "visionfive_defconfig"
+               #:extra-version "starfive-visionfive1")))
+    (package
+      (inherit base)
+      ;; This doesn't seem to make a difference
+      ;(source %starfive-visionfive1-kernel-source)
+      )))
+
 ;; OS starts from here:
 
 (operating-system
@@ -41,9 +124,12 @@
   ;; No need for glibc-2.31.
   (locale-libcs (list (canonical-package glibc)))
 
+  ;(bootloader (bootloader-configuration
+  ;              (bootloader grub-efi-bootloader)
+  ;              (targets '("/boot/efi"))))
   (bootloader (bootloader-configuration
-                (bootloader grub-efi-bootloader)
-                (targets '("/boot/efi"))))
+                (bootloader u-boot-starfive-visionfive-bootloader)
+                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
   ;(bootloader (bootloader-configuration
   ;              (bootloader extlinux-bootloader)
   ;              (targets '("/boot"))))
@@ -56,8 +142,10 @@
   ;(initrd-modules '("mmc_spi"))
   ;; https://github.com/zhaofengli/nixos-riscv64/blob/master/nixos/unmatched.nix
   ;(initrd-modules '("nvme" "mmc_block" "mmc_spi" "spi_sifive" "spi_nor"))
+
   ;; Try the gernic kernel first.
-  (kernel linux-libre-riscv64-generic)
+  ;(kernel linux-libre-riscv64-generic)
+  (kernel starfive-visionfive1-kernel)
 
   ;(swap-devices
   ;  (list (swap-space
