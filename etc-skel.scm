@@ -13,9 +13,16 @@
 guile
 (use-modules (gdb))
 (execute (string-append \"set debug-file-directory \"
-                        (or (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
-                            \"~/.guix-profile/lib/debug\"
-                            \"~/.guix-home/profile/lib/debug\")))
+                        (string-join
+                          (filter file-exists?
+                                  (append
+                                    (if (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
+                                      (list (getenv \"GDB_DEBUG_FILE_DIRECTORY\"))
+                                      '())
+                                    (list \"~/.guix-home/profile/lib/debug\"
+                                          \"~/.guix-profile/lib/debug\"
+                                          \"/run/current-system/profile/lib/debug\")))
+                          \":\")))
 end
 
 # Authorize extensions found in the store, such as the
