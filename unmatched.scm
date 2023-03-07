@@ -60,15 +60,19 @@
   ;; No need for glibc-2.31.
   (locale-libcs (list (canonical-package glibc)))
 
+  ;(bootloader (bootloader-configuration
+  ;              (bootloader u-boot-sifive-unmatched-bootloader)
+  ;              (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
   (bootloader (bootloader-configuration
-                (bootloader u-boot-sifive-unmatched-bootloader)
-                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+                (bootloader grub-efi-bootloader)
+                (targets '("/boot/efi"))))
 
   (firmware '())
   ;; Plenty of options for initrd modules.
   (initrd-modules '())
   ;(initrd-modules (cons "nvme" %base-initrd-modules))
   ;(initrd-modules '("nvme"))
+  ;(initrd-modules '("mmc_spi"))
   ;; https://github.com/zhaofengli/nixos-riscv64/blob/master/nixos/unmatched.nix
   ;(initrd-modules '("nvme" "mmc_block" "mmc_spi" "spi_sifive" "spi_nor"))
   ;; Try the gernic kernel first.
@@ -91,6 +95,7 @@
                   (comment "Efraim Flashner")
                   (group "users")
                   (home-directory "/home/efraim")
+                  (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
                       ;"lp" "lpadmin"
@@ -132,10 +137,10 @@
            (service dhcp-client-service-type)
 
            ;; Skip go for now
-           ;(service earlyoom-service-type
-           ;         (earlyoom-configuration
-           ;           (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
-           ;           (avoid-regexp "guile")))
+           (service earlyoom-service-type
+                    (earlyoom-configuration
+                      (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
+                      (avoid-regexp "guile")))
 
            (service zram-device-service-type
                     (zram-device-configuration
