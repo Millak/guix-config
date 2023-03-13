@@ -99,11 +99,12 @@
                "gnu"
                %starfive-visionfive1-kernel-source
                '("riscv64-linux")
-               #:defconfig "visionfive_defconfig"
+               ;#:defconfig "visionfive_defconfig"
+               #:defconfig "starfive_jh7100_fedora_defconfig"
                #:extra-version "starfive-visionfive1")))
     (package
       (inherit base)
-      ;; This doesn't seem to make a difference
+      ;; This doesn't seem to make a difference.
       ;(source %starfive-visionfive1-kernel-source)
       )))
 
@@ -124,12 +125,12 @@
   ;; No need for glibc-2.31.
   (locale-libcs (list (canonical-package glibc)))
 
-  ;(bootloader (bootloader-configuration
-  ;              (bootloader grub-efi-bootloader)
-  ;              (targets '("/boot/efi"))))
   (bootloader (bootloader-configuration
-                (bootloader u-boot-starfive-visionfive-bootloader)
-                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+                (bootloader grub-efi-bootloader)
+                (targets '("/boot/efi"))))
+  ;(bootloader (bootloader-configuration
+  ;              (bootloader u-boot-starfive-visionfive-bootloader)
+  ;              (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
   ;(bootloader (bootloader-configuration
   ;              (bootloader extlinux-bootloader)
   ;              (targets '("/boot"))))
@@ -144,8 +145,8 @@
   ;(initrd-modules '("nvme" "mmc_block" "mmc_spi" "spi_sifive" "spi_nor"))
 
   ;; Try the gernic kernel first.
-  ;(kernel linux-libre-riscv64-generic)
-  (kernel starfive-visionfive1-kernel)
+  (kernel linux-libre-riscv64-generic)
+  ;(kernel starfive-visionfive1-kernel)
 
   ;(swap-devices
   ;  (list (swap-space
@@ -159,7 +160,7 @@
            (file-system
              (device "/dev/vda3")
              ;(device (uuid "9146-2C77" 'fat32))
-             (mount-point "/boot")
+             (mount-point "/boot/efi")
              (type "vfat"))
            %guix-temproots
            %base-file-systems))
