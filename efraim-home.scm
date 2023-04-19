@@ -87,7 +87,7 @@
         "ffmpeg"
         "git-annex"
         "isync"
-        "keybase"
+        ;"keybase"
         "khal"
         "khard"
         "libhdate"
@@ -946,12 +946,12 @@ fi")))))
                    (services
                      (list
                        %syncthing-user-service
-                       %dropbox-user-service
+                       ;%dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
 
-                       %keybase-user-service
-                       %keybase-fuse-user-service
+                       ;%keybase-user-service
+                       ;%keybase-fuse-user-service
 
                        %kdeconnect-user-service
                        %parcimonie-user-service))))
