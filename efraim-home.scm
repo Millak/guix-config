@@ -160,6 +160,7 @@
         "wget"
         "wgetpaste"))
 
+;;
 
 (define S specification->package)
 
@@ -324,12 +325,13 @@
     ;; deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main
     ;; contrib and non-free arch:all packages (i.e. firmware)
     ;; deb [arch=all] http://deb.debian.org/debian/ sid contrib non-free
-    "    OTHERMIRROR=\"deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main\"\n"
+    ;; This one caused `pbuilder create` failures on real ppc hardware.
+    ;"    OTHERMIRROR=\"deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main\"\n"
     "    DEBOOTSTRAPOPTS=( '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' ${DEBOOTSTRAPOPTS[@]} )\n"
     "    EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
     "fi\n"
 
-    "APTCACHE=/var/cache/apt/archives\n"
+    "APTCACHE=/var/cache/apt/archives\n"    ; Same as apt itself.
     "HOOKDIR=" (getenv "XDG_CONFIG_HOME") "/pbuilder/hooks\n"
     "CCACHEDIR=/var/cache/pbuilder/ccache\n"
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
@@ -855,13 +857,13 @@ XTerm*metaSendsEscape: true\n"))
     (documentation "Incrementally refresh gnupg keyring")
     (provision '(parcimonie))
     (start #~(make-forkexec-constructor
-               ;(use-modules (srfi srfi-26))
+               ;(use-modules (guix build utils)
+               ;             (srfi srfi-1))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
                      ;; Can I use compose and find or a list to make this work?
-                     ;((@@ (gnu services telephony) flatten)
-                     ; (map (lambda (item)
+                     ; (append-map (lambda (item)
                      ;        (list "--gnupg_extra_options" "--keyring" item))
-                     ;      (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
+                     ;      (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$"))
                      ;; returns: ("--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/gpg/trustedkeys.kbx" "--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/upstream/trustedkeys.kbx")
                      "--gnupg_extra_args"
                      (string-append "--keyring="
@@ -938,7 +940,7 @@ if [ -d ${XDG_CACHE_HOME}/efreet ]; then
     rm -rf -- ${XDG_CACHE_HOME}/efreet
 fi
 if [ -d ${XDG_DATA_HOME}/flatpak/exports/share ]; then
-    export XDG_DATA_DIRS=$XDG_DATA_DIRS:${HOME}/.local/share/flatpak/exports/share
+    export XDG_DATA_DIRS=$XDG_DATA_DIRS:${XDG_DATA_HOME}/flatpak/exports/share
 fi")))))
 
         (service home-shepherd-service-type
