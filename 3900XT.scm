@@ -72,11 +72,19 @@
                  "git-minimal"          ; git-upload-pack
                  "nss-certs"
                  "virt-manager"
-                 "xterm"))
+                 "xterm"
+
+                 "sway"
+                 "dmenu"))
       %base-packages))
 
   (services
     (cons* (service enlightenment-desktop-service-type)
+
+           (service screen-locker-service-type
+                    (screen-locker-configuration
+                      "swaylock" (file-append (specification->package "swaylock")
+                                              "/bin/swaylock") #f))
 
            (service guix-publish-service-type
                     (guix-publish-configuration
