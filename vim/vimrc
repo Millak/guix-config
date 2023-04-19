@@ -74,7 +74,6 @@ let use_local_vimrc = [
             \ '/home/efraim/workspace/guix-core-updates',
             \ '/home/efraim/workspace/guix-past',
             \ '/home/efraim/workspace/guix-rust-team',
-            \ '/home/efraim/workspace/guix-staging',
             \ '/home/efraim/workspace/my-guix']
 " This only checks the directory of the current window.
 if index(use_local_vimrc, getcwd()) >=0
