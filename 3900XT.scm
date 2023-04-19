@@ -70,11 +70,14 @@
                  "compsize"
                  "econnman"
                  "git-minimal"          ; git-upload-pack
+                 "guix-backgrounds"
                  "nss-certs"
                  "virt-manager"
                  "xterm"
 
                  "sway"
+                 "swayidle"
+                 "alacritty"
                  "dmenu"))
       %base-packages))
 
