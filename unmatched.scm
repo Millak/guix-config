@@ -154,7 +154,7 @@
                config =>
                (guix-configuration
                  (inherit config)
-                 ;(substitute-urls #f)   ; No riscv64 substitutes.
+                 (substitute-urls '())   ; No riscv64 substitutes.
                  (authorized-keys %authorized-keys)
                  (extra-options
                    (cons* "--cache-failures" %extra-options)))))))

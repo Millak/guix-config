@@ -3,7 +3,7 @@
              (gnu)
              (gnu bootloader grub)
              (gnu bootloader u-boot)
-             ;(gnu bootloader extlinux)
+             (gnu bootloader extlinux)
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
@@ -29,6 +29,7 @@
              (guix utils)
              (guix git-download))
 
+;; Some 40ish commits on top of upstream u-boot 2022.04-rc2
 (define u-boot-starfive-visionfive
   (let ((base (make-u-boot-package "starfive_jh7100_visionfive_smode" "riscv64-linux-gnu")))
     (package
@@ -47,6 +48,8 @@
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
           #~(modify-phases #$phases
+              ;; We're building with openssl included :/
+              (delete 'disable-tools-libcrypto)
               (add-after 'unpack 'set-environment
                 (lambda* (#:key inputs #:allow-other-keys)
                   (setenv "OPENSBI" (search-input-file inputs
@@ -54,8 +57,7 @@
       (inputs
        (modify-inputs (package-inputs base)
          (append (specification->package "opensbi-generic")
-                 ;(specification->package "openssl")
-                 ))))))
+                 (specification->package "openssl")))))))
 
 ;; This is a placeholder!!
 (define install-starfive-visionfive-u-boot
@@ -72,41 +74,121 @@
   (bootloader
    (inherit u-boot-bootloader)
    (package u-boot-starfive-visionfive)
-   (disk-image-installer install-starfive-visionfive-u-boot)))
+   ;(disk-image-installer install-starfive-visionfive-u-boot)))
+   (disk-image-installer #~(lambda _ #t))))
 
 ;;
 
-;; The kernel is based on the 5.15 branch, but it looks like by 5.19.* much of
-;; it has already been upstreamed. It's not clear how much a custom kernel is
-;; necessary.
+;; The kernel is based on Linus' 6.3-rc1 branch, with about 50 patches waiting
+;; to be upstreamed.
 
-(define %starfive-visionfive1-kernel-version "SDK_v2.3.3")
-(define %starfive-visionfive1-kernel-hash
-  (base32 "060y4vbbg4x05g9749c2qpng0yl1wsq5rk79vs3njlf1nifbcpga"))
-(define %starfive-visionfive1-kernel-source
+(define %starfive-kernel-version "JH7110_VisionFive2_upstream")
+(define %starfive-kernel-hash
+  (base32 "000ar1c74fcjvrbmlykvg68439d443ci2wdm1yibz02ififfzn3q"))
+(define %starfive-kernel-source
   (origin
     (method git-fetch)
     (uri (git-reference
            (url "https://github.com/starfive-tech/linux")
-           (commit %starfive-visionfive1-kernel-version)))
-    (file-name (git-file-name "linux-kernel-for-starfive-visionfive1"
-                              %starfive-visionfive1-kernel-version))
-    (sha256 %starfive-visionfive1-kernel-hash)))
+           (commit %starfive-kernel-version)))
+    (file-name (git-file-name "linux-kernel-for-starfive" "6.3-rc1+50patches"))
+    (sha256 %starfive-kernel-hash)))
 
-(define starfive-visionfive1-kernel
+(define starfive-kernel
   (let ((base ((@@ (gnu packages linux) make-linux-libre*)
-               linux-libre-5.15-version
+               ;linux-libre-6.2-version
+               "6.3-rc1+50patches"
                "gnu"
-               %starfive-visionfive1-kernel-source
+               %starfive-kernel-source
                '("riscv64-linux")
                ;#:defconfig "visionfive_defconfig"
-               #:defconfig "starfive_jh7100_fedora_defconfig"
-               #:extra-version "starfive-visionfive1")))
+               ;#:defconfig "starfive_jh7100_fedora_defconfig"
+               #:extra-version "starfive")))
     (package
       (inherit base)
       ;; This doesn't seem to make a difference.
       ;(source %starfive-visionfive1-kernel-source)
       )))
+
+
+;; for /boot/uEnv.txt
+(define %uenv.txt
+  (mixed-text-file
+    "uEnv.txt"
+    "\
+fdt_high=0xffffffffffffffff
+initrd_high=0xffffffffffffffff
+kernel_addr_r=0x84000000
+kernel_comp_addr_r=0x90000000
+kernel_comp_size=0x10000000
+fdt_addr_r=0x88000000
+ramdisk_addr_r=0x88300000
+# Move DHCP after MMC to speed up booting
+boot_targets=mmc0 dhcp
+# Fix wrong fdtfile name
+fdtfile=" starfive-kernel "/lib/dtbs/starfive/jh7100-starfive-visionfive-v1.dtb
+# Fix missing bootcmd
+bootcmd=run distro_bootcmd"))
+
+(define %uenv.txt-debian
+  (plain-file
+    "uEnv.txt"
+    "\
+fdt_high=0xffffffffffffffff
+initrd_high=0xffffffffffffffff
+kernel_addr_r=0x84000000
+kernel_comp_addr_r=0x90000000
+kernel_comp_size=0x10000000
+fdt_addr_r=0x88000000
+ramdisk_addr_r=0x88300000
+# Move DHCP after MMC to speed up booting
+boot_targets=mmc0 dhcp
+# Fix wrong fdtfile name
+fdtfile=starfive/jh7100-starfive-visionfive-v1.dtb
+# Fix missing bootcmd
+bootcmd=run distro_bootcmd"))
+
+(define %uenv.txt-fedora
+  (plain-file
+    "uEnv.txt"
+    "\
+fdt_high=0xffffffffffffffff
+initrd_high=0xffffffffffffffff
+
+scriptaddr=0x88100000
+script_offset_f=0x1fff000
+script_size_f=0x1000
+
+kernel_addr_r=0x84000000
+kernel_comp_addr_r=0x90000000
+kernel_comp_size=0x10000000
+
+fdt_addr_r=0x88000000
+ramdisk_addr_r=0x88300000
+
+bootcmd=load mmc 0:2 0xa0000000 /EFI/fedora/grubriscv64.efi; bootefi 0xa0000000
+bootcmd_mmc0=devnum=0; run mmc_boot
+
+ipaddr=192.168.120.200
+netmask=255.255.255.0"))
+
+(define %uenv.txt-arch  ; for visionfive2
+  (plain-file
+    "uEnv.txt"
+    "\
+fdt_high=0xffffffffffffffff
+initrd_high=0xffffffffffffffff
+kernel_addr_r=0x44000000
+kernel_comp_addr_r=0x90000000
+kernel_comp_size=0x10000000
+fdt_addr_r=0x48000000
+ramdisk_addr_r=0x48100000
+# Move distro to first boot to speed up booting
+boot_targets=distro mmc0 dhcp
+# Fix wrong fdtfile name
+fdtfile=starfive/jh7110-visionfive-v2.dtb
+# Fix missing bootcmd
+bootcmd=run bootcmd_distro"))
 
 ;; OS starts from here:
 
@@ -125,12 +207,14 @@
   ;; No need for glibc-2.31.
   (locale-libcs (list (canonical-package glibc)))
 
-  (bootloader (bootloader-configuration
-                (bootloader grub-efi-bootloader)
-                (targets '("/boot/efi"))))
   ;(bootloader (bootloader-configuration
-  ;              (bootloader u-boot-starfive-visionfive-bootloader)
-  ;              (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+  ;              (bootloader grub-efi-bootloader)
+  ;              (targets '("/boot/efi"))))
+  ;; not for u-boot, but for the config stuff
+  (bootloader (bootloader-configuration
+                (bootloader u-boot-starfive-visionfive-bootloader)
+                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+  ;; extlinux depends on syslinux
   ;(bootloader (bootloader-configuration
   ;              (bootloader extlinux-bootloader)
   ;              (targets '("/boot"))))
@@ -138,6 +222,7 @@
   (firmware '())
   ;; Plenty of options for initrd modules.
   (initrd-modules '())
+  ;(initrd-modules '("dw_mmc-pltfm")) ;; suggested by Fedora? Not in 6.3-rc1+50patches kernel
   ;(initrd-modules (cons "nvme" %base-initrd-modules))
   ;(initrd-modules '("nvme"))
   ;(initrd-modules '("mmc_spi"))
@@ -145,8 +230,8 @@
   ;(initrd-modules '("nvme" "mmc_block" "mmc_spi" "spi_sifive" "spi_nor"))
 
   ;; Try the gernic kernel first.
-  (kernel linux-libre-riscv64-generic)
-  ;(kernel starfive-visionfive1-kernel)
+  ;(kernel linux-libre-riscv64-generic)
+  (kernel starfive-kernel)
 
   ;(swap-devices
   ;  (list (swap-space
@@ -157,24 +242,23 @@
              (device (file-system-label "root"))
              (mount-point "/")
              (type "ext4"))
-           (file-system
-             (device "/dev/vda3")
-             ;(device (uuid "9146-2C77" 'fat32))
-             (mount-point "/boot/efi")
-             (type "vfat"))
+           ;; We're leaving it as an efi-raw image.
+           ;(file-system
+           ;  (device "/dev/vda3")
+           ;  ;(device (uuid "9146-2C77" 'fat32))
+           ;  (mount-point "/boot/efi")
+           ;  (type "vfat"))
            %guix-temproots
            %base-file-systems))
 
   (users (cons* (user-account
-                  (name "efraim")
-                  (comment "Efraim Flashner")
+                  (name "riscv")
+                  (comment "Guix RISCV User")
                   (group "users")
-                  (home-directory "/home/efraim")
-                  (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
+                  (home-directory "/home/riscv")
+                  (password (crypt "starfive" "$6$abc123"))
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
-                      ;"lp" "lpadmin"
-                      ;"libvirt"
                       "audio" "video")))
                 %base-user-accounts))
 
@@ -182,9 +266,6 @@
     (append
       (map specification->package
            (list
-             ;"btrfs-progs"
-             ;"compsize"
-             ;"git-minimal"
              "nss-certs"
              ;"screen"
              ))
@@ -193,9 +274,10 @@
   (services
     (cons* (service openssh-service-type
                     (openssh-configuration
-                      (openssh (specification->package "openssh-sans-x"))
-                      (authorized-keys
-                       `(("efraim" ,(local-file "Extras/efraim.pub"))))))
+                      (openssh (specification->package "openssh-sans-x"))))
+
+           (service special-files-service-type
+                    `(("/boot/uEnv.txt" ,%uenv.txt)))
 
            ;(service mcron-service-type
            ;         (mcron-configuration
@@ -240,7 +322,7 @@
                config =>
                (guix-configuration
                  (inherit config)
-                 ;(substitute-urls #f)   ; No riscv64 substitutes.
+                 (substitute-urls '())   ; No riscv64 substitutes.
                  (authorized-keys %authorized-keys)
                  (extra-options
                    (cons* "--cache-failures" %extra-options)))))))
@@ -248,4 +330,4 @@
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
 
-;; guix system image --image-type=XXXXXX -L ~/workspace/guix-config/ ~/workspace/guix-config/visionfive1.scm --system=riscv64-linux
+;; guix system image --image-type=raw-with-offset -L ~/workspace/guix-config/ ~/workspace/guix-config/visionfive1.scm --system=riscv64-linux
