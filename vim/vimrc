@@ -71,7 +71,6 @@ autocmd Syntax * syn match ExtraWhitespace /\s+$\| \+\ze\t/ containedin=ALL
 let use_local_vimrc = [
             \ '/home/efraim/workspace/guix',
             \ '/home/efraim/workspace/guix-bioinformatics',
-            \ '/home/efraim/workspace/guix-core-updates',
             \ '/home/efraim/workspace/guix-past',
             \ '/home/efraim/workspace/guix-rust-team',
             \ '/home/efraim/workspace/my-guix']
