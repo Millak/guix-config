@@ -92,12 +92,15 @@
                             (openssh-configuration
                               (password-authentication? #t)))
 
-                   (service tor-service-type)
-                   (tor-hidden-service "ssh"
-                                       '((22 "127.0.0.1:22")))
-                   (tor-hidden-service "guix-publish"
-                                       ;jlcmm5lblot62p4txmplf66d76bsrfs4ilhcwaswjdulf6htvntxztad.onion
-                                       '((3000 "127.0.0.1:3000")))
+                   (service tor-service-type
+                            (tor-configuration
+                              (hidden-services
+                                (list
+                                  (name "ssh"
+                                        '((22 "127.0.0.1:22")))
+                                  (name "guix-publish"
+                                        ;; jlcmm5lblot62p4txmplf66d76bsrfs4ilhcwaswjdulf6htvntxztad.onion
+                                        '((3000 "127.0.0.1:3000")))))))
 
                    (service cups-service-type
                             (cups-configuration

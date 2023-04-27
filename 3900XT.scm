@@ -108,12 +108,14 @@
                         (plain-file "extra-torrc-bits"
                                     (string-append
                                       "# NumCPUs only affects relays, but we want to silence the warnings\n"
-                                      "NumCPUs 2\n")))))
-           (tor-hidden-service "ssh"
-                               '((22 "127.0.0.1:22")))
-           (tor-hidden-service "guix-publish"
-                               '((3000 "127.0.0.1:3000")))
-           ;; k7muufoychzetmq7evsv6gcq4sxq4olxo3uy2zlhek5fkfvl5uscbgyd.onion
+                                      "NumCPUs 2\n")))
+                      (hidden-services
+                        (list
+                          (name "ssh"
+                                '((22 "127.0.0.1:22")))
+                          (name "guix-publish"
+                                ;; k7muufoychzetmq7evsv6gcq4sxq4olxo3uy2zlhek5fkfvl5uscbgyd.onion
+                                '((3000 "127.0.0.1:3000")))))))
 
            (service cups-service-type
                     (cups-configuration

@@ -86,9 +86,12 @@
                       (authorized-keys
                        `(("efraim" ,(local-file "Extras/efraim.pub"))))))
 
-           (service tor-service-type)
-           (tor-hidden-service "ssh"
-                               '((22 "127.0.0.1:22")))
+           (service tor-service-type
+                    (tor-configuration
+                      (hidden-services
+                        (list
+                          (name "ssh"
+                                '((22 "127.0.0.1:22")))))))
 
            ;(service cups-service-type
            ;         (cups-configuration
