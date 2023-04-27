@@ -686,12 +686,17 @@ XTerm*metaSendsEscape: true\n"))
     (openssh-host (name "guixp9")
                   (host-name "p9.tobias.gr")
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
+    (openssh-host (name "*.unicorn-typhon.ts.net")
+                  (proxy
+                    (list
+                      (proxy-jump (host-name "do1")))))
     (openssh-host (name "*.onion *-tor")
                   (compression? #t)
-                  ;; Either this or we always need to prefix with torsocks.
-                  ;; TODO: Replace the custom ~/bin/openbsd-netcat with the line below:
-                  ;(proxy-command (string-append (S "netcat-openbsd") "/bin/nc -X 5 -x localhost:9050 %h %p"))
-                  (proxy-command (string-append (getenv "HOME") "/bin/openbsd-netcat -X 5 -x localhost:9050 %h %p"))
+                  (proxy
+                    ;; Either this or we always need to prefix with torsocks.
+                    ;; TODO: Replace the custom ~/bin/openbsd-netcat with the line below:
+                    ;(proxy-command (string-append (S "netcat-openbsd") "/bin/nc -x localhost:9050 %h %p")))
+                    (proxy-command (string-append (getenv "HOME") "/bin/openbsd-netcat -x localhost:9050 %h %p")))
                   (extra-content "  ControlPath ${XDG_RUNTIME_DIR}/%r@%k-%p\n"))
     (openssh-host (name "*")
                   (user "efraim")
