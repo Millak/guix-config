@@ -64,7 +64,7 @@
         "mpv"
         "mupdf"
         "my-moreutils"
-        "netsurf"
+        ;"netsurf"
         "nheko"
         "pavucontrol"
         "qtwayland@5"
@@ -953,7 +953,7 @@ fi")))))
                    (services
                      (list
                        %syncthing-user-service
-                       ;%dropbox-user-service
+                       %dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
 
@@ -986,8 +986,10 @@ fi")))))
            (".local/share/qutebrowser/pdfjs"
             ,(file-append (S "pdfjs") "/share/pdfjs"))
            ;; Also files into the bin directory.
-           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
-           ("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))))
+           ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
+           ;("bin/msmtp-password-flashner" ,%email-password)
+           ;("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))
+           ))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
@@ -1039,7 +1041,7 @@ fi")))))
            (".local/share/qutebrowser/pdfjs"
             ,(file-append (S "pdfjs") "/share/pdfjs"))
            ;; Also files into the bin directory.
-           ("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
+           ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ;("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))
            ))
 
