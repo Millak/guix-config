@@ -111,11 +111,13 @@
                                       "NumCPUs 2\n")))
                       (hidden-services
                         (list
-                          (name "ssh"
-                                '((22 "127.0.0.1:22")))
-                          (name "guix-publish"
-                                ;; k7muufoychzetmq7evsv6gcq4sxq4olxo3uy2zlhek5fkfvl5uscbgyd.onion
-                                '((3000 "127.0.0.1:3000")))))))
+                          (tor-onion-service-configuration
+                            (name "ssh")
+                            (mapping '((22 "127.0.0.1:22"))))
+                          (tor-onion-service-configuration
+                            (name "guix-publish")
+                            ;; k7muufoychzetmq7evsv6gcq4sxq4olxo3uy2zlhek5fkfvl5uscbgyd.onion
+                            (mapping '((3000 "127.0.0.1:3000"))))))))
 
            (service cups-service-type
                     (cups-configuration

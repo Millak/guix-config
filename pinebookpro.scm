@@ -90,8 +90,9 @@
                     (tor-configuration
                       (hidden-services
                         (list
-                          (name "ssh"
-                                '((22 "127.0.0.1:22")))))))
+                          (tor-onion-service-configuration
+                            (name "ssh")
+                            (mapping '((22 "127.0.0.1:22"))))))))
 
            ;(service cups-service-type
            ;         (cups-configuration
