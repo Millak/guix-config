@@ -43,8 +43,10 @@
 
 (define %GUI-only
   (list "adwaita-icon-theme"
-        "ephoto"
-        "evisum"
+        "alacritty"     ; this or kitty
+        "dmenu"
+        "ephoto"        ; drop
+        "evisum"        ; drop
         "font-culmus"
         "font-dejavu"
         "font-ghostscript"
@@ -56,8 +58,10 @@
         "gst-plugins-good"
         "gst-plugins-ugly"
         "icecat"
+        "imv"           ; this or qiv
         "kdeconnect"
         "keepassxc"
+        "kitty"         ; this or alacritty
         "lagrange"
         "libnotify"     ; notify-send
         "libreoffice"
@@ -67,11 +71,13 @@
         ;"netsurf"
         "nheko"
         "pavucontrol"
+        "qiv"           ; this or imv
         "qtwayland@5"
         "quasselclient"
         "qutebrowser"
-        "terminology"
-        "viewnior"
+        "terminology"   ; alacritty
+        "tuba"
+        "viewnior"      ; drop
         "wl-clipboard-x11"
         "zathura"
         "zathura-pdf-poppler"))
@@ -366,7 +372,7 @@
     #~(if #$guix-system?
         (if #$headless?
           (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
-          (string-append "pinentry-program " #$(file-append (S "pinentry-efl") "/bin/pinentry-efl") "\n"))
+          (string-append "pinentry-program " #$(file-append (S "pinentry-qt") "/bin/pinentry-qt") "\n"))
         "pinentry-program /usr/bin/pinentry\n")
     ;"enable-ssh-support\n"
     ;"allow-emacs-pinentry\n"
@@ -429,6 +435,7 @@
     "    annotate = yes\n"
     "[submodule]\n"
     "    fetchJobs = 0\n"
+    "    recurse = true\n"
     "[tag]\n"
     "    gpgSign = true\n"
     "[transfer]\n"
@@ -489,14 +496,14 @@
     "c.content.cookies.accept = 'no-3rdparty'\n"
     "c.content.default_encoding = 'utf-8'\n"
     ;"c.content.proxy = 'socks://localhost:9050/'\n"
-    ;"c.editor.command = ['terminology', '--exec', 'vim', '-f', '{file}', '-c', 'normal +{line}G+{column0}l']\n"
-    "c.editor.command = ['terminology', '--exec', 'vim', '-f', '{file}']\n"
-    ;"c.fileselect.folder.command = ['terminology', '--exec', 'ranger', '--choosedir={}']\n"
+    ;"c.editor.command = ['alacritty, '--command, 'vim', '-f', '{file}', '-c', 'normal +{line}G+{column0}l']\n"
+    "c.editor.command = ['alacritty, '--command, 'vim', '-f', '{file}']\n"
+    ;"c.fileselect.folder.command = ['xterm', '--exec', 'ranger', '--choosedir={}']\n"
     ;"c.fileselect.multiple_files.command = ['xterm', '--exec', 'ranger', '--choosefiles={}']\n"
     ;"c.fileselect.single_file.command = ['xterm', '--exec', 'ranger', '--choosefile={}']\n"
-    "c.fileselect.folder.command = ['terminology', '--exec', 'vifm', '{}']\n"
-    "c.fileselect.multiple_files.command = ['terminology', '--exec', 'vifm', '{}']\n"
-    "c.fileselect.single_file.command = ['terminology', '--exec', 'vifm', '{}']\n"
+    "c.fileselect.folder.command = ['alacritty', '--command', 'vifm', '{}']\n"
+    "c.fileselect.multiple_files.command = ['alacritty', '--command', 'vifm', '{}']\n"
+    "c.fileselect.single_file.command = ['alacritty', '--command', 'vifm', '{}']\n"
     "c.spellcheck.languages = [\"en-US\", \"he-IL\"]\n"))
 
 ;; This part does not work yet.
@@ -678,11 +685,11 @@ XTerm*metaSendsEscape: true\n"))
                   (identity-file "~/.ssh/id_ed25519_gitlab"))
     (openssh-host (name "gitlab.gnome.org")
                   (identity-file " ~/.ssh/id_ed25519_gnome"))
-    (openssh-host (name "bayfront")
-                  (host-name "bayfront.guix.gnu.org")
-                  (identity-file "~/.ssh/id_ed25519_overdrive")
-                  (compression? #t)
-                  (extra-content "  RemoteForward /home/efraim/.gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+    ;(openssh-host (name "bayfront")
+    ;              (host-name "bayfront.guix.gnu.org")
+    ;              (identity-file "~/.ssh/id_ed25519_overdrive")
+    ;              (compression? #t)
+    ;              (extra-content "  RemoteForward /home/efraim/.gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "guixp9")
                   (host-name "p9.tobias.gr")
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
@@ -988,8 +995,8 @@ fi")))))
            ;; Also files into the bin directory.
            ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ;("bin/msmtp-password-flashner" ,%email-password)
-           ;("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))
-           ))
+           ("bin/openbsd-netcat"
+            ,(file-append (S "netcat-openbsd") "/bin/nc"))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
@@ -1042,8 +1049,8 @@ fi")))))
             ,(file-append (S "pdfjs") "/share/pdfjs"))
            ;; Also files into the bin directory.
            ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
-           ;("bin/openbsd-netcat" ,(file-append (S "netcat-openbsd") "/bin/nc"))
-           ))
+           ("bin/openbsd-netcat"
+            ,(file-append (S "netcat-openbsd") "/bin/nc"))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
@@ -1064,6 +1071,7 @@ fi")))))
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("msmtp/config" ,%msmtp-config)
+           ("newsboat/config" ,%newsboat-config)
            ;; Specific to Guix System
            ;("nano/nanorc" ,%nanorc)
            ;("qutebrowser/config.py" ,%qutebrowser-config-py)

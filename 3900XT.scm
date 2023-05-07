@@ -68,21 +68,25 @@
       (map specification->package
            (list "adwaita-icon-theme"
                  "compsize"
-                 "econnman"
+                 "cmst"
+                 "econnman"             ; drop
                  "git-minimal"          ; git-upload-pack
                  "guix-backgrounds"
+                 "guix-simplyblack-sddm-theme"  ; sddm theme
                  "nss-certs"
                  "virt-manager"
                  "xterm"
 
+
                  "sway"
                  "swayidle"
-                 "alacritty"
-                 "dmenu"))
+                 "alacritty"            ; drop
+                 "dmenu"                ; drop
+                 ))
       %base-packages))
 
   (services
-    (cons* (service enlightenment-desktop-service-type)
+    (cons* (service enlightenment-desktop-service-type)     ; drop
 
            (service screen-locker-service-type
                     (screen-locker-configuration
@@ -105,10 +109,11 @@
            (service tor-service-type
                     (tor-configuration
                       (config-file
-                        (plain-file "extra-torrc-bits"
-                                    (string-append
-                                      "# NumCPUs only affects relays, but we want to silence the warnings\n"
-                                      "NumCPUs 2\n")))
+                        (plain-file
+                          "extra-torrc-bits"
+                          (string-append
+                            "# NumCPUs only affects relays, but we want to silence the warnings\n"
+                            "NumCPUs 2\n")))
                       (hidden-services
                         (list
                           (tor-onion-service-configuration
@@ -152,7 +157,7 @@
            (service earlyoom-service-type
                     (earlyoom-configuration
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
-                      (avoid-regexp "enlightenment")))
+                      (avoid-regexp "(enlightenment|guile)")))
 
            (service zram-device-service-type
                     (zram-device-configuration
@@ -162,6 +167,7 @@
 
            (service sddm-service-type
                     (sddm-configuration
+                      (theme "guix-simplyblack-sddm")
                       (display-server "wayland")))
 
            (remove (lambda (service)
