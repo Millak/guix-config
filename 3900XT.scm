@@ -69,7 +69,6 @@
            (list "adwaita-icon-theme"
                  "compsize"
                  "cmst"
-                 "econnman"             ; drop
                  "git-minimal"          ; git-upload-pack
                  "guix-backgrounds"
                  "guix-simplyblack-sddm-theme"  ; sddm theme
@@ -81,14 +80,13 @@
                  "sway"
                  "swayidle"
                  "alacritty"            ; drop
+                 "kitty"                ; drop
                  "dmenu"                ; drop
                  ))
       %base-packages))
 
   (services
-    (cons* (service enlightenment-desktop-service-type)     ; drop
-
-           (service screen-locker-service-type
+    (cons* (service screen-locker-service-type
                     (screen-locker-configuration
                       "swaylock" (file-append (specification->package "swaylock")
                                               "/bin/swaylock") #f))
@@ -157,7 +155,7 @@
            (service earlyoom-service-type
                     (earlyoom-configuration
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
-                      (avoid-regexp "(enlightenment|guile)")))
+                      (avoid-regexp "guile")))
 
            (service zram-device-service-type
                     (zram-device-configuration
