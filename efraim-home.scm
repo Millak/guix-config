@@ -45,8 +45,6 @@
   (list "adwaita-icon-theme"
         "alacritty"     ; this or kitty
         "dmenu"
-        "ephoto"        ; drop
-        "evisum"        ; drop
         "font-culmus"
         "font-dejavu"
         "font-ghostscript"
@@ -68,16 +66,13 @@
         "mpv"
         "mupdf"
         "my-moreutils"
-        ;"netsurf"
         "nheko"
         "pavucontrol"
         "qiv"           ; this or imv
         "qtwayland@5"
         "quasselclient"
         "qutebrowser"
-        "terminology"   ; alacritty
         "tuba"
-        "viewnior"      ; drop
         "wl-clipboard-x11"
         "zathura"
         "zathura-pdf-poppler"))
@@ -443,7 +438,6 @@
     "[web]\n"
     #~(if (or #$headless? #$work-machine?)
         (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
-        ;(string-append "    browser = " #$(file-append (S "netsurf") "/bin/netsurf-gtk3") "\n")
         "    browser = \"qutebrowser --target window\"\n")))
 
 (define %git-ignore
@@ -505,32 +499,6 @@
     "c.fileselect.multiple_files.command = ['alacritty', '--command', 'vifm', '{}']\n"
     "c.fileselect.single_file.command = ['alacritty', '--command', 'vifm', '{}']\n"
     "c.spellcheck.languages = [\"en-US\", \"he-IL\"]\n"))
-
-;; This part does not work yet.
-;(define %bg.edc
-;  (plain-file
-;    "bg.edc"
-;      "images {
-;      set { name: \"guix-checkered-16-9\";
-;      image {
-;      image: \"guix-checkered-16-9.svg\" LOSSY 100;
-;      size: 1920 1080 1000000000 1000000000;}}}
-;      collections {
-;      group { name: \"e/desktop/background\";
-;      data.item: \"noanimation\" \"1\";
-;      data { item: \"style\" \"4\"; }
-;      parts {
-;      part { name: \"bg\"; mouse_events: 0;
-;      description { state: \"default\" 0;
-;      image {
-;      normal: \"guix-checkered-16-9\";
-;      scale_hint: STATIC;}
-;      aspect: (1920/1080) (1920/1080); aspect_preference: NONE;}}}}}"))
-;
-;(define %guix-background
-;  (computed-file "guix-checkered-16-9.edj"
-;    #~(begin
-;        (system* #+(file-append (S "efl") "/bin/edje_cc") "-id" #$(file-append (@ (gnu artwork) %artwork-repository) "/backgrounds") #$%bg.edc "-o" #$output))))
 
 (define %gdbinit
   (plain-file "gdbinit" "\
