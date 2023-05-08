@@ -14,10 +14,11 @@ set $left h
 set $down j
 set $up k
 set $right l
+
 # Your preferred terminal emulator
-# Perhaps terminology is causing the screen to lockup?
-#set $term terminology
-set $term alacritty
+#set $term alacritty
+set $term kitty
+
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
