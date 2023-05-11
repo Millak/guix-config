@@ -872,17 +872,13 @@ XTerm*metaSendsEscape: true\n"))
                  (home-bash-configuration
                    (guix-defaults? #t)
                    (environment-variables
-                    `(;("QT_QPA_PLATFORM" . "wayland")
+                    `(("QT_QPA_PLATFORM" . "wayland")
                       ("ECORE_EVAS_ENGINE" . "wayland_egl")
                       ("ELM_ENGINE" . "wayland_egl")
                       ;; Still necessary for sdl2@2.0.14
                       ("SDL_VIDEODRIVER" . "wayland")
                       ("GDK_BACKEND" . "wayland")
-                      ;; Still causing trouble :/
-                      ;("MOZ_ENABLE_WAYLAND" . "1")
-                      ;; Work around qtwebengine and glibc issues:
-                      ;; Still necessary with qtwebengine-5.15.5, no text on ci.guix.gnu.org.
-                      ("QTWEBENGINE_CHROMIUM_FLAGS" . "--disable-seccomp-filter-sandbox")
+                      ("MOZ_ENABLE_WAYLAND" . "1")
                       ;; Append guix-home directories to bash completion dirs.
                       ;; TODO: Figure out if this is fixed elsewhere.
                       ("BASH_COMPLETION_USER_DIR" .
