@@ -55,6 +55,7 @@
         "flatpak"
         "gst-plugins-good"
         "gst-plugins-ugly"
+        "i3status"
         "icecat"
         "imv"           ; this or qiv
         "kdeconnect"
@@ -131,8 +132,7 @@
         "myrepos"
         ;; Currently zig only builds on x86_64-linux but
         ;; is only gated to 64-bit architectures.
-        ;(if (package-transitive-supported-systems
-        ;      (specification->package "ncdu@2"))
+        ;(if (supported-package? (specification->package "ncdu@2"))
         (if (equal? "x86_64-linux" (%current-system))
           "ncdu@2"
           "ncdu@1")
@@ -159,7 +159,9 @@
         "editorconfig-vim"
         "wcalc"
         "wget"
-        "wgetpaste"))
+        "wgetpaste"
+        "xdg-desktop-portal"
+        "xdg-desktop-portal-wlr"))
 
 ;;
 
@@ -170,7 +172,7 @@
        (filter (lambda (pkg)
                  (member (or (%current-system)
                              (%current-target-system))
-                         (package-transitive-supported-systems
+                         (supported-package?
                            (specification->package+output pkg))))
               (append
                 (if (or headless?
@@ -253,8 +255,8 @@
       ;; C-V U 0 0 A 0 is a non-breaking space, like below:
       ;; NB: C-V U 2 0 0 F is a right-to-left mark, C-V U 2 0 0 E is a left-to-right mark.
       ;; https://en.wikipedia.org/wiki/Bidirectional_text
-      "Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
-      ;"Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
+      ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
+      "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
       ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
       "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
       "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
@@ -493,6 +495,7 @@
     "c.auto_save.session = True\n"
     "c.content.cookies.accept = 'no-3rdparty'\n"
     "c.content.default_encoding = 'utf-8'\n"
+    "c.content.pdfjs = True\n"
     ;"c.content.proxy = 'socks://localhost:9050/'\n"
     ;"c.editor.command = ['alacritty', '--command', 'vim', '-f', '{file}', '-c', 'normal +{line}G+{column0}l']\n"
     "c.editor.command = ['alacritty', '--command', 'vim', '-f', '{file}']\n"
@@ -830,7 +833,9 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "dbus") "/bin/dbus-launch")
                      #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
-                     "-platform" "offscreen")
+                     ;; KDE Connect was built without "offscreen" support
+                     ;"-platform" "offscreen"
+                     )
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/kdeconnect.log")))
     ;; TODO: Enable autostart
     (auto-start? #f)
@@ -879,12 +884,7 @@ XTerm*metaSendsEscape: true\n"))
                       ("SDL_VIDEODRIVER" . "wayland")
                       ("GDK_BACKEND" . "wayland")
                       ("MOZ_ENABLE_WAYLAND" . "1")
-                      ;; Append guix-home directories to bash completion dirs.
-                      ;; TODO: Figure out if this is fixed elsewhere.
-                      ("BASH_COMPLETION_USER_DIR" .
-                       ,(string-append "$BASH_COMPLETION_USER_DIR:"
-                                       "$HOME/.guix-home/profile/share/bash-completion/completions:"
-                                       "$HOME/.guix-home/profile/etc/bash_completion.d"))
+
                       ("CVS_RSH" . "ssh")
                       ("EDITOR" . "vim")
                       ("GPG_TTY" . "$(tty)")
@@ -915,9 +915,6 @@ XTerm*metaSendsEscape: true\n"))
 unset SSH_AGENT_PID
 if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
     export SSH_AUTH_SOCK=\"$(" (S "gnupg") "/bin/gpgconf --list-dirs agent-ssh-socket)\"
-fi
-if [ -d ${XDG_CACHE_HOME}/efreet ]; then
-    rm -rf -- ${XDG_CACHE_HOME}/efreet
 fi
 if [ -d ${XDG_DATA_HOME}/flatpak/exports/share ]; then
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${XDG_DATA_HOME}/flatpak/exports/share

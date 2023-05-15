@@ -233,8 +233,8 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    #status_command while date +'%Y-%m-%d %k:%M:%S %p'; do sleep 1; done
-    status_command while date --rfc-email; do sleep 1; done
+    #status_command while date --rfc-email; do sleep 1; done
+    status_command i3status
 
     colors {
         statusline #ffffff
@@ -242,5 +242,8 @@ bar {
         inactive_workspace #32323200 #32323200 #5c5c5c
     }
 }
+
+for_window [app_id="imv"] floating enable
+for_window [app_id="mpv"] floating enable
 
 include /run/current-system/profile/etc/sway/config.d/*

@@ -76,13 +76,8 @@
                  "virt-manager"
                  "xterm"
 
-
                  "sway"
-                 "swayidle"
-                 "alacritty"            ; drop
-                 "kitty"                ; drop
-                 "dmenu"                ; drop
-                 ))
+                 "swayidle"))
       %base-packages))
 
   (services
