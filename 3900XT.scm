@@ -4,6 +4,7 @@
   (gnu system locale)
   (config filesystems)
   (config guix-daemon)
+  (services tailscale)
   (srfi srfi-1))
 (use-service-modules
   cups
@@ -98,6 +99,10 @@
            ;; guix system: error: symlink: File exists: "/etc/ssh"
            ;(simple-service 'ssh-known-hosts etc-service-type
            ;                `(("ssh/ssh-known-hosts" ,(local-file "Extras/ssh-known-hosts"))))
+
+           (service tailscaled-service-type
+                    (tailscaled-configuration
+                      (package (specification->package "tailscale-bin-amd64"))))
 
            (service tor-service-type
                     (tor-configuration
