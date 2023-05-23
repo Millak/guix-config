@@ -1,4 +1,4 @@
-(define-module (visionfive1))
+(define-module (visionfive2))
 (use-modules (guix packages)
              (gnu)
              (gnu bootloader grub)
@@ -30,17 +30,18 @@
              (guix git-download))
 
 ;; Some 40ish commits on top of upstream u-boot 2022.04-rc2
-(define u-boot-starfive-visionfive
-  (let ((base (make-u-boot-package "starfive_jh7100_visionfive_smode" "riscv64-linux-gnu")))
+(define u-boot-starfive-visionfive2
+  (let ((base (make-u-boot-package "starfive_jh7100_visionfive_smode" "riscv64-linux-gnu"))
+        (commit "ac0ac696256abf412826d74ee918dd417e207d7b"))
     (package
       (inherit base)
-      (version "VF_SDK_510_V1.2.1")
+      (version (git-version "VF2_v2.11.5" "2" commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
                        (url "https://github.com/starfive-tech/u-boot")
-                       (commit version)))
-                (file-name (git-file-name "starfive-visionfive-u-boot" version))
+                       (commit commit)))
+                (file-name (git-file-name "starfive-visionfive2-u-boot" version))
                 (sha256
                  (base32
                   "0brywkh2ppqqhpjhr3n6w0flf31sbmbgy6rbpdczdl1mrav44l8n"))))
@@ -60,22 +61,20 @@
                  (specification->package "openssl")))))))
 
 ;; This is a placeholder!!
-(define install-starfive-visionfive-u-boot
+(define install-visionfive2-u-boot
   #~(lambda (bootloader root-index image)
       (let ((spl (string-append bootloader "/libexec/spl/u-boot-spl.bin"))
             (u-boot (string-append bootloader "/libexec/u-boot.itb")))
-        ;; https://source.denx.de/u-boot/u-boot/-/blob/master/doc/board/sifive/unmatched.rst
         (write-file-on-device spl (stat:size (stat spl))
-                              image (* 34 512))
+                              image (* 4096 512))
         (write-file-on-device u-boot (stat:size (stat u-boot))
-                              image (* 2082 512)))))
+                              image (* 8192 512)))))
 
-(define u-boot-starfive-visionfive-bootloader
+(define u-boot-starfive-visionfive2-bootloader
   (bootloader
    (inherit u-boot-bootloader)
-   (package u-boot-starfive-visionfive)
-   ;(disk-image-installer install-starfive-visionfive-u-boot)))
-   (disk-image-installer #~(lambda _ #t))))
+   (package u-boot-starfive-visionfive2)
+   (disk-image-installer install-visionfive2-u-boot)))
 
 ;;
 
@@ -109,90 +108,10 @@
       ;(source %starfive-visionfive1-kernel-source)
       )))
 
-
-;; for /boot/uEnv.txt
-(define %uenv.txt
-  (mixed-text-file
-    "uEnv.txt"
-    "\
-fdt_high=0xffffffffffffffff
-initrd_high=0xffffffffffffffff
-kernel_addr_r=0x84000000
-kernel_comp_addr_r=0x90000000
-kernel_comp_size=0x10000000
-fdt_addr_r=0x88000000
-ramdisk_addr_r=0x88300000
-# Move DHCP after MMC to speed up booting
-boot_targets=mmc0 dhcp
-# Fix wrong fdtfile name
-fdtfile=" starfive-kernel "/lib/dtbs/starfive/jh7100-starfive-visionfive-v1.dtb
-# Fix missing bootcmd
-bootcmd=run distro_bootcmd"))
-
-(define %uenv.txt-debian
-  (plain-file
-    "uEnv.txt"
-    "\
-fdt_high=0xffffffffffffffff
-initrd_high=0xffffffffffffffff
-kernel_addr_r=0x84000000
-kernel_comp_addr_r=0x90000000
-kernel_comp_size=0x10000000
-fdt_addr_r=0x88000000
-ramdisk_addr_r=0x88300000
-# Move DHCP after MMC to speed up booting
-boot_targets=mmc0 dhcp
-# Fix wrong fdtfile name
-fdtfile=starfive/jh7100-starfive-visionfive-v1.dtb
-# Fix missing bootcmd
-bootcmd=run distro_bootcmd"))
-
-(define %uenv.txt-fedora
-  (plain-file
-    "uEnv.txt"
-    "\
-fdt_high=0xffffffffffffffff
-initrd_high=0xffffffffffffffff
-
-scriptaddr=0x88100000
-script_offset_f=0x1fff000
-script_size_f=0x1000
-
-kernel_addr_r=0x84000000
-kernel_comp_addr_r=0x90000000
-kernel_comp_size=0x10000000
-
-fdt_addr_r=0x88000000
-ramdisk_addr_r=0x88300000
-
-bootcmd=load mmc 0:2 0xa0000000 /EFI/fedora/grubriscv64.efi; bootefi 0xa0000000
-bootcmd_mmc0=devnum=0; run mmc_boot
-
-ipaddr=192.168.120.200
-netmask=255.255.255.0"))
-
-(define %uenv.txt-arch  ; for visionfive2
-  (plain-file
-    "uEnv.txt"
-    "\
-fdt_high=0xffffffffffffffff
-initrd_high=0xffffffffffffffff
-kernel_addr_r=0x44000000
-kernel_comp_addr_r=0x90000000
-kernel_comp_size=0x10000000
-fdt_addr_r=0x48000000
-ramdisk_addr_r=0x48100000
-# Move distro to first boot to speed up booting
-boot_targets=distro mmc0 dhcp
-# Fix wrong fdtfile name
-fdtfile=starfive/jh7110-visionfive-v2.dtb
-# Fix missing bootcmd
-bootcmd=run bootcmd_distro"))
-
 ;; OS starts from here:
 
 (operating-system
-  (host-name "visionfive1")
+  (host-name "visionfive2")
   (timezone "Asia/Jerusalem")
   (locale "en_IL.utf8")
   (locale-definitions
@@ -203,16 +122,16 @@ bootcmd=run bootcmd_distro"))
   (keyboard-layout
     (keyboard-layout "us" "altgr-intl"))
 
-  ;; No need for glibc-2.31.
+  ;; No need for glibc-2.33.
   (locale-libcs (list (canonical-package glibc)))
 
-  ;(bootloader (bootloader-configuration
-  ;              (bootloader grub-efi-bootloader)
-  ;              (targets '("/boot/efi"))))
-  ;; not for u-boot, but for the config stuff
   (bootloader (bootloader-configuration
-                (bootloader u-boot-starfive-visionfive-bootloader)
-                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+                (bootloader grub-efi-bootloader)
+                (targets '("/boot/efi"))))
+  ;; not for u-boot, but for the config stuff
+  ;(bootloader (bootloader-configuration
+  ;              (bootloader u-boot-starfive-visionfive2-bootloader)
+  ;              (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
   ;; extlinux depends on syslinux
   ;(bootloader (bootloader-configuration
   ;              (bootloader extlinux-bootloader)
@@ -275,9 +194,6 @@ bootcmd=run bootcmd_distro"))
                     (openssh-configuration
                       (openssh (specification->package "openssh-sans-x"))))
 
-           (service special-files-service-type
-                    `(("/boot/uEnv.txt" ,%uenv.txt)))
-
            ;(service mcron-service-type
            ;         (mcron-configuration
            ;           ;; Image created with ext4
@@ -329,4 +245,4 @@ bootcmd=run bootcmd_distro"))
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
 
-;; guix system image --image-type=raw-with-offset -L ~/workspace/guix-config/ ~/workspace/guix-config/visionfive1.scm --system=riscv64-linux
+;; guix system image --image-type=raw-with-offset -L ~/workspace/guix-config/ ~/workspace/guix-config/visionfive2.scm --system=riscv64-linux
