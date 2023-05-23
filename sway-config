@@ -22,8 +22,9 @@ set $term alacritty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | dmenu | xargs swaymsg exec --
+#set $menu dmenu_path | dmenu | xargs swaymsg exec --
 #set $menu wofi --show=drun --lines=5 --prompt=""
+set $menu tofi-drun | xargs swaymsg exec --
 
 set $swaylock swaylock --daemonize --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg
 
@@ -233,8 +234,8 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    #status_command while date --rfc-email; do sleep 1; done
-    status_command i3status
+    status_command while date --rfc-email; do sleep 1; done
+    #status_command i3status
 
     colors {
         statusline #ffffff

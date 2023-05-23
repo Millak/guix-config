@@ -44,7 +44,7 @@
 (define %GUI-only
   (list "adwaita-icon-theme"
         "alacritty"     ; this or kitty
-        "dmenu"
+        "dmenu"         ; this or tofi
         "font-culmus"
         "font-dejavu"
         "font-ghostscript"
@@ -73,6 +73,7 @@
         "qtwayland@5"
         "quasselclient"
         "qutebrowser"
+        "tofi"          ; this or dmenu
         "tuba"
         "wl-clipboard-x11"
         "zathura"
@@ -668,10 +669,10 @@ XTerm*metaSendsEscape: true\n"))
     (openssh-host (name "guixp9")
                   (host-name "p9.tobias.gr")
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
-    (openssh-host (name "*.unicorn-typhon.ts.net")
-                  (proxy
-                    (list
-                      (proxy-jump (host-name "do1")))))
+    ;(openssh-host (name "*.unicorn-typhon.ts.net")
+    ;              (proxy
+    ;                (list
+    ;                  (proxy-jump (host-name "do1")))))
     (openssh-host (name "*.onion *-tor")
                   (compression? #t)
                   (proxy
@@ -834,8 +835,8 @@ XTerm*metaSendsEscape: true\n"))
                (list #$(file-append (S "dbus") "/bin/dbus-launch")
                      #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
                      ;; KDE Connect was built without "offscreen" support
-                     ;"-platform" "offscreen"
-                     )
+                     ;; without this it fails to create wl_display
+                     "-platform" "offscreen")
                #:log-file (string-append (getenv "XDG_LOG_HOME") "/kdeconnect.log")))
     ;; TODO: Enable autostart
     (auto-start? #f)
