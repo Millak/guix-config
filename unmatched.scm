@@ -17,31 +17,31 @@
   linux)
 
 ;; For (gnu bootloader u-boot)
-(use-modules (gnu packages bootloaders))
+;(use-modules (gnu packages bootloaders))
 
-(define install-sifive-unmatched-u-boot
-  #~(lambda (bootloader root-index image)
-      (let ((spl (string-append bootloader "/libexec/spl/u-boot-spl.bin"))
-            (u-boot (string-append bootloader "/libexec/u-boot.itb")))
-        ;; https://source.denx.de/u-boot/u-boot/-/blob/master/doc/board/sifive/unmatched.rst
-        (write-file-on-device spl (stat:size (stat spl))
-                              image (* 34 512))
-        (write-file-on-device u-boot (stat:size (stat u-boot))
-                              image (* 2082 512)))))
+;(define install-sifive-unmatched-u-boot
+;  #~(lambda (bootloader root-index image)
+;      (let ((spl (string-append bootloader "/libexec/spl/u-boot-spl.bin"))
+;            (u-boot (string-append bootloader "/libexec/u-boot.itb")))
+;        ;; https://source.denx.de/u-boot/u-boot/-/blob/master/doc/board/sifive/unmatched.rst
+;        (write-file-on-device spl (stat:size (stat spl))
+;                              image (* 34 512))
+;        (write-file-on-device u-boot (stat:size (stat u-boot))
+;                              image (* 2082 512)))))
 
 ;; To prepare the disk: (from gptfdisk)
 ;;sgdisk -g --clear --set-alignment=1 \
 ;;    --new=1:34:+1M: --change-name=1:spl --typecode=1:5b193300-fc78-40cd-8002-e86c45580b47 \
 ;;    --new=2:2082:+4M: --change-name=2:uboot --typecode=2:2e54b353-1271-4842-806f-e436d6af6985 \
-;;    --new=3:16384:282623    --change-name=3:boot --typecode=3:0x0700 \    ; vfat
+;;    --new=3:16384:282623    --change-name=3:boot --typecode=3:0x0700 \    ; vfat (maybe exfat?)
 ;;    --new=4:286720:13918207 --change-name=4:root --typecode=4:0x8300 \    ; ext4
 ;;    [block device]
 
-(define u-boot-sifive-unmatched-bootloader
-  (bootloader
-   (inherit u-boot-bootloader)
-   (package u-boot-sifive-unmatched)
-   (disk-image-installer install-sifive-unmatched-u-boot)))
+;(define u-boot-sifive-unmatched-bootloader
+;  (bootloader
+;   (inherit u-boot-bootloader)
+;   (package u-boot-sifive-unmatched)
+;   (disk-image-installer install-sifive-unmatched-u-boot)))
 
 ;; OS starts from here:
 
@@ -57,15 +57,15 @@
   (keyboard-layout
     (keyboard-layout "us" "altgr-intl"))
 
-  ;; No need for glibc-2.31.
+  ;; No need for glibc-2.33.
   (locale-libcs (list (canonical-package glibc)))
 
-  ;(bootloader (bootloader-configuration
-  ;              (bootloader u-boot-sifive-unmatched-bootloader)
-  ;              (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
   (bootloader (bootloader-configuration
-                (bootloader grub-efi-bootloader)
-                (targets '("/boot/efi"))))
+                (bootloader u-boot-sifive-unmatched-bootloader)
+                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+  ;(bootloader (bootloader-configuration
+  ;              (bootloader grub-efi-bootloader)
+  ;              (targets '("/boot/efi"))))
 
   (firmware '())
   ;; Plenty of options for initrd modules.
@@ -139,7 +139,7 @@
            ;; Skip go for now
            (service earlyoom-service-type
                     (earlyoom-configuration
-                      (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
+                      (prefer-regexp "(cc1(plus)?|.rustc-real|Web Content)")
                       (avoid-regexp "guile")))
 
            (service zram-device-service-type
