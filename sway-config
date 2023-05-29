@@ -26,7 +26,7 @@ set $term alacritty
 #set $menu wofi --show=drun --lines=5 --prompt=""
 set $menu tofi-drun | xargs swaymsg exec --
 
-set $swaylock swaylock --daemonize --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg
+set $swaylock swaylock --daemonize --indicator-radius 85 --ring-color 1a1a1a --key-hl-color ffb638 --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg
 
 ### Output configuration
 #
