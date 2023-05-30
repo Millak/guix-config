@@ -1,6 +1,7 @@
 (define-module (efraim-home)
   #:use-module (gnu home)
   #:use-module (gnu home services)
+  #:use-module (gnu home services mail)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services ssh)
@@ -633,6 +634,40 @@ XTerm*metaSendsEscape: true\n"))
 
     "account default: gmail-efraim\n"))
 
+(define %home-msmtp-configuration-accounts
+  (list
+    (msmtp-account
+      (name "flashner.co.il")
+      (configuration
+        (msmtp-configuration
+          (host "flashner.co.il")
+          (port 465)
+          (user "efraim")
+          (from "efraim@flashner.co.il")
+          (password-eval "gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.gpg")
+          (tls-starttls? #f)
+          (extra-content "tls_fingerprint 49:08:49:DF:A5:E9:73:8F:72:DA:BD:2D:2C:C4:C0:24:34:2B:66:D6"))))
+    (msmtp-account
+      (name "gmail-efraim")
+      (configuration
+        (msmtp-configuration
+          (host "smtp.gmail.com")
+          (port 587)
+          (user "efraim.flashner")
+          (from "efraim.flashner@gmail.com")
+          (password-eval "gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.efraimflashnergmail.gpg")
+          (tls-trust-file "/etc/ssl/certs/ca-certificates.crt"))))
+    (msmtp-account
+      (name "gmail-themillak")
+      (configuration
+        (msmtp-configuration
+          (host "smtp.gmail.com")
+          (port 587)
+          (user "themillak")
+          (from "themillak@gmail.com")
+          (password-eval "gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.themillakgmail.gpg")
+          (tls-trust-file "/etc/ssl/certs/ca-certificates.crt"))))))
+
 (define %home-openssh-configuration-hosts
   ;; RemoteForward is "there" to "here".
   (list
@@ -940,6 +975,19 @@ fi")))))
         ;         (home-openssh-configuration
         ;           (hosts %home-openssh-configuration-hosts)))
 
+        (service home-msmtp-service-type
+                 (home-msmtp-configuration
+                   (default-account "gmail-efraim")
+                   (defaults
+                     (msmtp-configuration
+                       ;; For tor proxy.
+                       ;(extra-content
+                       ;  (string-append "proxy_host 127.0.0.1\n"
+                       ;                 "proxy_port 9050"))
+                       (auth? #t)
+                       (tls? #t)))
+                   (accounts %home-msmtp-configuration-accounts)))
+
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
            (".gnupg/gpg.conf" ,%gpg.conf)
@@ -982,7 +1030,7 @@ fi")))))
             ,(file-append (S "mpv-twitch-chat")
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
-           ("msmtp/config" ,%msmtp-config)
+           ;("msmtp/config" ,%msmtp-config)
            ("newsboat/config" ,%newsboat-config)
            ("nano/nanorc" ,%nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
