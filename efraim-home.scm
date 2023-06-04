@@ -24,6 +24,7 @@
 
 (define %Guix_machines
   (list "bayfront"
+        "berlin"
         "guixp9"))
 
 (define %UTenn_machines
@@ -44,8 +45,7 @@
 
 (define %GUI-only
   (list "adwaita-icon-theme"
-        "alacritty"     ; this or kitty
-        "dmenu"         ; this or tofi
+        "alacritty"
         "font-culmus"
         "font-dejavu"
         "font-ghostscript"
@@ -61,7 +61,6 @@
         "imv"           ; this or qiv
         "kdeconnect"
         "keepassxc"
-        "kitty"         ; this or alacritty
         "lagrange"
         "libnotify"     ; notify-send
         "libreoffice"
@@ -74,7 +73,7 @@
         "qtwayland@5"
         "quasselclient"
         "qutebrowser"
-        "tofi"          ; this or dmenu
+        "tofi"
         "tuba"
         "wl-clipboard-x11"
         "zathura"
@@ -678,9 +677,7 @@ XTerm*metaSendsEscape: true\n"))
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "ct-tor")
                   (host-name "teiefezsytzpsennj3ramwqaroh6thqyzdvbu3fxktonvxguqt3rxsid.onion")
-                  (identity-file "~/.ssh/id_ed25519")
-                  ;(extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n")
-                  )
+                  (identity-file "~/.ssh/id_ed25519"))
     (openssh-host (name "E5400-tor")
                   (host-name "k27pjetdse4otw2l6qkn5qdqzv3ucuky7jsn4fmibnkxqeleec3yelad.onion")
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
@@ -690,17 +687,23 @@ XTerm*metaSendsEscape: true\n"))
                     (string-append "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"
                                    "\n\n"
                                    "Include config-uthsc\n")))
+    (openssh-host (name "hetzner-storage")
+                  (host-name "u353806.your-storagebox.de")
+                  (user "u353806-sub2")
+                  (port 23)
+                  (identity-file "~/.ssh/id_ed25519"))
     (openssh-host (name "git.sv.gnu.org git.savannah.gnu.org")
                   (identity-file "~/.ssh/id_ed25519_savannah"))
     (openssh-host (name "gitlab.com gitlab.inria.fr salsa.debian.org")
                   (identity-file "~/.ssh/id_ed25519_gitlab"))
     (openssh-host (name "gitlab.gnome.org")
                   (identity-file " ~/.ssh/id_ed25519_gnome"))
+    (openssh-host (name "berlin")
+                  (host-name "berlin.guix.gnu.org")
+                  (identity-file "~/.ssh/id_ed25519_overdrive"))
     ;(openssh-host (name "bayfront")
     ;              (host-name "bayfront.guix.gnu.org")
-    ;              (identity-file "~/.ssh/id_ed25519_overdrive")
-    ;              (compression? #t)
-    ;              (extra-content "  RemoteForward /home/efraim/.gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+    ;              (identity-file "~/.ssh/id_ed25519_overdrive"))
     (openssh-host (name "guixp9")
                   (host-name "p9.tobias.gr")
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
@@ -713,8 +716,8 @@ XTerm*metaSendsEscape: true\n"))
                   (proxy
                     ;; Either this or we always need to prefix with torsocks.
                     ;; TODO: Replace the custom ~/bin/openbsd-netcat with the line below:
-                    ;(proxy-command (string-append (S "netcat-openbsd") "/bin/nc -x localhost:9050 %h %p")))
-                    (proxy-command (string-append (getenv "HOME") "/bin/openbsd-netcat -x localhost:9050 %h %p")))
+                    ;(proxy-command (string-append (S "netcat-openbsd") "/bin/nc -X 5 -x localhost:9050 %h %p")))
+                    (proxy-command (string-append (getenv "HOME") "/bin/openbsd-netcat -X 5 -x localhost:9050 %h %p")))
                   (extra-content "  ControlPath ${XDG_RUNTIME_DIR}/%r@%k-%p\n"))
     (openssh-host (name "*")
                   (user "efraim")
@@ -740,6 +743,16 @@ XTerm*metaSendsEscape: true\n"))
                          "128.169.0.0/16"
         ;                 "'")
         )))
+
+(define %update-guix-gpg-keyring
+  (program-file
+    "update-guix-members-gpg-keys"
+    #~(let ((gpg-keyring (tmpnam))
+            (keyring-file "https://savannah.gnu.org/project/memberlist-gpgkeys.php?group=guix&download=1"))
+        ((@ (guix build download) url-fetch) keyring-file gpg-keyring)
+        (system* "gpg" "--import" gpg-keyring)
+        ;; Clean up after ourselves.
+        (delete-file gpg-keyring))))
 
 ;;; Extra services.
 
@@ -975,6 +988,13 @@ fi")))))
         ;         (home-openssh-configuration
         ;           (hosts %home-openssh-configuration-hosts)))
 
+        ;(service home-gpg-agent-service-type
+        ;         (home-gpg-agent-configuration
+        ;           (gnupg
+        ;             (if headless?
+        ;               (file-append (S "pinentry-tty") "/bin/pinentry-tty")
+        ;               (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
+
         (service home-msmtp-service-type
                  (home-msmtp-configuration
                    (default-account "gmail-efraim")
@@ -1009,11 +1029,15 @@ fi")))))
            ;; Also files into the bin directory.
            ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ;("bin/msmtp-password-flashner" ,%email-password)
+           ("bin/update-guix-keyring" ,%update-guix-gpg-keyring)
            ("bin/openbsd-netcat"
             ,(file-append (S "netcat-openbsd") "/bin/nc"))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
+           ;("chromium/WidevineCdm/latest-component-updated-widevine-cdm"
+           ; ,(file-append (S "widevine")
+           ;               "/share/chromium/latest-component-updated-widevine-cdm"))
            ("gdb/gdbinit" ,%gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
