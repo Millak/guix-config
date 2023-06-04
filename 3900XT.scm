@@ -78,14 +78,19 @@
                  "xterm"
 
                  "sway"
-                 "swayidle"))
+                 "swayidle"
+                 "swaylock"))
       %base-packages))
 
   (services
     (cons* (service screen-locker-service-type
                     (screen-locker-configuration
-                      "swaylock" (file-append (specification->package "swaylock")
-                                              "/bin/swaylock") #f))
+                      (name "swaylock")
+                      (program (file-append (specification->package "swaylock")
+                                              "/bin/swaylock"))
+                      (allow-empty-password? #f)
+                      (using-pam? #t)
+                      (using-setuid? #f)))
 
            (service guix-publish-service-type
                     (guix-publish-configuration
