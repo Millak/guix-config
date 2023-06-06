@@ -156,7 +156,7 @@
 ;     '((with-branch . "vim-guix-vim=master")))))
 
 ;; https://guix.gnu.org/manual/devel/en/html_node/Defining-Package-Variants.html#index-input-rewriting
-;; Both of these are equivilent to '--with-input'
+;; Both of these are equivalent to '--with-input'
 ;; package-input-rewriting => takes an 'identity'
 ;; package-input-rewriting/spec => takes a name
 

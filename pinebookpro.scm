@@ -32,13 +32,19 @@
   (keyboard-layout
     (keyboard-layout "us" "altgr-intl"))
 
+  #;(bootloader
+    (bootloader-configuration
+      (bootloader u-boot-pinebook-pro-rk3399-bootloader)
+      (targets '("/dev/mmcblk2"))))
+
   (bootloader
     (bootloader-configuration
       (bootloader grub-efi-bootloader)
       (targets '("/boot/efi"))
       (keyboard-layout keyboard-layout)))
 
-  (initrd-modules (list "nvme"))        ; By default none.
+  (initrd-modules '())
+  ;(initrd-modules (list "nvme"))        ; By default none.
   (kernel linux-libre-arm64-generic)
   (firmware (list ath9k-htc-firmware))  ; By default none.
 
@@ -65,20 +71,32 @@
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
                       ;"lp" "lpadmin"       ; CUPS
-                      ;"libvirt"            ; libvirt
                       "audio" "video")))
                 %base-user-accounts))
   (packages
     (append
-      (list ;(specification->package "compsize")
-            (specification->package "econnman")
-            (specification->package "nss-certs")
-            ;(specification->package "virt-manager")
-            (specification->package "xterm"))
+      (map specification->package
+           (list ;"compsize"
+                 "cmst"
+                 "guix-backgrounds"
+                 "guix-simplyblack-sddm-theme"  ; sddm theme
+                 "nss-certs"
+                 "xterm"
+
+                 "sway"
+                 "swayidle"
+                 "swaylock"))
       %base-packages))
 
   (services
-    (cons* (service enlightenment-desktop-service-type)
+    (cons* (service screen-locker-service-type
+                    (screen-locker-configuration
+                      (name "swaylock")
+                      (program (file-append (specification->package "swaylock")
+                                              "/bin/swaylock"))
+                      (allow-empty-password? #f)
+                      (using-pam? #t)
+                      (using-setuid? #f)))
 
            (service openssh-service-type
                     (openssh-configuration
@@ -94,17 +112,17 @@
                             (name "ssh")
                             (mapping '((22 "127.0.0.1:22"))))))))
 
-           ;(service cups-service-type
-           ;         (cups-configuration
-           ;           (web-interface? #t)
-           ;           (default-paper-size "A4")
-           ;           (extensions
-           ;             (list cups-filters hplip-minimal))))
+           #;(service cups-service-type
+                    (cups-configuration
+                      (web-interface? #t)
+                      (default-paper-size "A4")
+                      (extensions
+                        (list cups-filters hplip-minimal))))
 
-           ;(service mcron-service-type
-           ;         (mcron-configuration
-           ;           ;; Image created with ext4
-           ;           (jobs (%btrfs-maintenance-jobs "/"))))
+           #;(service mcron-service-type
+                    (mcron-configuration
+                      ;; Image created with ext4
+                      (jobs (%btrfs-maintenance-jobs "/"))))
 
            (service openntpd-service-type
                     (openntpd-configuration
@@ -113,23 +131,18 @@
 
            (service connman-service-type)
 
-           ;(service libvirt-service-type
-           ;         (libvirt-configuration
-           ;           (unix-sock-group "libvirt")))
-           ;(service virtlog-service-type)
-
            ;; This one seems to cause the boot process to hang.
-           ;(service qemu-binfmt-service-type
-           ;         (qemu-binfmt-configuration
-           ;           ;; We get some architectures for free.
-           ;           (platforms
-           ;             (fold delete %qemu-platforms
-           ;                   (lookup-qemu-platforms "arm" "aarch64")))))
+           #;(service qemu-binfmt-service-type
+                    (qemu-binfmt-configuration
+                      ;; We get some architectures for free.
+                      (platforms
+                        (fold delete %qemu-platforms
+                              (lookup-qemu-platforms "arm" "aarch64")))))
 
            (service earlyoom-service-type
                     (earlyoom-configuration
                       (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
-                      (avoid-regexp "enlightenment")))
+                      (avoid-regexp "guile")))
 
            (service zram-device-service-type
                     (zram-device-configuration
@@ -153,6 +166,7 @@
                        config =>
                        (sddm-configuration
                          (inherit config)
+                         (theme "guix-simplyblack-sddm")
                          (display-server "wayland")))
 
                      (guix-service-type

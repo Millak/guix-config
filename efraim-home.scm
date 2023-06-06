@@ -54,6 +54,8 @@
         "font-opendyslexic"
         "font-terminus"
         "flatpak"
+        "gstreamer"
+        "gst-plugins-base"
         "gst-plugins-good"
         "gst-plugins-ugly"
         "i3status"
@@ -141,6 +143,7 @@
         "nss-certs"
         "openssh"
         "parallel"
+        "python-codespell"
         "qrencode"
         "rsync"
         "screen"
@@ -206,10 +209,45 @@
       "set show-mode-in-prompt on\n"
       "set enable-bracketed-paste on\n"
       "set editing-mode vi\n"
-      "Control-l: clear-screen\n"
+      "Control-l: clear-screen\n"   ; would I rather have clear-display?
       "set bell-style visible\n"
       "set colored-completion-prefix on\n"
       "set colored-stats on\n")))
+
+        #;
+        (service home-inputrc-service-type
+                 (home-inputrc-configuration
+                   (key-bindings
+                    `(("Control-l" . "clear-screen"))); would I rather have clear-display?
+                   (variables
+                    `(("bell-style" . "visible")
+                      ("colored-completion-prefix" . #t)
+                      ("colored-stats" . #t)
+                      ("enable-bracketed-paste" . #t)
+                      ("editing-mode" . "vi")
+                      ("show-mode-in-prompt" . #t)))
+                   ;; This was just for testing purposes.
+                   #;
+                   (conditional-constructs
+                    `(("$if mode=vi" .
+                       ,(home-inputrc-configuration
+                          (key-bindings
+                           `(("Control-l" . "clear-screen"))); would I rather have clear-display?
+                          (variables
+                           `(("bell-style" . "visible")
+                             ("colored-completion-prefix" . #t)
+                             ("colored-stats" . #t)
+                             ("enable-bracketed-paste" . #t)
+                             ("editing-mode" . "vi")
+                             ("show-mode-in-prompt" . #t)))))
+                      ("$else" .
+                       ,(home-inputrc-configuration
+                          (key-bindings
+                           `(("Control-l" . "clear-screen")))))
+                      ("$endif" . #t)
+                      ("$include" . "/etc/inputrc")
+                      ("$include" . ,(file-append (S "readline") "/etc/inputrc"))))
+                   ))
 
 (define %screenrc
   (plain-file
@@ -401,7 +439,6 @@
     "    algorithm = patience\n"
     "[fetch]\n"
     "    prune = true\n"
-    ;"    pruneTags = true\n"
     "    parallel = 0\n"
     "[format]\n"
     "    coverLetter = auto\n"
@@ -701,16 +738,16 @@ XTerm*metaSendsEscape: true\n"))
     (openssh-host (name "berlin")
                   (host-name "berlin.guix.gnu.org")
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
-    ;(openssh-host (name "bayfront")
-    ;              (host-name "bayfront.guix.gnu.org")
-    ;              (identity-file "~/.ssh/id_ed25519_overdrive"))
+    #;(openssh-host (name "bayfront")
+                  (host-name "bayfront.guix.gnu.org")
+                  (identity-file "~/.ssh/id_ed25519_overdrive"))
     (openssh-host (name "guixp9")
                   (host-name "p9.tobias.gr")
                   (identity-file "~/.ssh/id_ed25519_overdrive"))
-    ;(openssh-host (name "*.unicorn-typhon.ts.net")
-    ;              (proxy
-    ;                (list
-    ;                  (proxy-jump (host-name "do1")))))
+    #;(openssh-host (name "*.unicorn-typhon.ts.net")
+                  (proxy
+                    (list
+                      (proxy-jump (host-name "do1")))))
     (openssh-host (name "*.onion *-tor")
                   (compression? #t)
                   (proxy
@@ -984,16 +1021,17 @@ fi")))))
                        %kdeconnect-user-service
                        %parcimonie-user-service))))
 
-        ;(service home-openssh-service-type
-        ;         (home-openssh-configuration
-        ;           (hosts %home-openssh-configuration-hosts)))
+        #;(service home-openssh-service-type
+                 (home-openssh-configuration
+                   (hosts %home-openssh-configuration-hosts)))
 
-        ;(service home-gpg-agent-service-type
-        ;         (home-gpg-agent-configuration
-        ;           (gnupg
-        ;             (if headless?
-        ;               (file-append (S "pinentry-tty") "/bin/pinentry-tty")
-        ;               (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
+        ;; Can't seem to get (if headless?) to work
+        #;(service home-gpg-agent-service-type
+                 (home-gpg-agent-configuration
+                   (gnupg
+                     (if headless?
+                       (file-append (S "pinentry-tty") "/bin/pinentry-tty")
+                       (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
 
         (service home-msmtp-service-type
                  (home-msmtp-configuration
@@ -1001,9 +1039,9 @@ fi")))))
                    (defaults
                      (msmtp-configuration
                        ;; For tor proxy.
-                       ;(extra-content
-                       ;  (string-append "proxy_host 127.0.0.1\n"
-                       ;                 "proxy_port 9050"))
+                       #;(extra-content
+                         (string-append "proxy_host 127.0.0.1\n"
+                                        "proxy_port 9050"))
                        (auth? #t)
                        (tls? #t)))
                    (accounts %home-msmtp-configuration-accounts)))
@@ -1035,9 +1073,9 @@ fi")))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
-           ;("chromium/WidevineCdm/latest-component-updated-widevine-cdm"
-           ; ,(file-append (S "widevine")
-           ;               "/share/chromium/latest-component-updated-widevine-cdm"))
+           #;("chromium/WidevineCdm/latest-component-updated-widevine-cdm"
+            ,(file-append (S "widevine")
+                          "/share/chromium/latest-component-updated-widevine-cdm"))
            ("gdb/gdbinit" ,%gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)

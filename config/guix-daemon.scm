@@ -9,6 +9,7 @@
 (define %substitute-urls
   (list "https://bordeaux.guix.gnu.org"
         "https://ci.guix.gnu.org"
+        ;"https://4zwzi66wwdaalbhgnix55ea3ab4pvvw66ll2ow53kjub6se4q2bclcyd.onion"
         "http://guix.genenetwork.org"
         "https://guix.tobias.gr"))
 
