@@ -75,6 +75,7 @@
         "qtwayland@5"
         "quasselclient"
         "qutebrowser"
+        "telegram-desktop"
         "tofi"
         "tuba"
         "wl-clipboard-x11"
@@ -88,7 +89,6 @@
 
 (define %not-for-work
   (list "btrfs-progs"
-        "catimg"
         "ffmpeg"
         "git-annex"
         "isync"
@@ -373,7 +373,7 @@
     ;; deb [arch=all] http://deb.debian.org/debian/ sid contrib non-free
     ;; This one caused `pbuilder create` failures on real ppc hardware.
     ;"    OTHERMIRROR=\"deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main\"\n"
-    "    DEBOOTSTRAPOPTS=( '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' ${DEBOOTSTRAPOPTS[@]} )\n"
+    "    DEBOOTSTRAPOPTS=( '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
     "    EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
     "fi\n"
 
@@ -391,7 +391,7 @@
     "keyserver hkp://keyserver.computer42.org\n"
     "keyserver-options auto-key-retrieve\n"
     "keyserver-options include-revoked\n"
-    ;"photo-viewer \"" #$(file-append (S "catimg") "/bin/catimg $i\"\n"
+    ;"photo-viewer \"" #$(file-append (S "imv") "/bin/imv $i\"\n"
     "keyid-format 0xlong\n"
     ;; For use with 'gpg --locate-external-key'
     "auto-key-locate wkd cert pka dane hkp://keys.openpgp.org hkp://keyserver.ubuntu.com hkp://keyserver.computer42.org\n"
@@ -426,7 +426,7 @@
     "[user]\n"
     "    name = Efraim Flashner\n"
     "    email = efraim@flashner.co.il\n"
-    "    signingkey = 0xca3d8351\n"
+    "    signingkey = 0xCA3D8351\n"
     "[core]\n"
     "    editor = vim\n"
     "[checkout]\n"
@@ -1063,7 +1063,7 @@ fi")))))
            (".Xdefaults" ,%xdefaults)
 
            (".local/share/qutebrowser/pdfjs"
-            ,(file-append (S "pdfjs") "/share/pdfjs"))
+            ,(file-append (S "pdfjs-legacy") "/share/pdfjs"))
            ;; Also files into the bin directory.
            ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ;("bin/msmtp-password-flashner" ,%email-password)
