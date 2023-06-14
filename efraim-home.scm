@@ -1021,7 +1021,7 @@ fi")))))
                        %kdeconnect-user-service
                        %parcimonie-user-service))))
 
-        #;(service home-openssh-service-type
+        (service home-openssh-service-type
                  (home-openssh-configuration
                    (hosts %home-openssh-configuration-hosts)))
 
