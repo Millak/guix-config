@@ -14,9 +14,12 @@
 
 ;;;
 
+;; To create a temporary directory in XDG_RUNTIME_DIR
+;; (mkdtemp (string-append (getenv "XDG_RUNTIME_DIR") "/XXXXXX"))
+
 (define %logdir
-  (or (getenv "XDG_LOG_HOME")
-      (format #f "~a/.local/var/log"
+  (or (string-append (getenv "XDG_STATE_HOME") "/log")
+      (format #f "~a/.local/state/log"
               (getenv "HOME"))))
 
 (define headless?
@@ -800,7 +803,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "syncthing") "/bin/syncthing")
                      "-no-browser")
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/syncthing.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/syncthing.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
@@ -813,7 +816,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--foreground"
                      "--verbose"
                      (string-append (getenv "HOME") "/Dropbox"))
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/dbxfs.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/dbxfs.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Dropbox")))
     ;; Needs gpg key to unlock.
@@ -829,7 +832,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--monitor"
                      "--verbose"
                      (string-append (getenv "HOME") "/Onedrive"))
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/onedrive.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/onedrive.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Onedrive")))
     (auto-start? #f)        ; Needs network.
@@ -887,7 +890,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/keybase.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/keybase.log")))
     (stop #~(make-system-destructor
               (string-append #$(file-append (S "keybase")
                                             "/bin/keybase")
@@ -905,7 +908,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/kbfsfuse")
                      "-log-to-file")
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/kbfs.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/kbfs.log")))
     (stop #~(make-kill-destructor))
     ;; Depends on keybase.
     (auto-start? #f)
@@ -922,7 +925,7 @@ XTerm*metaSendsEscape: true\n"))
                      ;; KDE Connect was built without "offscreen" support
                      ;; without this it fails to create wl_display
                      "-platform" "offscreen")
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/kdeconnect.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/kdeconnect.log")))
     ;; TODO: Enable autostart
     (auto-start? #f)
     (stop #~(make-kill-destructor))))
@@ -948,7 +951,7 @@ XTerm*metaSendsEscape: true\n"))
                      (string-append "--keyring="
                                     (getenv "XDG_CONFIG_HOME")
                                     "/guix/gpg/trustedkeys.kbx"))
-               #:log-file (string-append (getenv "XDG_LOG_HOME") "/parcimonie.log")))
+               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/parcimonie.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
