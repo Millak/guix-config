@@ -710,6 +710,9 @@ XTerm*metaSendsEscape: true\n"))
 (define %home-openssh-configuration-hosts
   ;; RemoteForward is "there" to "here".
   (list
+    (openssh-host (name "*")
+                  ;; Need to put something for HOST or MATCH before I can put the Include.
+                  (extra-content "Include config-uthsc\n"))
     (openssh-host (name "do1-tor")
                   (host-name "ohpdsn5yv7g4gqm3rsz6a323q4ta5vgzptwaje6vkwhobhfwhknd2had.onion"))
     (openssh-host (name "g4-tor")
@@ -723,10 +726,7 @@ XTerm*metaSendsEscape: true\n"))
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "3900xt-tor")
                   (host-name "edvqnpr5a2jjuswveoy63k3jxthqpgqatwzk53up5k6ve2rjwgd4jgqd.onion")
-                  (extra-content
-                    (string-append "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"
-                                   "\n\n"
-                                   "Include config-uthsc\n")))
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "hetzner-storage")
                   (host-name "u353806.your-storagebox.de")
                   (user "u353806-sub2")
