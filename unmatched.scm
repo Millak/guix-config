@@ -29,9 +29,6 @@
   (keyboard-layout
     (keyboard-layout "us" "altgr-intl"))
 
-  ;; No need for glibc-2.33.
-  (locale-libcs (list (canonical-package glibc)))
-
   (bootloader (bootloader-configuration
                 (bootloader u-boot-sifive-unmatched-bootloader)
                 (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
