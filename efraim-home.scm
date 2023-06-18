@@ -932,17 +932,17 @@ XTerm*metaSendsEscape: true\n"))
 
 (define %parcimonie-user-service
   (shepherd-service
-    (documentation "Incrementally refresh gnupg keyring")
+    (documentation "Incrementally refresh gnupg keyring over Tor")
     (provision '(parcimonie))
     (start #~(make-forkexec-constructor
-               ;(use-modules (guix build utils)
-               ;             (srfi srfi-1))
+               #;(use-modules (guix build utils)
+                            (srfi srfi-1))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
-                     ;; Can I use compose and find or a list to make this work?
-                     ; (append-map (lambda (item)
-                     ;        (list "--gnupg_extra_options" "--keyring" item))
-                     ;      (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$"))
+                     #;(append-map (lambda (item)
+                             (list "--gnupg_extra_options" "--keyring" item))
+                           (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$"))
                      ;; returns: ("--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/gpg/trustedkeys.kbx" "--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/upstream/trustedkeys.kbx")
+                     ;; Needs to not be a list inside of a list.
                      "--gnupg_extra_args"
                      (string-append "--keyring="
                                     (getenv "XDG_CONFIG_HOME")
