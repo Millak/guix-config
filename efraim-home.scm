@@ -82,6 +82,8 @@
         "tofi"
         "tuba"
         "wl-clipboard-x11"
+        "xdg-desktop-portal"
+        "xdg-desktop-portal-wlr"
         "zathura"
         "zathura-pdf-poppler"))
 
@@ -166,9 +168,7 @@
         "editorconfig-vim"
         "wcalc"
         "wget"
-        "wgetpaste"
-        "xdg-desktop-portal"
-        "xdg-desktop-portal-wlr"))
+        "wgetpaste"))
 
 ;;
 
