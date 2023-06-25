@@ -62,6 +62,7 @@
                     '("wheel" "netdev" "kvm"
                       "lp" "lpadmin"
                       "libvirt"
+                      ;"plugdev"
                       "audio" "video")))
                 %base-user-accounts))
   (packages
@@ -134,9 +135,13 @@
                       (extensions
                         (list cups-filters hplip-minimal))))
 
+           ;(udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
+
            (service mcron-service-type
                     (mcron-configuration
-                      (jobs (%btrfs-maintenance-jobs "/"))))
+                      (jobs (append
+                              %btrfs-defrag-var-guix-db
+                              (%btrfs-maintenance-jobs "/")))))
 
            (service openntpd-service-type
                     (openntpd-configuration
