@@ -21,10 +21,7 @@
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services shepherd)
-  #:use-module ((gnu system file-systems) #:select (file-system-mapping))
-  #:use-module ((gnu build linux-container) #:select (%namespaces))
   #:use-module (guix records)
-  #:use-module (guix least-authority)
   #:use-module (guix gexp)
   #:use-module (dfsg contrib tailscale)
   #:export (tailscaled-service-type
@@ -62,38 +59,22 @@
   "Return a <shepherd-service> for Tailscaled with CONFIG"
   (match-record config <tailscaled-configuration>
                 (package listen-port state-file socket-file no-logs? verbosity)
-    (let ((tailscaled (least-authority-wrapper
-                        (file-append package "/sbin/tailscaled")
-                        #:name "tailscaled"
-                        #:mappings (list (file-system-mapping
-                                           (source "/var/lib/tailscale")
-                                           (target source)
-                                           (writable? #t))
-                                         (file-system-mapping
-                                           (source "/var/log")
-                                           (target source)
-                                           (writable? #t))
-                                         (file-system-mapping
-                                           (source "/var/run/tailscale")
-                                           (target source)
-                                           (writable? #t)))
-                        #:namespaces (delq 'net %namespaces))))
-      (list
-        (shepherd-service
-          (provision '(tailscaled))
-          (documentation "Tailscaled networking daemon")
-          (requirement '(networking))
-          (start #~(make-forkexec-constructor
-                     (list #$tailscaled
-                           "-state" #$state-file
-                           "-socket" #$socket-file
-                           "-port" (number->string #$listen-port)
-                           #$@(if no-logs?
-                                '("-no-logs-no-support")
-                                '())
-                           "-verbose" (number->string #$verbosity))
-                     #:log-file "/var/log/tailscaled.log"))
-          (stop #~(make-kill-destructor)))))))
+    (list
+      (shepherd-service
+        (provision '(tailscaled))
+        (documentation "Tailscaled networking daemon")
+        (requirement '(networking))
+        (start #~(make-forkexec-constructor
+                   (list #$(file-append package "/sbin/tailscaled")
+                         "-state" #$state-file
+                         "-socket" #$socket-file
+                         "-port" (number->string #$listen-port)
+                         #$@(if no-logs?
+                              '("-no-logs-no-support")
+                              '())
+                         "-verbose" (number->string #$verbosity))
+                   #:log-file "/var/log/tailscaled.log"))
+        (stop #~(make-kill-destructor))))))
 
 (define %tailscaled-log-rotation
   (list (log-rotation
