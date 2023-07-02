@@ -5,6 +5,9 @@
 #
 # Read `man 5 sway` for a complete reference.
 
+#exec export XDG_CURRENT_DESKTOP=sway
+#exec dbus-update-activation-environment XDG_CURRENT_DESKTOP
+
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -244,5 +247,8 @@ bar {
 
 for_window [app_id="imv"] floating enable
 for_window [app_id="mpv"] floating enable
+for_window [title = "KeePassXC -  Access Request"] floating enable
+#for_window [window_type="dialog"] floating enable
+#for_window [window_role="dialog"] floating enable
 
 include /run/current-system/profile/etc/sway/config.d/*
