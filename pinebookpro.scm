@@ -4,6 +4,7 @@
   (gnu system locale)
   (config filesystems)
   (config guix-daemon)
+  (services tailscale)
   (srfi srfi-1))
 (use-service-modules
   cups
@@ -32,6 +33,7 @@
   (keyboard-layout
     (keyboard-layout "us" "altgr-intl"))
 
+  ;; Currently using tow-boot
   #;(bootloader
     (bootloader-configuration
       (bootloader u-boot-pinebook-pro-rk3399-bootloader)
@@ -103,6 +105,10 @@
                       (password-authentication? #t)
                       (authorized-keys
                        `(("efraim" ,(local-file "Extras/efraim.pub"))))))
+
+           (service tailscaled-service-type
+                    (tailscaled-configuration
+                      (package (specification->package "tailscale-bin-arm64"))))
 
            (service tor-service-type
                     (tor-configuration
