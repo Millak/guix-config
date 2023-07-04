@@ -18,9 +18,10 @@
 ;; (mkdtemp (string-append (getenv "XDG_RUNTIME_DIR") "/XXXXXX"))
 
 (define %logdir
-  (or (string-append (getenv "XDG_STATE_HOME") "/log")
-      (format #f "~a/.local/state/log"
-              (getenv "HOME"))))
+  (string-append
+    (or (getenv "XDG_STATE_HOME")
+        (string-append (getenv "HOME") "/.local/state"))
+    "/log"))
 
 (define headless?
   (eq? #f (getenv "DISPLAY")))
@@ -177,10 +178,8 @@
 (define package-list
   (map (compose list specification->package+output)
        (filter (lambda (pkg)
-                 (member (or (%current-system)
-                             (%current-target-system))
-                         (supported-package?
-                           (specification->package+output pkg))))
+                 (supported-package?
+                   (specification->package+output pkg)))
               (append
                 (if (or headless?
                         (not guix-system?))
@@ -381,7 +380,8 @@
     "fi\n"
 
     "APTCACHE=/var/cache/apt/archives\n"    ; Same as apt itself.
-    "HOOKDIR=" (getenv "XDG_CONFIG_HOME") "/pbuilder/hooks\n"
+    "HOOKDIR=" (or (getenv "XDG_CONFIG_HOME")
+                   (string-append (getenv "HOME") "/.config")) "/pbuilder/hooks\n"
     "CCACHEDIR=/var/cache/pbuilder/ccache\n"
     "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
@@ -803,7 +803,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "syncthing") "/bin/syncthing")
                      "-no-browser")
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/syncthing.log")))
+               #:log-file (string-append %logdir "/syncthing.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
@@ -816,7 +816,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--foreground"
                      "--verbose"
                      (string-append (getenv "HOME") "/Dropbox"))
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/dbxfs.log")))
+               #:log-file (string-append %logdir "/dbxfs.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Dropbox")))
     ;; Needs gpg key to unlock.
@@ -832,7 +832,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--monitor"
                      "--verbose"
                      (string-append (getenv "HOME") "/Onedrive"))
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/onedrive.log")))
+               #:log-file (string-append %logdir "/onedrive.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Onedrive")))
     (auto-start? #f)        ; Needs network.
@@ -890,7 +890,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/keybase.log")))
+               #:log-file (string-append %logdir "/keybase.log")))
     (stop #~(make-system-destructor
               (string-append #$(file-append (S "keybase")
                                             "/bin/keybase")
@@ -908,7 +908,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/kbfsfuse")
                      "-log-to-file")
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/kbfs.log")))
+               #:log-file (string-append %logdir "/kbfs.log")))
     (stop #~(make-kill-destructor))
     ;; Depends on keybase.
     (auto-start? #f)
@@ -925,7 +925,7 @@ XTerm*metaSendsEscape: true\n"))
                      ;; KDE Connect was built without "offscreen" support
                      ;; without this it fails to create wl_display
                      "-platform" "offscreen")
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/kdeconnect.log")))
+               #:log-file (string-append %logdir "/kdeconnect.log")))
     ;; TODO: Enable autostart
     (auto-start? #f)
     (stop #~(make-kill-destructor))))
@@ -945,13 +945,15 @@ XTerm*metaSendsEscape: true\n"))
                      ;; Needs to not be a list inside of a list.
                      "--gnupg_extra_args"
                      (string-append "--keyring="
-                                    (getenv "XDG_CONFIG_HOME")
+                                    (or (getenv "XDG_CONFIG_HOME")
+                                        (string-append (getenv "HOME") "/.config"))
                                     "/guix/upstream/trustedkeys.kbx")
                      "--gnupg_extra_args"
                      (string-append "--keyring="
-                                    (getenv "XDG_CONFIG_HOME")
+                                    (or (getenv "XDG_CONFIG_HOME")
+                                        (string-append (getenv "HOME") "/.config"))
                                     "/guix/gpg/trustedkeys.kbx"))
-               #:log-file (string-append (getenv "XDG_STATE_HOME") "/log/parcimonie.log")))
+               #:log-file (string-append %logdir "/parcimonie.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
