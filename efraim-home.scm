@@ -803,7 +803,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "syncthing") "/bin/syncthing")
                      "-no-browser")
-               #:log-file (string-append %logdir "/syncthing.log")))
+               #:log-file (string-append #$%logdir "/syncthing.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
@@ -816,7 +816,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--foreground"
                      "--verbose"
                      (string-append (getenv "HOME") "/Dropbox"))
-               #:log-file (string-append %logdir "/dbxfs.log")))
+               #:log-file (string-append #$%logdir "/dbxfs.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Dropbox")))
     ;; Needs gpg key to unlock.
@@ -832,7 +832,7 @@ XTerm*metaSendsEscape: true\n"))
                      "--monitor"
                      "--verbose"
                      (string-append (getenv "HOME") "/Onedrive"))
-               #:log-file (string-append %logdir "/onedrive.log")))
+               #:log-file (string-append #$%logdir "/onedrive.log")))
     (stop #~(make-system-destructor
               (string-append "fusermount -u " (getenv "HOME") "/Onedrive")))
     (auto-start? #f)        ; Needs network.
@@ -890,7 +890,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/keybase")
                      "service")
-               #:log-file (string-append %logdir "/keybase.log")))
+               #:log-file (string-append #$%logdir "/keybase.log")))
     (stop #~(make-system-destructor
               (string-append #$(file-append (S "keybase")
                                             "/bin/keybase")
@@ -908,7 +908,7 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "keybase") "/bin/kbfsfuse")
                      "-log-to-file")
-               #:log-file (string-append %logdir "/kbfs.log")))
+               #:log-file (string-append #$%logdir "/kbfs.log")))
     (stop #~(make-kill-destructor))
     ;; Depends on keybase.
     (auto-start? #f)
@@ -925,7 +925,7 @@ XTerm*metaSendsEscape: true\n"))
                      ;; KDE Connect was built without "offscreen" support
                      ;; without this it fails to create wl_display
                      "-platform" "offscreen")
-               #:log-file (string-append %logdir "/kdeconnect.log")))
+               #:log-file (string-append #$%logdir "/kdeconnect.log")))
     ;; TODO: Enable autostart
     (auto-start? #f)
     (stop #~(make-kill-destructor))))
@@ -953,7 +953,7 @@ XTerm*metaSendsEscape: true\n"))
                                     (or (getenv "XDG_CONFIG_HOME")
                                         (string-append (getenv "HOME") "/.config"))
                                     "/guix/gpg/trustedkeys.kbx"))
-               #:log-file (string-append %logdir "/parcimonie.log")))
+               #:log-file (string-append #$%logdir "/parcimonie.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
