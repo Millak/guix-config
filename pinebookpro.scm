@@ -54,11 +54,12 @@
     (cons* (file-system
              (device (file-system-label "Guix_image"))
              (mount-point "/")
-             (type "ext4"))
+             (type "btrfs")
+             (options "compress=zstd,discard,space_cache=v2"))
            (file-system
              (mount-point "/boot/efi")
-             ;(device (uuid "9146-2C77" 'fat32))
-             (device "/dev/mmcblk1p1")
+             ;(device (uuid "D36C-7EBD" 'fat32))
+             (device (file-system-label "GNU-ESP"))
              (type "vfat"))
            ;%tmp-tmpfs
            %guix-temproots
@@ -73,12 +74,13 @@
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
                       ;"lp" "lpadmin"       ; CUPS
+                      ;"plugdev"
                       "audio" "video")))
                 %base-user-accounts))
   (packages
     (append
       (map specification->package
-           (list ;"compsize"
+           (list "compsize"
                  "cmst"
                  "guix-backgrounds"
                  "guix-simplyblack-sddm-theme"  ; sddm theme
@@ -125,10 +127,11 @@
                       (extensions
                         (list cups-filters hplip-minimal))))
 
-           #;(service mcron-service-type
+           (service mcron-service-type
                     (mcron-configuration
-                      ;; Image created with ext4
-                      (jobs (%btrfs-maintenance-jobs "/"))))
+                      (jobs (append
+                              %btrfs-defrag-var-guix-db
+                              (%btrfs-maintenance-jobs "/")))))
 
            (service openntpd-service-type
                     (openntpd-configuration
@@ -180,7 +183,7 @@
                        (guix-configuration
                          (inherit config)
                          ;; Rely on btrfs compression.
-                         ;(log-compression 'none)
+                         (log-compression 'none)
                          (discover? #t)
                          (substitute-urls %substitute-urls)
                          (authorized-keys %authorized-keys)
@@ -194,3 +197,4 @@
 ;; sudo cfdisk /dev/sdX to resize /dev/sdX2 to use the remaining space left at the end of the µSD card
 ;; guix shell e2fsprogs -- sudo resize2fs /dev/sdX2
 ;; guix shell e2fsck-static -- sudo -E e2fsck /dev/sdX2
+;; guix shell btrfs-progs -- sudo btrfs-convert -L /dev/sdX2
