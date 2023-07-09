@@ -41,7 +41,7 @@
 
   (bootloader
     (bootloader-configuration
-      (bootloader grub-efi-bootloader)
+      (bootloader grub-efi-removable-bootloader)
       (targets '("/boot/efi"))
       (keyboard-layout keyboard-layout)))
 
@@ -176,7 +176,8 @@
                        (sddm-configuration
                          (inherit config)
                          (theme "guix-simplyblack-sddm")
-                         (display-server "wayland")))
+                         (display-server "wayland")
+                         (numlock "off")))
 
                      (guix-service-type
                        config =>
