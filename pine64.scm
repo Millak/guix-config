@@ -36,13 +36,13 @@
   (kernel linux-libre-arm64-generic)
   (firmware '())
 
-  (swap-devices
+  #;(swap-devices
     (list (swap-space
             (target "/swapfile"))))
 
   (file-systems
     (cons* (file-system
-             (device (file-system-label "root"))
+             (device (file-system-label "Guix_image"))
              (mount-point "/")
              (type "ext4"))
            %guix-temproots
@@ -97,8 +97,7 @@
                       ;; Prevent moving to year 2116.
                       (constraints-from '("https://www.google.com/"))))
 
-           (service connman-service-type)
-           (service wpa-supplicant-service-type)
+           (service dhcp-client-service-type)
 
            (service earlyoom-service-type
                     (earlyoom-configuration
