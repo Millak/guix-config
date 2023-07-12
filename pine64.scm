@@ -5,6 +5,7 @@
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
+             (services tailscale)
              (srfi srfi-1))
 (use-service-modules
   linux
@@ -32,7 +33,6 @@
       (targets '("/dev/mmcblk0"))))     ; SD card/eMMC (SD priority) storage
 
   (initrd-modules '())
-  ;; The board fails to boot with stock linux-libre
   (kernel linux-libre-arm64-generic)
   (firmware '())
 
@@ -71,6 +71,10 @@
                       (openssh (specification->package "openssh-sans-x"))
                       (authorized-keys
                         `(("efraim" ,(local-file "Extras/efraim.pub"))))))
+
+           (service tailscaled-service-type
+                    (tailscaled-configuration
+                      (package (specification->package "tailscale-bin-arm64"))))
 
            (service mcron-service-type
                     (mcron-configuration
@@ -113,7 +117,6 @@
                config =>
                (guix-configuration
                  (inherit config)
-                 (discover? #t)
                  (substitute-urls %substitute-urls)
                  (authorized-keys %authorized-keys)
                  (extra-options
