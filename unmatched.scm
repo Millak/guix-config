@@ -35,12 +35,7 @@
                 (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
 
   (firmware '())
-  ;; Plenty of options for initrd modules.
   (initrd-modules '())
-  ;(initrd-modules '("nvme"))
-  ;(initrd-modules '("mmc_spi"))
-  ;; https://github.com/zhaofengli/nixos-riscv64/blob/master/nixos/unmatched.nix
-  ;(initrd-modules '("nvme" "mmc_block" "mmc_spi" "spi_sifive" "spi_nor"))
   (kernel linux-libre-riscv64-generic)
 
   ;(swap-devices
