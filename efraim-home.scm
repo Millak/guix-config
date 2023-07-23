@@ -203,53 +203,6 @@
       "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n"
       "gpu-context=wayland\n")))
 
-(define %inputrc
-  (plain-file
-    "dot-inputrc"
-    (string-append
-      "set show-mode-in-prompt on\n"
-      "set enable-bracketed-paste on\n"
-      "set editing-mode vi\n"
-      "Control-l: clear-screen\n"   ; would I rather have clear-display?
-      "set bell-style visible\n"
-      "set colored-completion-prefix on\n"
-      "set colored-stats on\n")))
-
-        #;
-        (service home-inputrc-service-type
-                 (home-inputrc-configuration
-                   (key-bindings
-                    `(("Control-l" . "clear-screen"))); would I rather have clear-display?
-                   (variables
-                    `(("bell-style" . "visible")
-                      ("colored-completion-prefix" . #t)
-                      ("colored-stats" . #t)
-                      ("enable-bracketed-paste" . #t)
-                      ("editing-mode" . "vi")
-                      ("show-mode-in-prompt" . #t)))
-                   ;; This was just for testing purposes.
-                   #;
-                   (conditional-constructs
-                    `(("$if mode=vi" .
-                       ,(home-inputrc-configuration
-                          (key-bindings
-                           `(("Control-l" . "clear-screen"))); would I rather have clear-display?
-                          (variables
-                           `(("bell-style" . "visible")
-                             ("colored-completion-prefix" . #t)
-                             ("colored-stats" . #t)
-                             ("enable-bracketed-paste" . #t)
-                             ("editing-mode" . "vi")
-                             ("show-mode-in-prompt" . #t)))))
-                      ("$else" .
-                       ,(home-inputrc-configuration
-                          (key-bindings
-                           `(("Control-l" . "clear-screen")))))
-                      ("$endif" . #t)
-                      ("$include" . "/etc/inputrc")
-                      ("$include" . ,(file-append (S "readline") "/etc/inputrc"))))
-                   ))
-
 (define %screenrc
   (plain-file
     "dot-screenrc"
@@ -631,46 +584,17 @@ XTerm*metaSendsEscape: true\n"))
     "Near :local:\n"
     "Patterns * !work\n"))
 
-(define %msmtp-config
-  (mixed-text-file
-    "msmtp-config"
-    "defaults\n"
-    "auth            on\n"
-    ;; For tor proxy.
-    ;"proxy_host     127.0.0.1\n"
-    ;"proxy_port     9050\n"
-    "tls             on\n"
-    "\n"
-    ;"flashner.co.il\n"
-    "account         flashner.co.il\n"
-    "host            flashner.co.il\n"
-    "port            465\n"
-    "from            efraim@flashner.co.il\n"
-    "user            efraim\n"
-    ;"passwordeval gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.gpg\n"
-    "passwordeval    " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.gpg\n"
-    "tls_starttls    off\n"
-    "tls_fingerprint 49:08:49:DF:A5:E9:73:8F:72:DA:BD:2D:2C:C4:C0:24:34:2B:66:D6\n"
-    "\n"
-    ;"gmail efraim.flashner\n"
-    "account         gmail-efraim\n"
-    "host            smtp.gmail.com\n"
-    "port            587\n"
-    "from            efraim.flashner@gmail.com\n"
-    "user            efraim.flashner\n"
-    "passwordeval    " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.efraimflashnergmail.gpg\n"
-    "tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
-    "\n"
-    ;"gmail themillak\n"
-    ;"account         gmail-themillak\n"
-    ;"host            smtp.gmail.com\n"
-    ;"port            587\n"
-    ;"from            themillak@gmail.com\n"
-    ;"user            themillak\n"
-    ;"passwordeval    " (S "gnupg") "/bin/gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.themillakgmail.gpg\n"
-    ;"tls_trust_file  /etc/ssl/certs/ca-certificates.crt\n"
-
-    "account default: gmail-efraim\n"))
+(define %home-inputrc-configuration
+  (home-inputrc-configuration
+  (key-bindings
+    `(("Control-l" . "clear-screen")))  ; would I rather have clear-display?
+  (variables
+    `(("bell-style" . "visible")
+      ("colored-completion-prefix" . #t)
+      ("colored-stats" . #t)
+      ("enable-bracketed-paste" . #t)
+      ("editing-mode" . "vi")
+      ("show-mode-in-prompt" . #t)))))
 
 (define %home-msmtp-configuration-accounts
   (list
@@ -707,25 +631,29 @@ XTerm*metaSendsEscape: true\n"))
           (tls-trust-file "/etc/ssl/certs/ca-certificates.crt"))))))
 
 (define %home-openssh-configuration-hosts
-  ;; RemoteForward is "there" to "here".
+  ;; RemoteForward is "remote/there" to "local/here".
+  ;; LocalForward is "local/here" to "remote/there".
   (list
     (openssh-host (name "*")
                   ;; Need to put something for HOST or MATCH before I can put the Include.
                   (extra-content "Include config-uthsc\n"))
     (openssh-host (name "do1-tor")
                   (host-name "ohpdsn5yv7g4gqm3rsz6a323q4ta5vgzptwaje6vkwhobhfwhknd2had.onion"))
+    #;(openssh-host (name "do1")
+                  (host-name "flashner.co.il")
+                  (extra-content "  LocalForward localhost:3000 flashner.co.il:3000\n"))
     (openssh-host (name "g4-tor")
                   (host-name "km2merla7rtcgknbxk7oiavzh3w6jwmonfgxnruj57tocj3evy4vapad.onion")
-                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/$i/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "ct-tor")
                   (host-name "teiefezsytzpsennj3ramwqaroh6thqyzdvbu3fxktonvxguqt3rxsid.onion")
                   (identity-file "~/.ssh/id_ed25519"))
     (openssh-host (name "E5400-tor")
                   (host-name "k27pjetdse4otw2l6qkn5qdqzv3ucuky7jsn4fmibnkxqeleec3yelad.onion")
-                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/$i/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "3900xt-tor")
                   (host-name "edvqnpr5a2jjuswveoy63k3jxthqpgqatwzk53up5k6ve2rjwgd4jgqd.onion")
-                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra\n"))
+                  (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/$i/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "hetzner-storage")
                   (host-name "u353806.your-storagebox.de")
                   (user "u353806-sub2")
@@ -988,6 +916,7 @@ XTerm*metaSendsEscape: true\n"))
                     `(("cp" . "cp --reflink=auto")
                       ("exitexit" . "exit")
                       ("clear" . "printf '\\E[H\\E[J\\E[0m'")
+                      ;("clear" . ,(file-append (S "ncurses") "/bin/clear"))
                       ("ime" . "time")
                       ("guix-home-build" .
                        ,(string-append "~/workspace/guix/pre-inst-env guix home "
@@ -1025,10 +954,6 @@ fi")))))
                        %kdeconnect-user-service
                        %parcimonie-user-service))))
 
-        (service home-openssh-service-type
-                 (home-openssh-configuration
-                   (hosts %home-openssh-configuration-hosts)))
-
         ;; Can't seem to get (if headless?) to work
         #;(service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
@@ -1036,6 +961,9 @@ fi")))))
                      (if headless?
                        (file-append (S "pinentry-tty") "/bin/pinentry-tty")
                        (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
+
+        (service home-inputrc-service-type
+                   %home-inputrc-configuration)
 
         (service home-msmtp-service-type
                  (home-msmtp-configuration
@@ -1050,12 +978,15 @@ fi")))))
                        (tls? #t)))
                    (accounts %home-msmtp-configuration-accounts)))
 
+        (service home-openssh-service-type
+                 (home-openssh-configuration
+                   (hosts %home-openssh-configuration-hosts)))
+
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
            (".gnupg/gpg.conf" ,%gpg.conf)
            (".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
            (".guile" ,%guile)
-           (".inputrc" ,%inputrc)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
            (".mbsyncrc" ,%mbsyncrc)
@@ -1085,7 +1016,7 @@ fi")))))
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
            ;; This clears the defaults, do not use.
-           ; ("config/lesskey" ,%lesskey)
+           ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
             ,(file-append (S "mpv-mpris")
                           "/lib/mpris.so"))
@@ -1096,7 +1027,6 @@ fi")))))
             ,(file-append (S "mpv-twitch-chat")
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
-           ;("msmtp/config" ,%msmtp-config)
            ("newsboat/config" ,%newsboat-config)
            ("nano/nanorc" ,%nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
@@ -1109,12 +1039,28 @@ fi")))))
     (packages package-list)
     (services
       (list
+
+        (service home-inputrc-service-type
+                   %home-inputrc-configuration)
+
+        (service home-msmtp-service-type
+                 (home-msmtp-configuration
+                   (default-account "gmail-efraim")
+                   (defaults
+                     (msmtp-configuration
+                       ;; For tor proxy.
+                       #;(extra-content
+                         (string-append "proxy_host 127.0.0.1\n"
+                                        "proxy_port 9050"))
+                       (auth? #t)
+                       (tls? #t)))
+                   (accounts %home-msmtp-configuration-accounts)))
+
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
            ;(".gnupg/gpg.conf" ,%gpg.conf)
            ;(".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
            (".guile" ,%guile)
-           (".inputrc" ,%inputrc)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
            (".mbsyncrc" ,%mbsyncrc)
@@ -1139,7 +1085,7 @@ fi")))))
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
            ;; This clears the defaults, do not use.
-           ; ("config/lesskey" ,%lesskey)
+           ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
             ,(file-append (S "mpv-mpris")
                           "/lib/mpris.so"))
@@ -1150,7 +1096,6 @@ fi")))))
             ,(file-append (S "mpv-twitch-chat")
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
-           ("msmtp/config" ,%msmtp-config)
            ("newsboat/config" ,%newsboat-config)
            ;; Specific to Guix System
            ;("nano/nanorc" ,%nanorc)
