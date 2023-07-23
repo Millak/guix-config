@@ -5,7 +5,6 @@
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
-             (services tailscale)
              (srfi srfi-1))
 (use-service-modules
   linux
@@ -72,10 +71,6 @@
                       (openssh (specification->package "openssh-sans-x"))
                       (authorized-keys
                        `(("efraim" ,(local-file "Extras/efraim.pub"))))))
-
-           (service tailscaled-service-type
-                    (tailscaled-configuration
-                      (package (specification->package "tailscale-bin-riscv64"))))
 
            ;; Image created with ext4
            ;(service mcron-service-type
