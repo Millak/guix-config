@@ -110,11 +110,10 @@
         "syncthing"
         "toot"
         "vdirsyncer"
-        "weechat"
         "yt-dlp"))
 
 (define %headless
-  (list ))
+  (list "weechat"))
 
 (define %guix-system-apps
   ;; These packages are provided by Guix System.
