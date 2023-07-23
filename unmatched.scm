@@ -37,9 +37,9 @@
   (initrd-modules '())
   (kernel linux-libre-riscv64-generic)
 
-  ;(swap-devices
-  ;  (list (swap-space
-  ;          (target "/swapfile"))))
+  #;(swap-devices
+    (list (swap-space
+            (target "/swapfile"))))
 
   (file-systems
     (cons* (file-system
