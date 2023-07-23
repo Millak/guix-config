@@ -32,7 +32,6 @@
       (targets '("/dev/mmcblk0"))))     ; We want to use the eMMC.
 
   (initrd-modules '())
-  ;; The board fails to boot with stock linux-libre? Untested.
   (kernel linux-libre-arm64-generic)
   (firmware '())
 
@@ -80,7 +79,7 @@
                         (list
                           #~(job '(next-hour '(3))
                                  "guix gc --free-space=15G")
-                          ;; The board powers up at unix date 1453366264.
+                          ;; The board powers up at unix date 1453366264 (Jan 2016).
                           ;; Restart ntpd regularly to set the clock.
                           #~(job '(next-hour '(0 6 12 18))
                                  "/run/current-system/profile/bin/herd restart ntpd")))))
@@ -111,11 +110,11 @@
                config =>
                (guix-configuration
                  (inherit config)
-                 (discover? #t)
                  (substitute-urls %substitute-urls)
                  (authorized-keys %authorized-keys)
                  (extra-options
                    (cons*
+                     "--cores=2"
                      "--cache-failures"
                      %extra-options)))))))
 
