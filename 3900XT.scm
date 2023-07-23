@@ -70,7 +70,6 @@
       (map specification->package
            (list "adwaita-icon-theme"
                  "compsize"
-                 "cmst"
                  "git-minimal"          ; git-upload-pack
                  "guix-backgrounds"
                  "guix-simplyblack-sddm-theme"  ; sddm theme
@@ -143,13 +142,6 @@
                               %btrfs-defrag-var-guix-db
                               (%btrfs-maintenance-jobs "/")))))
 
-           (service openntpd-service-type
-                    (openntpd-configuration
-                      (listen-on '("127.0.0.1" "::1"))
-                      (constraints-from '("https://www.google.com/"))))
-
-           (service connman-service-type)
-
            (service libvirt-service-type
                     (libvirt-configuration
                       (unix-sock-group "libvirt")))
@@ -184,8 +176,6 @@
                                  (list
                                    gdm-service-type
                                    modem-manager-service-type
-                                   network-manager-service-type
-                                   ntp-service-type
                                    screen-locker-service-type))
                            (eq? 'network-manager-applet
                                 (service-type-name type)))))
