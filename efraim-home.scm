@@ -864,19 +864,19 @@ XTerm*metaSendsEscape: true\n"))
     (start #~(make-forkexec-constructor
                #;(use-modules (guix build utils)
                             (srfi srfi-1))
+               #;(cons* #$(file-append (S "parcimonie") "/bin/parcimonie")
+                      (append-map
+                        (lambda (item)
+                          (list (string-append "--gnupg_extra_options=--keyring=" item)))
+                        (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
                (list #$(file-append (S "parcimonie") "/bin/parcimonie")
-                     #;(append-map (lambda (item)
-                             (list "--gnupg_extra_options" "--keyring" item))
-                           (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$"))
-                     ;; returns: ("--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/gpg/trustedkeys.kbx" "--gnupg_extra_options" "--keyring" "/home/efraim/.config/guix/upstream/trustedkeys.kbx")
-                     ;; Needs to not be a list inside of a list.
-                     "--gnupg_extra_args"
-                     (string-append "--keyring="
+                     (string-append "--gnupg_extra_args="
+                                    "--keyring="
                                     (or (getenv "XDG_CONFIG_HOME")
                                         (string-append (getenv "HOME") "/.config"))
                                     "/guix/upstream/trustedkeys.kbx")
-                     "--gnupg_extra_args"
-                     (string-append "--keyring="
+                     (string-append "--gnupg_extra_args="
+                                    "--keyring="
                                     (or (getenv "XDG_CONFIG_HOME")
                                         (string-append (getenv "HOME") "/.config"))
                                     "/guix/gpg/trustedkeys.kbx"))
