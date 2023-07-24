@@ -43,7 +43,7 @@
 
   (file-systems
     (cons* (file-system
-             (device (file-system-label "root"))
+             (device (file-system-label "Guix_image"))
              (mount-point "/")
              (type "ext4"))
            %guix-temproots
