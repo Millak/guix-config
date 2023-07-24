@@ -862,24 +862,13 @@ XTerm*metaSendsEscape: true\n"))
     (documentation "Incrementally refresh gnupg keyring over Tor")
     (provision '(parcimonie))
     (start #~(make-forkexec-constructor
-               #;(use-modules (guix build utils)
+               (use-modules (guix build utils)
                             (srfi srfi-1))
-               #;(cons* #$(file-append (S "parcimonie") "/bin/parcimonie")
+               (cons* #$(file-append (S "parcimonie") "/bin/parcimonie")
                       (append-map
                         (lambda (item)
                           (list (string-append "--gnupg_extra_options=--keyring=" item)))
                         (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
-               (list #$(file-append (S "parcimonie") "/bin/parcimonie")
-                     (string-append "--gnupg_extra_args="
-                                    "--keyring="
-                                    (or (getenv "XDG_CONFIG_HOME")
-                                        (string-append (getenv "HOME") "/.config"))
-                                    "/guix/upstream/trustedkeys.kbx")
-                     (string-append "--gnupg_extra_args="
-                                    "--keyring="
-                                    (or (getenv "XDG_CONFIG_HOME")
-                                        (string-append (getenv "HOME") "/.config"))
-                                    "/guix/gpg/trustedkeys.kbx"))
                #:log-file (string-append #$%logdir "/parcimonie.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
