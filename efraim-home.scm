@@ -105,7 +105,6 @@
         "msmtp"
         "mutt"
         "newsboat"
-        "parcimonie"
         "sshfs"
         "syncthing"
         "toot"
@@ -867,7 +866,7 @@ XTerm*metaSendsEscape: true\n"))
                (cons* #$(file-append (S "parcimonie") "/bin/parcimonie")
                       (append-map
                         (lambda (item)
-                          (list (string-append "--gnupg_extra_options=--keyring=" item)))
+                          (list (string-append "--gnupg_extra_args=--keyring=" item)))
                         (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
                #:log-file (string-append #$%logdir "/parcimonie.log")))
     (stop #~(make-kill-destructor))
