@@ -48,7 +48,7 @@
   (initrd-modules '())
   ;(initrd-modules (list "nvme"))        ; By default none.
   (kernel linux-libre-arm64-generic)
-  (firmware (list ath9k-htc-firmware))  ; By default none.
+  (firmware (list ath9k-htc-firmware))
 
   (file-systems
     (cons* (file-system
@@ -58,7 +58,6 @@
              (options "compress=zstd,discard,space_cache=v2"))
            (file-system
              (mount-point "/boot/efi")
-             ;(device (uuid "D36C-7EBD" 'fat32))
              (device (file-system-label "GNU-ESP"))
              (type "vfat"))
            ;%tmp-tmpfs
@@ -81,7 +80,6 @@
     (append
       (map specification->package
            (list "compsize"
-                 "cmst"
                  "guix-backgrounds"
                  "guix-simplyblack-sddm-theme"  ; sddm theme
                  "nss-certs"
@@ -138,8 +136,6 @@
                       (listen-on '("127.0.0.1" "::1"))
                       (constraints-from '("https://www.google.com/"))))
 
-           (service connman-service-type)
-
            ;; This one seems to cause the boot process to hang.
            #;(service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
@@ -164,7 +160,6 @@
                        (or (memq type
                                  (list
                                    modem-manager-service-type
-                                   network-manager-service-type
                                    ntp-service-type
                                    screen-locker-service-type))
                            (eq? 'network-manager-applet
