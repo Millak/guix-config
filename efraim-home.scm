@@ -82,7 +82,8 @@
         "telegram-desktop"
         "tofi"
         "tuba"
-        "wl-clipboard-x11"
+        "wl-clipboard"
+        "wl-clipboard-x11"  ; for xclip compat
         "xdg-desktop-portal"
         "xdg-desktop-portal-wlr"
         "zathura"
@@ -151,7 +152,6 @@
         "qrencode"
         "rsync"
         "screen"
-        "stow"
         "tig"
         "torsocks"
         "translate-shell"
@@ -167,7 +167,8 @@
         "editorconfig-vim"
         "wcalc"
         "wget"
-        "wgetpaste"))
+        "wgetpaste"
+        "xdg-utils"))
 
 ;;
 
