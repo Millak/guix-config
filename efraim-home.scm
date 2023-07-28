@@ -941,7 +941,7 @@ fi")))))
                        ;%keybase-fuse-user-service
 
                        %kdeconnect-user-service
-                       %parcimonie-user-service))))
+                       #;%parcimonie-user-service))))
 
         ;; Can't seem to get (if headless?) to work
         #;(service home-gpg-agent-service-type
