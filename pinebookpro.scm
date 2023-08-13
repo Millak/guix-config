@@ -21,6 +21,25 @@
   firmware
   linux)
 
+(define %sway-keyboard-function-keys
+  (mixed-text-file
+    "keyboard-function-keys"
+    ;; bindsym XF86Sleep
+    "bindsym XF86MonBrightnessUp exec " (specification->package "brightnessctl") "/bin/brightnessctl set 5%+\n"
+    "bindsym XF86MonBrightnessDown exec " (specification->package "brightnessctl") "/bin/brightnessctl set 5%-\n"
+    ;; Fn + F4 doesn't register as a key
+    "bindsym XF86AudioMute exec " (specification->package "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
+    "bindsym XF86AudioLowerVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
+    "bindsym XF86AudioRaiseVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
+    ;; Fn + F7 actually does stop the keyboard
+    ;; bindsym Insert
+    ;; bindsym Print
+    ;; bindsym Num_Lock
+    ;; bindsym Scroll_Lock
+    ;; bindsym Pause
+    ;; TODO? Remap power button
+    ))
+
 (operating-system
   (host-name "pbp")
   (timezone "Asia/Jerusalem")
@@ -69,7 +88,6 @@
                   (comment "Efraim Flashner")
                   (group "users")
                   (home-directory "/home/efraim")
-                  (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
                       ;"lp" "lpadmin"       ; CUPS
@@ -87,7 +105,11 @@
 
                  "sway"
                  "swayidle"
-                 "swaylock"))
+                 "swaylock"
+
+                 "dunst"
+                 "i3status"
+                 "tofi"))
       %base-packages))
 
   (services
@@ -99,6 +121,10 @@
                       (allow-empty-password? #f)
                       (using-pam? #t)
                       (using-setuid? #f)))
+
+           (simple-service 'sway-kbd-fn-keys etc-service-type
+                           `(("sway/config.d/function-keys"
+                              ,%sway-keyboard-function-keys)))
 
            (service openssh-service-type
                     (openssh-configuration
