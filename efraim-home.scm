@@ -9,6 +9,7 @@
   #:use-module (gnu packages)
   #:use-module (guix packages)
   #:use-module (guix transformations)
+  #:use-module (guix utils)
   #:use-module (guix gexp)
   #:use-module (ice-9 match))
 
@@ -890,6 +891,10 @@ XTerm*metaSendsEscape: true\n"))
                       ;; Still necessary for sdl2@2.0.14
                       ("SDL_VIDEODRIVER" . "wayland")
                       ("GDK_BACKEND" . "wayland")
+                      ;; This is necessary on the pbp
+                      ,@(if (target-aarch64?)
+                          `(("GSK_RENDERER" . "cairo"))
+                          `())
                       ("MOZ_ENABLE_WAYLAND" . "1")
 
                       ("CVS_RSH" . "ssh")
