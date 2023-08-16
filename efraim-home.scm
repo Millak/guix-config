@@ -913,15 +913,37 @@ XTerm*metaSendsEscape: true\n"))
                       ;("clear" . ,(file-append (S "ncurses") "/bin/clear"))
                       ("ime" . "time")
                       ("guix-home-build" .
-                       ,(string-append "~/workspace/guix/pre-inst-env guix home "
-                                       "build --no-grafts --fallback "
-                                       "-L ~/workspace/my-guix/ "
-                                       "~/workspace/guix-config/efraim-home.scm"))
+                       ,(if (and (not work-machine?)
+                                 (file-exists? (string-append
+                                                 (getenv "HOME")
+                                                 "/workspace/guix/pre-inst-env"))
+                                 (target-x86-64?))
+                          `(string-append
+                             "~/workspace/guix/pre-inst-env guix home "
+                             "build --no-grafts --fallback "
+                             "-L ~/workspace/my-guix/ "
+                             "~/workspace/guix-config/efraim-home.scm")
+                          `(string-append
+                             "guix home "
+                             "build --no-grafts --fallback "
+                             "-L ~/workspace/my-guix/ "
+                             "~/workspace/guix-config/efraim-home.scm")))
                       ("guix-home-reconfigure" .
-                       ,(string-append "~/workspace/guix/pre-inst-env guix home "
-                                       "reconfigure --fallback "
-                                       "-L ~/workspace/my-guix/ "
-                                       "~/workspace/guix-config/efraim-home.scm"))))
+                       ,(if (and (not work-machine?)
+                                 (file-exists? (string-append
+                                                 (getenv "HOME")
+                                                 "/workspace/guix/pre-inst-env"))
+                                 (target-x86-64?))
+                          `(string-append
+                             "~/workspace/guix/pre-inst-env guix home "
+                             "reconfigure --fallback "
+                             "-L ~/workspace/my-guix/ "
+                             "~/workspace/guix-config/efraim-home.scm")
+                          `(string-append
+                             "guix home "
+                             "reconfigure --fallback "
+                             "-L ~/workspace/my-guix/ "
+                             "~/workspace/guix-config/efraim-home.scm")))))
                    (bash-profile
                      (list
                        (mixed-text-file "bash-profile" "\
