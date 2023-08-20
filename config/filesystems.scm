@@ -4,7 +4,7 @@
   #:use-module (gnu packages linux)
   #:use-module (guix gexp)
   #:export (%btrfs-maintenance-jobs
-            %btrfs-defrag-var-guix-db
+            %btrfs-defrag-var-guix
             %guix-temproots
             %tmp-tmpfs))
 
@@ -21,14 +21,14 @@
                           "-musage=50,limit=1 "
                           #$mount-point))))
 
-(define %btrfs-defrag-var-guix-db
+(define %btrfs-defrag-var-guix
   (list
     #~(job '(next-hour '(2))
            (string-append #$btrfs-progs "/bin/btrfs "
                           "filesystem "
                           "defragment "
                           "-rczstd "
-                          "/var/guix/db"))))
+                          "/var/guix"))))
 
 ;; 10MiB should be enough, but 'guix lint -c derivations' needs much more.
 (define %guix-temproots

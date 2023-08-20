@@ -139,7 +139,7 @@
            (service mcron-service-type
                     (mcron-configuration
                       (jobs (append
-                              %btrfs-defrag-var-guix-db
+                              %btrfs-defrag-var-guix
                               (%btrfs-maintenance-jobs "/")))))
 
            (service libvirt-service-type
