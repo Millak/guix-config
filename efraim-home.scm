@@ -5,6 +5,7 @@
   #:use-module (gnu home services shells)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services ssh)
+  #:use-module (gnu home services syncthing)
   #:use-module (gnu services)
   #:use-module (gnu packages)
   #:use-module (guix packages)
@@ -724,18 +725,6 @@ XTerm*metaSendsEscape: true\n"))
 
 ;;; Extra services.
 
-(define %syncthing-user-service
-  (shepherd-service
-    (documentation "Run `syncthing' without calling the browser")
-    (provision '(syncthing))
-    (start #~(make-forkexec-constructor
-               (list #$(file-append (S "syncthing") "/bin/syncthing")
-                     "--no-browser"
-                     "--no-restart")
-               #:log-file (string-append #$%logdir "/syncthing.log")))
-    (stop #~(make-kill-destructor))
-    (respawn? #t)))
-
 (define %dropbox-user-service
   (shepherd-service
     (documentation "Provide access to Dropbox™")
@@ -960,7 +949,6 @@ fi")))))
                  (home-shepherd-configuration
                    (services
                      (list
-                       %syncthing-user-service
                        %dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
@@ -998,6 +986,8 @@ fi")))))
         (service home-openssh-service-type
                  (home-openssh-configuration
                    (hosts %home-openssh-configuration-hosts)))
+
+        (service home-syncthing-service-type)
 
         (service home-files-service-type
          `((".cvsrc" ,%cvsrc)
