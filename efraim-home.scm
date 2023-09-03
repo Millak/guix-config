@@ -730,7 +730,8 @@ XTerm*metaSendsEscape: true\n"))
     (provision '(syncthing))
     (start #~(make-forkexec-constructor
                (list #$(file-append (S "syncthing") "/bin/syncthing")
-                     "-no-browser")
+                     "--no-browser"
+                     "--no-restart")
                #:log-file (string-append #$%logdir "/syncthing.log")))
     (stop #~(make-kill-destructor))
     (respawn? #t)))
