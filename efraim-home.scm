@@ -1,6 +1,7 @@
 (define-module (efraim-home)
   #:use-module (gnu home)
   #:use-module (gnu home services)
+  #:use-module (gnu home services gnupg)
   #:use-module (gnu home services mail)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services shepherd)
@@ -848,22 +849,6 @@ XTerm*metaSendsEscape: true\n"))
     (auto-start? #f)
     (stop #~(make-kill-destructor))))
 
-(define %parcimonie-user-service
-  (shepherd-service
-    (documentation "Incrementally refresh gnupg keyring over Tor")
-    (provision '(parcimonie))
-    (start #~(make-forkexec-constructor
-               (use-modules (guix build utils)
-                            (srfi srfi-1))
-               (cons* #$(file-append (S "parcimonie") "/bin/parcimonie")
-                      (append-map
-                        (lambda (item)
-                          (list (string-append "--gnupg_extra_args=--keyring=" item)))
-                        (find-files (getenv "XDG_CONFIG_HOME") "^trustedkeys\\.kbx$")))
-               #:log-file (string-append #$%logdir "/parcimonie.log")))
-    (stop #~(make-kill-destructor))
-    (respawn? #t)))
-
 ;;;
 
 (define guix-system-home-environment
@@ -956,8 +941,7 @@ fi")))))
                        ;%keybase-user-service
                        ;%keybase-fuse-user-service
 
-                       %kdeconnect-user-service
-                       #;%parcimonie-user-service))))
+                       %kdeconnect-user-service))))
 
         ;; Can't seem to get (if headless?) to work
         #;(service home-gpg-agent-service-type
@@ -986,6 +970,10 @@ fi")))))
         (service home-openssh-service-type
                  (home-openssh-configuration
                    (hosts %home-openssh-configuration-hosts)))
+
+        (service home-parcimonie-service-type
+          (home-parcimonie-configuration
+            (refresh-guix-keyrings? #t)))
 
         (service home-syncthing-service-type)
 
