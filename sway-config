@@ -10,7 +10,7 @@
 
 ### Variables
 #
-# Logo key. Use Mod1 for Alt.
+# Logo key use Mod4. Use Mod1 for Alt.
 set $mod Mod4
 # Home row direction keys, like vim
 set $left h
@@ -27,7 +27,7 @@ set $term alacritty
 #set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu tofi-drun | xargs swaymsg exec --
 
-set $swaylock swaylock --daemonize --indicator-radius 85 --ring-color 1a1a1a --key-hl-color ffb638 --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg
+set $swaylock /run/current-system/profile/bin/swaylock --daemonize --indicator-radius 85 --ring-color 1a1a1a --key-hl-color ffb638 --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg
 
 ### Output configuration
 #
@@ -47,11 +47,10 @@ output HDMI-A-1 resolution 1920x1080 position 1920,0
 #
 # Example configuration:
 #
-exec swayidle -w \
+exec /run/current-system/profile/bin/swayidle -w \
          timeout 300 $swaylock \
          timeout 600 'swaymsg "output * dpms off"' \
-         resume 'swaymsg "output * dpms on"' \
-         before-sleep $swaylock
+         resume 'swaymsg "output * dpms on"'
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -235,8 +234,8 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command while date --rfc-email; do sleep 1; done
-    #status_command i3status
+    #status_command while date --rfc-email; do sleep 1; done
+    status_command /run/current-system/profile/bin/i3status
 
     colors {
         statusline #ffffff
@@ -253,3 +252,4 @@ for_window [title = "IceCat — Sharing Indicator"] floating enable
 #for_window [window_role="dialog"] floating enable
 
 include /run/current-system/profile/etc/sway/config.d/*
+include /etc/sway/config.d/*
