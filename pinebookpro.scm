@@ -123,6 +123,10 @@
                       (using-pam? #t)
                       (using-setuid? #f)))
 
+           (extra-special-file
+             "/var/lib/alsa/asound.state"
+             (local-file "Extras/pbp-asound.state"))
+
            (simple-service 'sway-kbd-fn-keys etc-service-type
                            `(("sway/config.d/function-keys"
                               ,%sway-keyboard-function-keys)))
