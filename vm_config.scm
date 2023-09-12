@@ -10,6 +10,7 @@
 (use-package-modules
   certs)
 
+;; One file, no guix-config checkout.
 (define %efraim-ssh-key
   (plain-file "id_ed25519.pub"
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3PkIpyUbnAtS8B5oO1rDm2vW5xhArIVjaRJrZzHVkX efraim@flashner.co.il"))
@@ -75,10 +76,13 @@
                         `(("efraim" ,%efraim-ssh-key)))
                       (extra-content "StreamLocalBindUnlink yes")))
 
-           ;(service tor-service-type)
-           ;(tor-hidden-service "ssh"
-           ;                    '((22 "127.0.0.1:22")))
-
+           #;(service tor-service-type
+                    (tor-configuration
+                      (hidden-services
+                        (list
+                          (tor-onion-service-configuration
+                            (name "ssh")
+                            (mapping '((22 "127.0.0.1:22"))))))))
 
            (service openntpd-service-type
                     (openntpd-configuration
@@ -94,17 +98,17 @@
            ;; For networking
            (service dhcp-client-service-type)
 
-           (modify-services %base-services
-                            ;; The default udev rules are not needed in a VM.
-                            (udev-service-type config =>
-                                               (udev-configuration
-                                                 (inherit config)
-                                                 (rules '())))
-                            ;(guix-service-type config =>
-                            ;                   (guix-configuration
-                            ;                     (inherit config)
-                            ;                     ))
-                            )))
+           (modify-services
+             %base-services
+             ;; The default udev rules are not needed in a VM.
+             ;; TODO: Remove udev entirely?
+             (udev-service-type config =>
+                                (udev-configuration
+                                  (inherit config)
+                                  (rules '())))
+             #;(guix-service-type config =>
+             (guix-configuration
+               (inherit config))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
