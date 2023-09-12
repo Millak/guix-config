@@ -27,7 +27,7 @@ set $term alacritty
 #set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu tofi-drun | xargs swaymsg exec --
 
-set $swaylock /run/current-system/profile/bin/swaylock --daemonize --indicator-radius 85 --ring-color 1a1a1a --key-hl-color ffb638 --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg
+set $swaylock '/run/current-system/profile/bin/swaylock --daemonize --indicator-radius 85 --ring-color 1a1a1a --key-hl-color ffb638 --image /run/current-system/profile/share/backgrounds/guix/guix-checkered-16-9.svg'
 
 ### Output configuration
 #
@@ -49,8 +49,8 @@ output HDMI-A-1 resolution 1920x1080 position 1920,0
 #
 exec /run/current-system/profile/bin/swayidle -w \
          timeout 300 $swaylock \
-         timeout 600 'swaymsg "output * dpms off"' \
-         resume 'swaymsg "output * dpms on"'
+         timeout 600 '/run/current-system/profile/bin/swaymsg "output * dpms off"' \
+         resume '/run/current-system/profile/bin/swaymsg "output * dpms on"'
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
