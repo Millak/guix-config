@@ -30,18 +30,20 @@
 (define-record-type* <tailscaled-configuration>
   tailscaled-configuration make-tailscaled-configuration
   tailscaled-configuration?
-  (package tailscaled-configuration-package
-             (default tailscale))   ; package
-  (listen-port tailscaled-configuration-listen-port
-               (default 41641))     ; number
-  (state-file tailscaled-configuration-state-file
-              (default "/var/lib/tailscale/tailscaled.state"))  ; path
-  (socket-file tailscaled-configuration-socket-file
-              (default "/var/run/tailscale/tailscaled.sock"))   ; path
-  (no-logs?    tailscaled-configuration-no-logs
-               (default #f))
-  (verbosity tailscaled-configuration-verbosity
-             (default 0)))          ; number
+  (package      tailscaled-configuration-package
+                (default tailscale))   ; package
+  (listen-port  tailscaled-configuration-listen-port
+                (default 41641))     ; number
+  (state-file   tailscaled-configuration-state-file
+                (default "/var/lib/tailscale/tailscaled.state"))  ; path
+  (socket-file  tailscaled-configuration-socket-file
+                (default "/var/run/tailscale/tailscaled.sock"))   ; path
+  (no-logs?     tailscaled-configuration-no-logs
+                (default #f))
+  (dev-net-tun? tailscaled-configuration-dev-net-tun
+                (default #t))
+  (verbosity    tailscaled-configuration-verbosity
+                (default 0)))          ; number
 
 (define (tailscaled-activation config)
   "Create the necessary directories for tailscale and run 'tailscaled
@@ -58,7 +60,7 @@
 (define (tailscaled-shepherd-service config)
   "Return a <shepherd-service> for Tailscaled with CONFIG"
   (match-record config <tailscaled-configuration>
-                (package listen-port state-file socket-file no-logs? verbosity)
+                (package listen-port state-file socket-file no-logs? dev-net-tun? verbosity)
     (list
       (shepherd-service
         (provision '(tailscaled))
@@ -66,6 +68,9 @@
         (requirement '(networking))
         (start #~(make-forkexec-constructor
                    (list #$(file-append package "/sbin/tailscaled")
+                         #$@(if dev-net-tun?
+                              '()
+                              '("--tun=userspace-networking"))
                          "-state" #$state-file
                          "-socket" #$socket-file
                          "-port" (number->string #$listen-port)
