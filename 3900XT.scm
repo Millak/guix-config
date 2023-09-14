@@ -79,7 +79,11 @@
 
                  "sway"
                  "swayidle"
-                 "swaylock"))
+                 "swaylock"
+
+                 "dunst"
+                 "i3status"
+                 "tofi"))
       %base-packages))
 
   (services
