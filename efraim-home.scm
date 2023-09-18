@@ -346,13 +346,13 @@
     "default-key CA3D8351\n"
     "display-charset utf-8\n"
     "with-fingerprint\n"
-    "keyserver hkp://keyserver.computer42.org\n"
+    "keyserver hkp://pgp.net.nz\n"
     "keyserver-options auto-key-retrieve\n"
     "keyserver-options include-revoked\n"
     ;"photo-viewer \"" #$(file-append (S "imv") "/bin/imv $i\"\n"
     "keyid-format 0xlong\n"
     ;; For use with 'gpg --locate-external-key'
-    "auto-key-locate wkd cert pka dane hkp://keys.openpgp.org hkp://keyserver.ubuntu.com hkp://keyserver.computer42.org\n"
+    "auto-key-locate wkd cert pka dane hkp://pgpkeys.eu hkp://pgp.surf.nl hkp://pgp.net.nz hkp://keyserver.ubuntu.com hkp://the.earth.li hkp://keys.openpgp.org\n"
     ;; Some of these settings can be seen in g10/keygen.c in gnupg's source code, in keygen_set_std_prefs
     ;; or in the output of `gpg --version`
     ;"personal-cipher-preferences AES256 AES192 AES\n"               ; Drop 3DES
