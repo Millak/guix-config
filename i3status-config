@@ -20,7 +20,7 @@ order += "cpu_temperature_0"
 order += "disk /tmp"
 order += "load"
 order += "memory"
-order += "volume master"
+#order += "volume master"
 order += "tztime local"
 
 wireless _first_ {
@@ -62,6 +62,7 @@ memory {
         format_degraded = "MEMORY < %available"
 }
 
+# This causes issues on 3900XT
 volume master {
     format = "♪: %volume"
     format_muted = "♪: muted (%volume)"
