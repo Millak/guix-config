@@ -19,6 +19,19 @@
 (use-package-modules
   cups)
 
+(define %sway-keyboard-function-keys
+  (mixed-text-file
+    "keyboard-function-keys"
+    ;; bindsym XF86AudioPlay
+    "bindsym XF86AudioMute exec " (specification->package "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
+    "bindsym XF86AudioLowerVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
+    "bindsym XF86AudioRaiseVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
+    ;; bindsym XF86HomePage
+    ;; bindsym XF86Mail
+    ;; TODO? POWER BUTTON
+    ;; bindsym XF86Calculator
+    ))
+
 (operating-system
   (host-name "3900XT")
   (timezone "Asia/Jerusalem")
@@ -101,6 +114,10 @@
                       (host "0.0.0.0")
                       (port 3000)
                       (advertise? #t)))
+
+           (simple-service 'sway-kbd-fn-keys etc-service-type
+                           `(("sway/config.d/function-keys"
+                              ,%sway-keyboard-function-keys)))
 
            (service openssh-service-type
                     (openssh-configuration
