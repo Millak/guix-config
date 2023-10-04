@@ -29,15 +29,11 @@
   (bootloader
     (bootloader-configuration
       (bootloader u-boot-rock64-rk3328-bootloader)
-      (targets '("/dev/mmcblk0"))))     ; We want to use the eMMC.
+      (targets '("/dev/mmcblk0"))))
 
   (initrd-modules '())
   (kernel linux-libre-arm64-generic)
   (firmware '())
-
-  (swap-devices
-    (list (swap-space
-            (target "/swapfile"))))
 
   (file-systems
     (cons* (file-system
@@ -59,10 +55,12 @@
 
   ;; This is where we specify system-wide packages.
   (packages
-    (cons* (specification->package "nss-certs")     ; for HTTPS access
-           ;(specification->package "btrfs-progs")
-           ;(specification->package "compsize")
-           %base-packages))
+    (append
+      (map specification->package
+           (list ;"btrfs-progs"
+                 ;"compsize"
+                 "nss-certs"))
+      %base-packages))
 
   (services
     (cons* (service openssh-service-type
@@ -73,8 +71,6 @@
 
            (service mcron-service-type
                     (mcron-configuration
-                      ;; Image created with ext4
-                      ;(jobs (%btrfs-maintenance-jobs "/"))
                       (jobs
                         (list
                           #~(job '(next-hour '(3))
@@ -113,13 +109,17 @@
                  (substitute-urls %substitute-urls)
                  (authorized-keys %authorized-keys)
                  (extra-options
-                   (cons*
-                     "--cores=2"
-                     "--cache-failures"
-                     %extra-options)))))))
+                   (cons* "--cores=2"
+                          "--cache-failures"
+                          %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
 
-;; guix system image --image-type=rock64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/rock64.scm --system=aarch64-linux
-;; guix system image --image-type=rock64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/rock64.scm --target=aarch64-linux-gnu
+;; guix system image --image-type=rock64-raw -L ~/workspace/my-guix -L ~/workspace/guix-config/ ~/workspace/guix-config/rock64.scm --system=aarch64-linux
+;; guix system image --image-type=rock64-raw -L ~/workspace/my-guix -L ~/workspace/guix-config/ ~/workspace/guix-config/rock64.scm --target=aarch64-linux-gnu
+
+;; sudo cfdisk /dev/sdX to resize /dev/sdX1 to use the remaining space left at the end of the µSD card
+;; guix shell e2fsprogs -- sudo resize2fs /dev/sdX1
+;; guix shell e2fsck-static -- sudo -E e2fsck /dev/sdX1
+;; guix shell btrfs-progs -- sudo btrfs-convert -L /dev/sdX1
