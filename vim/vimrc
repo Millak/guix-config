@@ -96,6 +96,11 @@ let g:slime_paste_file = getenv('XDG_RUNTIME_DIR') . "/.slime_paste"
 " Airline.vim
 let g:airline#extensions#tabline#enabled = 1
 
+" EditorConfig
+if has('syntax') && has('eval') && filereadable('.editorconfig')
+    packadd! editorconfig
+endif
+
 " Guix.vim
 let g:guix_binary = "/home/efraim/workspace/guix/pre-inst-env guix "
 let g:guix_build_options = "-L /home/efraim/workspace/my-guix -L /home/efraim/workspace/guix-config"
