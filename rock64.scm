@@ -5,6 +5,7 @@
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
+             (services tailscale)
              (srfi srfi-1))
 (use-service-modules
   linux
@@ -29,7 +30,7 @@
   (bootloader
     (bootloader-configuration
       (bootloader u-boot-rock64-rk3328-bootloader)
-      (targets '("/dev/mmcblk0"))))
+      (targets '("/dev/mmcblk0"))))     ; SD card/eMMC (SD priority) storage
 
   (initrd-modules '())
   (kernel linux-libre-arm64-generic)
@@ -69,6 +70,10 @@
                       (authorized-keys
                         `(("efraim" ,(local-file "Extras/efraim.pub"))))))
 
+           (service tailscaled-service-type
+                    (tailscaled-configuration
+                      (package (specification->package "tailscale-bin-arm64"))))
+
            (service mcron-service-type
                     (mcron-configuration
                       (jobs
@@ -80,11 +85,7 @@
                           #~(job '(next-hour '(0 6 12 18))
                                  "/run/current-system/profile/bin/herd restart ntpd")))))
 
-           (service openntpd-service-type
-                    (openntpd-configuration
-                      (listen-on '("127.0.0.1" "::1"))
-                      ;; Prevent moving to year 2116.
-                      (constraints-from '("https://www.google.com/"))))
+           (service ntp-service-type)
 
            (service connman-service-type)
            (service wpa-supplicant-service-type)
@@ -109,7 +110,7 @@
                  (substitute-urls %substitute-urls)
                  (authorized-keys %authorized-keys)
                  (extra-options
-                   (cons* "--cores=2"
+                   (cons* "--cores=3"
                           "--cache-failures"
                           %extra-options)))))))
 
