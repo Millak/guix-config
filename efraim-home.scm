@@ -395,6 +395,9 @@
                        "    gpgSign = true\n"))
     "[diff]\n"
     "    algorithm = patience\n"
+    ;"[diff \"sqlite3\"]\n"
+    ;"    binary = true\n"
+    ;"    textconv = \"echo .dump | " (file-append (S "sqlite") "/bin/sqlite3") "\"\n"
     "[fetch]\n"
     "    prune = true\n"
     "    parallel = 0\n"
