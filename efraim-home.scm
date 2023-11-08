@@ -277,15 +277,14 @@
     "log = -v\n"
     "[diff]\n"
     "git = True\n"
-    ;"[email]\n"
-    ;"method = \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il /usr/lib/dovecot/imap ./Maildir 2> /dev/null\"\n"
+    "[email]\n"
+    "method = " (file-append (S "msmtp") "/bin/msmtp") "\n"
     "[ui]\n"
     "username = Efraim Flashner <efraim@flashner.co.il\n"
     "verbose = True\n"
     "merge = meld\n"
     "[web]\n"
-    ;"cacerts = " (ca-certificate-bundle (packages->manifest (list nss-certs))) " \n"))
-    "cacerts = /etc/ssl/certs/ca-certificates.crt\n"))
+    "cacerts = " (or (getenv "GIT_SSL_CAINFO") (getenv "SSL_CERT_FILE")) " \n"))
 
 (define %ytdl-config
   (plain-file
