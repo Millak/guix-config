@@ -395,9 +395,13 @@
                        "    gpgSign = true\n"))
     "[diff]\n"
     "    algorithm = patience\n"
+    "[diff \"scheme\"]\n"
+    "    xfuncname = \"^(\\(define.*)$\"\n"
     ;"[diff \"sqlite3\"]\n"
     ;"    binary = true\n"
     ;"    textconv = \"echo .dump | " (file-append (S "sqlite") "/bin/sqlite3") "\"\n"
+    "[diff \"texinfo\"]\n"
+    "    xfuncname = \"^@node[[:space:]]+([^,]+).*$\"\n"
     "[fetch]\n"
     "    prune = true\n"
     "    parallel = 0\n"
