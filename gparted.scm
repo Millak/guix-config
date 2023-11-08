@@ -34,21 +34,17 @@
        ;; The tests need more of the inputs that we've stripped
        ;; away in order to pass. Skip the tests for now.
        ((#:tests? _ #t) #f)
-       ((#:configure-flags _ ''())
-        `(list "--disable-cups"
-               "--disable-introspection"
-               "--enable-x11-backend"
-               "--disable-gtk-doc-html"
-               (string-append "--with-html-dir="
-                              (assoc-ref %outputs "doc")
-                              "/share/gtk-doc/html")))
+       ((#:configure-flags _ #~'())
+        #~(list "-Dwayland_backend=false"
+                "-Dprint_backends=file"
+                "-Dintrospection=false"))
        ((#:phases phases)
-        `(modify-phases ,phases
-           (add-after 'install 'remove-localizations
-             (lambda* (#:key outputs #:allow-other-keys)
-               (delete-file-recursively
-                 (string-append (assoc-ref outputs "out")
-                                "/share/locale"))))))))
+        #~(modify-phases #$phases
+            (add-after 'install 'remove-localizations
+              (lambda* (#:key outputs #:allow-other-keys)
+                (delete-file-recursively
+                  (string-append (assoc-ref outputs "out")
+                                 "/share/locale"))))))))
     (propagated-inputs
      (modify-inputs (package-propagated-inputs gtk+)
                     (prepend gdk-pixbuf)
@@ -64,7 +60,6 @@
                             "libxfixes"
                             "libxinerama"
                             "libxkbcommon"
-                            "libxrandr"
                             "libxrender"
                             "mesa"
                             "wayland"
@@ -109,9 +104,9 @@
     (inherit btrfs-progs)
     (arguments
      (substitute-keyword-arguments (package-arguments btrfs-progs)
-       ((#:configure-flags cf ''())
+       ((#:configure-flags cf #~'())
         ;; texlive-bin FTBFS with the package changes.
-        `(cons* "--disable-documentation" ,cf))))
+        #~(cons* "--disable-documentation" #$cf))))
     (native-inputs
      (modify-inputs (package-native-inputs btrfs-progs)
                     (delete "python-sphinx")))))
@@ -158,10 +153,10 @@
     (inherit parted)
     (arguments
      (substitute-keyword-arguments (package-arguments parted)
-       ((#:configure-flags cf ''())
-        `(cons* "--without-readline"
-                "--disable-static"
-                ,cf))))
+       ((#:configure-flags cf #~'())
+        #~(cons* "--without-readline"
+                 "--disable-static"
+                 #$cf))))
     (inputs (modify-inputs (package-inputs parted)
                            (delete "readline")))))
 
@@ -174,16 +169,19 @@
           (srfi srfi-26)
           ,@modules))
        ((#:build-type _) "minsize") ; decreases the size by ~30%.
-       ((#:configure-flags cf ''())
-        `(append
+       ((#:configure-flags cf #~'())
+        #~(append
            (remove
              (cut string-match
                   "-D(platforms|vulkan-(drivers|layers)|gles2|gbm|shared-glapi)=.*" <>)
-             ,cf)
+             #$cf)
 
            ;; This has to go last so we can disable vulkan.
            (list "-Dplatforms=x11"
-                 "-Dvulkan-drivers=")))))
+                 "-Dvulkan-drivers=")))
+       ((#:phases phases)
+        #~(modify-phases #$phases
+            (delete 'set-layer-path-in-manifests)))))
     (inputs
      (modify-inputs (package-inputs mesa)
                     (prepend (list zstd "lib"))
@@ -194,12 +192,12 @@
 ;; We could use a newer version of llvm, but this is the version mesa
 ;; is currently built against, so it has the most testing in Guix.
 (define llvm-minimal
-  (package/inherit llvm-11
+  (package/inherit llvm-for-mesa
     ;; If we can separate out the include directory we'd save another 21MB.
     (outputs (list "out"))
-    (version (package-version llvm-11))
+    (version (package-version llvm-for-mesa))
     (arguments
-     (substitute-keyword-arguments (package-arguments llvm-11)
+     (substitute-keyword-arguments (package-arguments llvm-for-mesa)
        ((#:build-type _) "MinSizeRel") ; decreases the size by ~25%
        ((#:configure-flags cf ''())
         ;; AMDGPU is needed by the vulkan drivers.
@@ -207,41 +205,17 @@
                                 (system->llvm-target) ";AMDGPU")
                "-DLLVM_BUILD_TOOLS=NO"
                "-DLLVM_BUILD_LLVM_DYLIB=YES"
-               "-DLLVM_LINK_LLVM_DYLIB=YES"))
-       ((#:phases phases)
-        `(modify-phases ,phases
-           (add-after 'install 'delete-static-libraries
-             (lambda* (#:key outputs #:allow-other-keys)
-               (for-each delete-file
-                         (find-files (string-append
-                                       (assoc-ref outputs "out") "/lib")
-                                     "\\.a$"))))
-           (replace 'install-opt-viewer
-             (lambda* (#:key outputs #:allow-other-keys)
-               (let ((out (assoc-ref outputs "out")))
-                 (delete-file-recursively
-                   (string-append out "/share/opt-viewer")))))
-           (add-after 'install 'build-and-install-llvm-config
-             (lambda* (#:key outputs #:allow-other-keys)
-               (let ((out (assoc-ref outputs "out")))
-                 (substitute*
-                   "tools/llvm-config/CMakeFiles/llvm-config.dir/link.txt"
-                   (((string-append "/tmp/guix-build-llvm-"
-                                    ,version ".drv-0/build/lib"))
-                    (string-append out "/lib")))
-                 (invoke "make" "llvm-config")
-                 (install-file "bin/llvm-config"
-                               (string-append out "/bin")))))))))))
+               "-DLLVM_LINK_LLVM_DYLIB=YES"))))))
 
 (define use-minimized-inputs
   (package-input-rewriting/spec
     `(;("elfutils" . ,(const elfutils-smaller))
       ;("freetype" . ,(const freetype-minimal))
-      ;("gtk+" . ,(const gtk+-minimal))
+      ("gtk+" . ,(const gtk+-minimal))
       ;("harfbuzz" . ,(const harfbuzz-minimal))
       ;("libelf" . ,(const libelf-smaller))
-      ;("llvm" . ,(const llvm-minimal))
-      ;("mesa" . ,(const mesa-smaller))
+      ("llvm" . ,(const llvm-minimal))
+      ("mesa" . ,(const mesa-smaller))
       ("parted" . ,(const parted-minimal))
       ;("readline" . ,(const readline-smaller))
       ;("util-linux" . ,(const util-linux-minimal))
@@ -273,6 +247,19 @@
        ((#:configure-flags cf ''())
         `(cons* "--enable-libparted-dmraid" ,cf))))))
 
+(define* (minimized-package pkg)
+  (package
+    (inherit (use-minimized-inputs pkg))))
+
+(define fuse-minimized
+  (minimized-package fuse))
+
+(define lvm2-minimized
+  (minimized-package lvm2))
+
+(define mdadm-minimized
+  (minimized-package mdadm))
+
 ;;
 
 (operating-system
@@ -286,20 +273,22 @@
 
   (bootloader (bootloader-configuration
                (bootloader grub-bootloader)
-               (targets '("/dev/sda"))
+               (targets '("/dev/vda"))
                (terminal-outputs '(console))))
   (file-systems (cons (file-system
+                        (device (file-system-label "root"))
                         (mount-point "/")
-                        (device "/dev/sda1")
                         (type "ext4"))
                       %base-file-systems))
   (firmware '())
+  (locale-libcs (list glibc))
 
   (users %base-user-accounts)
 
   (packages
     (append
       (map use-minimized-inputs
+         (append
            (map specification->package
                 (list
                   "neofetch"           ; bash-minimal
@@ -322,11 +311,13 @@
                   "nilfs-utils"        ; util-linux:lib
                   "ntfs-3g"            ; fuse-2
                   "udftools"           ; only glibc, gcc:lib
-                  "xfsprogs")))
-      (list btrfs-progs-minimal
-            gparted-custom
-            fluxbox-custom)       ; also a lot :/
-      %base-packages))
+                  "xfsprogs"))
+           (list btrfs-progs-minimal
+                 gparted-custom
+                 fluxbox-custom)       ; also a lot :/
+           %base-packages-interactive
+           %base-packages-linux
+           %base-packages-utils))))
 
   ;; Use a modified list of setuid-programs.
   ;; Are there any we need? We run as root.
@@ -366,4 +357,6 @@
                (udev-service-type
                  config =>
                  (udev-configuration
-                   (rules (list lvm2 fuse mdadm)))))))))
+                   (rules (list fuse-minimized
+                                lvm2-minimized
+                                mdadm-minimized)))))))))
