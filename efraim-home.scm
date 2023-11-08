@@ -81,7 +81,9 @@
         "qiv"           ; this or imv
         "qtwayland@5"
         "quasselclient"
-        "qutebrowser"
+        (if (supported-package? (specification->package "qutebrowser-with-adblock"))
+          "qutebrowser-with-adblock"
+          "qutebrowser")
         "telegram-desktop"
         "tofi"
         "tuba"
