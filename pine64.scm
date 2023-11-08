@@ -36,10 +36,6 @@
   (kernel linux-libre-arm64-generic)
   (firmware '())
 
-  #;(swap-devices
-    (list (swap-space
-            (target "/swapfile"))))
-
   (file-systems
     (cons* (file-system
              (device (file-system-label "Guix_image"))
@@ -60,10 +56,12 @@
 
   ;; This is where we specify system-wide packages.
   (packages
-    (cons* (specification->package "nss-certs")     ; for HTTPS access
-           ;(specification->package "btrfs-progs")
-           ;(specification->package "compsize")
-           %base-packages))
+    (append
+      (map specification->package
+           (list ;"btrfs-progs"
+                 ;"compsize"
+                 "nss-certs"))
+      %base-packages))
 
   (services
     (cons* (service openssh-service-type
@@ -85,17 +83,11 @@
                           #~(job '(next-hour '(3))
                                  "guix gc --free-space=15G")
                           ;; The board powers up at unix date 0.
-                          ;; Restart ntpd to set the clock.
-                          ;; This will run (24 hours and) 5 minutes after bootup.
-                          ;#~(job '(next-minute-from '(next-day) '(5))
-                          ;       "/run/current-system/profile/bin/herd restart ntpd")
-                          ))))
+                          ;; Restart ntpd regularly to set the clock.
+                          #~(job '(next-hour '(0 6 12 18))
+                                 "/run/current-system/profile/bin/herd restart ntpd")))))
 
-           (service openntpd-service-type
-                    (openntpd-configuration
-                      (listen-on '("127.0.0.1" "::1"))
-                      ;; Prevent moving to year 2116.
-                      (constraints-from '("https://www.google.com/"))))
+           (service ntp-service-type)
 
            (service dhcp-client-service-type)
 
@@ -119,7 +111,9 @@
                  (substitute-urls %substitute-urls)
                  (authorized-keys %authorized-keys)
                  (extra-options
-                   (cons* "--cores=2" "--cache-failures" %extra-options)))))))
+                   (cons* "--cores=2"
+                          "--cache-failures"
+                          %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
