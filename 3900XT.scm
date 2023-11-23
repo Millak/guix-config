@@ -22,14 +22,18 @@
 (define %sway-keyboard-function-keys
   (mixed-text-file
     "keyboard-function-keys"
-    ;; bindsym XF86AudioPlay
+    ;; bindsym XF86Tools
     "bindsym XF86AudioMute exec " (specification->package "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
     "bindsym XF86AudioLowerVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
     "bindsym XF86AudioRaiseVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
+    ;; bindsym XF86AudioPrev
+    ;; bindsym XF86AudioNext
+    ;; bindsym XF86AudioPlay
+    ;; bindsym XF86AudioStop
     ;; bindsym XF86HomePage
     ;; bindsym XF86Mail
-    ;; TODO? POWER BUTTON
-    ;; bindsym XF86Calculator
+    ;; bindsym XF86Explorer
+    ;; bindsym XF86Favorites
     ))
 
 (operating-system
