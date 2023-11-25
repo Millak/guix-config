@@ -258,6 +258,12 @@
       "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
       "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
 
+(define %curlrc
+  (plain-file
+    "curlrc"
+    (string-append
+      "compressed\n")))
+
 (define %cvsrc
   (plain-file
     "dot-cvsrc"
@@ -385,6 +391,8 @@
     "    name = Efraim Flashner\n"
     "    email = efraim@flashner.co.il\n"
     "    signingkey = 0xCA3D8351\n"
+    "[am]\n"
+    "    threeWay = true\n"
     "[core]\n"
     "    editor = vim\n"
     "[checkout]\n"
@@ -587,7 +595,7 @@ XTerm*metaSendsEscape: true\n"))
     ;"SSLType IMAPS\n"
     ;"CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
     "Timeout 120\n" ; 25 MB * 8 (bytes to bits) / 2 Mb/s = 100 s, add 20% for safety.
-    "Tunnel \"" (S "openssh") "/bin/ssh -o Compression=yes -q flashner.co.il 'MAIL=maildir:~/Maildir exec /usr/lib/dovecot/imap'\"\n"
+    "Tunnel \"" (S "openssh") "/bin/ssh -o Compression=yes -q do1.unicorn-typhon.ts.net 'MAIL=maildir:~/Maildir exec /usr/lib/dovecot/imap'\"\n"
     "\n"
     "Channel flashner\n"
     "Far :flashner:\n"
@@ -597,7 +605,7 @@ XTerm*metaSendsEscape: true\n"))
 (define %home-inputrc-configuration
   (home-inputrc-configuration
   (key-bindings
-    `(("Control-l" . "clear-screen")))  ; would I rather have clear-display?
+    `(("Control-l" . "clear-display")))  ; would I rather have clear-screen?
   (variables
     `(("bell-style" . "visible")
       ("colored-completion-prefix" . #t)
@@ -850,7 +858,9 @@ XTerm*metaSendsEscape: true\n"))
                      #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
                      ;; KDE Connect was built without "offscreen" support
                      ;; without this it fails to create wl_display
-                     "-platform" "offscreen")
+                     ;; Is the second part still true?
+                     "-platform" "offscreen"
+                     )
                #:log-file (string-append #$%logdir "/kdeconnect.log")))
     ;; TODO: Enable autostart
     (auto-start? #f)
@@ -992,6 +1002,7 @@ fi")))))
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
            (".mbsyncrc" ,%mbsyncrc)
+           ;; https://salsa.debian.org/med-team/parallel/-/blob/2f4412d851ea9f9c41667b5f6821cd1102bb107a/debian/patches/remove-overreaching-citation-request.patch
            (".parallel/will-cite" ,(plain-file "will-cite" ""))
            (".pbuilderrc" ,%pbuilderrc)
            (".screenrc" ,%screenrc)
@@ -1014,10 +1025,12 @@ fi")))))
            #;("chromium/WidevineCdm/latest-component-updated-widevine-cdm"
             ,(file-append (S "widevine")
                           "/share/chromium/latest-component-updated-widevine-cdm"))
+           ("curlrc" ,%curlrc)
            ("gdb/gdbinit" ,%gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
+           ;("lagrange/fonts" "../../.guix-home/profile/share/fonts")
            ;; This clears the defaults, do not use.
            ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
@@ -1084,6 +1097,7 @@ fi")))))
 
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
+           ("curlrc" ,%curlrc)
            ("gdb/gdbinit" ,%gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
