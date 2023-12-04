@@ -474,6 +474,11 @@
   (mixed-text-file
     "newsboat-config"
     "browser \"qutebrowser --target window %u\"\n"
+    "urls-source \"ocnews\"\n"
+    "ocnews-url \"https://nx41374.your-storageshare.de/\"\n"
+    "ocnews-login \"efraim\"\n"
+    ;; Need to type in the password blind.
+    "ocnews-passwordeval \"keepassxc-cli show --attributes password /home/efraim/Downloads/Efraim\\\\ \\\\(2\\\\).kdbx hetzner_nextcloud_efraim\"\n"
     "download-full-page yes\n"
     "article-sort-order date-desc\n"
     "save-path \"~/Downloads\"\n"
