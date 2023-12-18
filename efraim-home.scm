@@ -67,7 +67,7 @@
         "gst-plugins-ugly"
         "i3status"
         "icecat"
-        "imv"           ; this or qiv
+        "imv"
         "kdeconnect"
         "keepassxc"
         "lagrange"
@@ -78,7 +78,6 @@
         "my-moreutils"
         "nheko"
         "pavucontrol"
-        "qiv"           ; this or imv
         "qtwayland@5"
         "quasselclient"
         (if (supported-package? (specification->package "qutebrowser-with-adblock"))
