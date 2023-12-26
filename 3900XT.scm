@@ -8,6 +8,7 @@
   (srfi srfi-1))
 (use-service-modules
   cups
+  dns
   desktop
   linux
   mcron
@@ -133,6 +134,18 @@
            (service tailscaled-service-type
                     (tailscaled-configuration
                       (package (specification->package "tailscale-bin-amd64"))))
+
+           (service dnsmasq-service-type
+                    (dnsmasq-configuration
+                      (no-resolv? #t)
+                      (servers '("192.168.1.1"
+                                 ;; Tailscale
+                                 "/unicorn-typhon.ts.net/100.100.100.100"
+                                 ;; OpenDNS servers
+                                 "208.67.222.222"
+                                 "208.67.220.220"
+                                 "2620:119:35::35"
+                                 "2620:119:53::53"))))
 
            (service tor-service-type
                     (tor-configuration
