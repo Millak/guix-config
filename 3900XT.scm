@@ -124,6 +124,11 @@
                            `(("sway/config.d/function-keys"
                               ,%sway-keyboard-function-keys)))
 
+           (extra-special-file
+             "/usr/share/zoneinfo/tzdata.zi"
+             (file-append (specification->package "tzdata")
+                          "/share/zoneinfo/tzdata.zi"))
+
            (service openssh-service-type
                     (openssh-configuration
                       (password-authentication? #t)))
