@@ -223,6 +223,12 @@
     (string-append
       "color=yes\n")))
 
+(define %wgetrc
+  (plain-file
+    "dot-wgetrc"
+    (string-append
+      "continue=yes\n")))
+
 (define %wgetpaste.conf
   (plain-file
     "dot-wgetpaste-conf"
@@ -1012,6 +1018,7 @@ fi")))))
            (".screenrc" ,%screenrc)
            (".signature" ,%signature)
            (".wcalcrc" ,%wcalcrc)
+           (".wgetrc" ,%wgetrc)
            (".wgetpaste.conf" ,%wgetpaste.conf)
            (".Xdefaults" ,%xdefaults)
 
@@ -1089,6 +1096,7 @@ fi")))))
            (".screenrc" ,%screenrc)
            (".signature" ,%signature)
            (".wcalcrc" ,%wcalcrc)
+           (".wgetrc" ,%wgetrc)
            (".wgetpaste.conf" ,%wgetpaste.conf)
            ;(".Xdefaults" ,%xdefaults)
 
