@@ -195,6 +195,40 @@
                   %guix-system-apps)
                 %cli-apps))))
 
+;;; Helper programs.
+
+;; generate with echo foo | gpg --encrypt -r 0xgpgkey | base64
+
+(define %email-password-base64
+  "hQIMA7NiANSDITKgAQ//cCXlvhNge4cA2zg/ZQFZhbBMYJJXWi1YdEMWc+8tJVDJHNqJDZOct3igmfILo6bVAQywXn3E7zgiNiPiqIIqMWDSwhIuTzdw3hNZEQmiaikpeLGIphLtPkKAH3maMMVWxQquDvYYuXdbYLiww/0POtbOeqcjfo+GRY5LQpsjOrX7pzwvxh5VQJFEUQ9GvdVwRJP9JOHxLSgrzhg0HzHVdnZQzrMpIykfG3qoUsQzgQxgnH1R0lhj7F4vffyWdPiArVV+33rVtW9+GDPO1VlUG2B6mWsjt/LPX3No/dByilmLapGYhFtJiRKaEWOJE/S4ApsAnAli4wLwe/YM1dLv5WOWFKn9XEQRBwB+QM56xL7FZIA5sWUQXVICPxnDrSGKXXQkQJSBGtGadAMwuGTgb3sSNVGc0s65MKZ2BGgol6BjxFqNBwO2+g5oGzKJTmo6vGHcEn3JpKPop0QX76MfCCyA8vujPD03ejVk/0G+mkGY8x4Vnb5zXG7OwEax6p6U+Tu/127/FJ+BRbxPxtqpGP/6jHeqjl9jNl/tVibNjhsxpeLzFkMzL3WU0nD3cnB8ZYgdC78f+sZ773Uzo87pFi5gKzh7cfULUxkiHeBO1HY+KH6bm/qxEj9Sjt3kbkhXmjnjMDOg9AI+izXupfIs+EVT02p0z6qr1QHGHCWPvSrSUgHmO71SpZcMkBs6X95lNsanMeHXNYg9EAm6zSZqrQQ9z8AcufAOWxoXS5hmaIMtef+zqKn3oQ0qvWtYXvpswlVuQgqxeZS/ndoTjnUUJj/Ngq4=")
+
+(define %newsboat-password-base64
+  "hQIMA7NiANSDITKgAQ//RJqPOSSxwnLeabuPpWWcirIZpYM1K4U0qRXwE/BSQCO3ZdIBC2Kbk9xCG8dD+kd9NtEbqItbb+ZOz+JCAM3/r5a3mEkXwaEsKRhs3in+7i/EBsmUGidaf7m37g8VZDXGzBMn0KSKtnT9r7vVE9F8goAkWAyD5VewuPS5YIm80nzHrppC2GTYc3Al+wG6OseloyWgh4nQQaeCcv7e2I1H+fkZHAZRTZiqsoMiA4913kcL1cebExPUa8KpzE+0ZsHUZbRYhaPULKXdplTZRxXHSRQaJI/gzTm9tpCrjE7trZABXmiQAATZvgAp+n0Wvm2kF6QUy684fqETiVibEXBV2gKAibbD+ldTIUk7X1VQJdFfVtXeAmrxQKsxXqNZ1D7bjnbhpRFA81TvwH1Ka0QXB1Ga7TK/RHSB8AzSYFSoSroms+qzs36BniRKJt+jtgrTAwWtbG2iaYzvAxsZfPJTpUt6iavyB20tjNqINiIXEwPf1GGbFOt34l+FCnuLr2PeW1mVwno0zSMc+fE5El0gbMrBJ4wJAZoYFhyw7KpppRm8AS5RvbKHx1wS5pTz3Nn901hOXenJQ2As/NmOqK9QByqOzF4UWx/htVNQlDtJr/nJEapGAqO+xZ2Hg2wv9TV39whrigT9xy7UhM2AsmuiBxxMD7JOexREEg3vuTu5pOjSdAFu1HTG87upUby/J8X64ULbGWWDPQzbALnSf1NAd+n6cW62HN6cUJOuKGM3M3q1T3W4iCQtztgQK3pC4ggHrUdRLbRr2vbgHnqRyIHjeP9Q4S/2uJ806fX2p2ns0jDjh/YTZZm/q/0AeTjUEdyloCjspULH")
+
+(define (decrypt-password encrypted-string)
+  (program-file
+    "magic-password-file"
+    #~(begin
+        (use-modules (ice-9 popen)
+                     (ice-9 rdelim))
+        (display
+          (read-line (pipeline
+                       '((#$(file-append (S "coreutils-minimal") "/bin/echo")
+                          #$encrypted-string)
+                         (#$(file-append (S "coreutils-minimal") "/bin/base64")
+                          "--decode")
+                         (#$(file-append (S "gnupg") "/bin/gpg")
+                          "--no-tty"
+                          "--for-your-eyes-only"
+                          "--quiet"
+                          "--decrypt"))))))))
+
+(define %email-password
+  (decrypt-password %email-password-base64))
+
+(define %newsboat-password
+  (decrypt-password %newsboat-password-base64))
+
 ;;;
 
 (define %mpv-conf
@@ -483,8 +517,7 @@
     "urls-source \"ocnews\"\n"
     "ocnews-url \"https://nx41374.your-storageshare.de/\"\n"
     "ocnews-login \"efraim\"\n"
-    ;; Need to type in the password blind.
-    "ocnews-passwordeval \"keepassxc-cli show --attributes password /home/efraim/Downloads/Efraim\\\\ \\\\(2\\\\).kdbx hetzner_nextcloud_efraim\"\n"
+    "ocnews-passwordeval " %newsboat-password "\n"
     "download-full-page yes\n"
     "article-sort-order date-desc\n"
     "save-path \"~/Downloads\"\n"
@@ -603,6 +636,7 @@ XTerm*metaSendsEscape: true\n"))
     "Host flashner.co.il\n"
     ;; Use the tunnel instead.
     ;"PassCmd \"" (S "gnupg") "/bin/gpg --quiet --for-your-eyes-only --decrypt $HOME/.msmtp.password.gpg\"\n"
+    ;"PassCmd " %email-password "\n"
     ;"SSLType IMAPS\n"
     ;"CertificateFile /etc/ssl/certs/ca-certificates.crt\n"
     "Timeout 120\n" ; 25 MB * 8 (bytes to bits) / 2 Mb/s = 100 s, add 20% for safety.
@@ -636,6 +670,7 @@ XTerm*metaSendsEscape: true\n"))
           (user "efraim")
           (from "efraim@flashner.co.il")
           (password-eval "gpg --no-tty --for-your-eyes-only --quiet --decrypt $HOME/.msmtp.password.gpg")
+          ;(password-eval %email-password)
           (tls-starttls? #f)
           (extra-content "tls_fingerprint 49:08:49:DF:A5:E9:73:8F:72:DA:BD:2D:2C:C4:C0:24:34:2B:66:D6"))))
     (msmtp-account
