@@ -470,6 +470,7 @@
       ".exrc\n"
       "*sw?\n"
       ".vimrc\n"
+      ".envrc\n"
       "gtags.files\n"
       "GPATH\n"
       "GRTAGS\n"
@@ -894,6 +895,7 @@ XTerm*metaSendsEscape: true\n"))
                       ("EDITOR" . "vim")
                       ("GPG_TTY" . "$(tty)")
                       ("XZ_DEFAULTS" . "--threads=0 --memlimit=50%")
+                      ("ZSTD_NBTHREADS" . "0")
                       ("HISTSIZE" . "3000")
                       ("HISTFILESIZE" . "10000")
                       ("HISTCONTROL" . "ignoreboth")
@@ -1017,7 +1019,6 @@ fi")))))
             ,(file-append (S "pdfjs-legacy") "/share/pdfjs"))
            ;; Also files into the bin directory.
            ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
-           ;("bin/msmtp-password-flashner" ,%email-password)
            ("bin/update-guix-keyring" ,%update-guix-gpg-keyring)
            ("bin/openbsd-netcat"
             ,(file-append (S "netcat-openbsd") "/bin/nc"))))
