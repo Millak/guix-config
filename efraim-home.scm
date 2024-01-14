@@ -205,6 +205,9 @@
 (define %newsboat-password-base64
   "hQIMA7NiANSDITKgAQ//RJqPOSSxwnLeabuPpWWcirIZpYM1K4U0qRXwE/BSQCO3ZdIBC2Kbk9xCG8dD+kd9NtEbqItbb+ZOz+JCAM3/r5a3mEkXwaEsKRhs3in+7i/EBsmUGidaf7m37g8VZDXGzBMn0KSKtnT9r7vVE9F8goAkWAyD5VewuPS5YIm80nzHrppC2GTYc3Al+wG6OseloyWgh4nQQaeCcv7e2I1H+fkZHAZRTZiqsoMiA4913kcL1cebExPUa8KpzE+0ZsHUZbRYhaPULKXdplTZRxXHSRQaJI/gzTm9tpCrjE7trZABXmiQAATZvgAp+n0Wvm2kF6QUy684fqETiVibEXBV2gKAibbD+ldTIUk7X1VQJdFfVtXeAmrxQKsxXqNZ1D7bjnbhpRFA81TvwH1Ka0QXB1Ga7TK/RHSB8AzSYFSoSroms+qzs36BniRKJt+jtgrTAwWtbG2iaYzvAxsZfPJTpUt6iavyB20tjNqINiIXEwPf1GGbFOt34l+FCnuLr2PeW1mVwno0zSMc+fE5El0gbMrBJ4wJAZoYFhyw7KpppRm8AS5RvbKHx1wS5pTz3Nn901hOXenJQ2As/NmOqK9QByqOzF4UWx/htVNQlDtJr/nJEapGAqO+xZ2Hg2wv9TV39whrigT9xy7UhM2AsmuiBxxMD7JOexREEg3vuTu5pOjSdAFu1HTG87upUby/J8X64ULbGWWDPQzbALnSf1NAd+n6cW62HN6cUJOuKGM3M3q1T3W4iCQtztgQK3pC4ggHrUdRLbRr2vbgHnqRyIHjeP9Q4S/2uJ806fX2p2ns0jDjh/YTZZm/q/0AeTjUEdyloCjspULH")
 
+(define %dbxfs-token-base64
+  "hQIMA7NiANSDITKgAQ//QPzNZW0oatd2gmt0Zfb7ZMJ1WDmaQMtcfxsFTZlfRgA3n5Fbgxah8x6jR33nOFIeG6jjdOUyXmQuYhRXdaV7feRjCwFBxuVdcE1yXzQ0yhyRoV3he9AKrKE80wAoc8plq+1Sj1j67wOuXy1wo3COU9O1G76QTcqCVjxVUP+NBIUO7FdjMMn77HL5ZTmJkDGgu3vCMB5Eb38kAm10y4Na5+SG5zgBXSDJ1y+i32olQ+wDZ5RukJGZpgnoPrzr3OdRFLEaR0A7VZxulQko26/5utFWsr/qmPDxJk9eQTbSW/iRiUM/tVp5oy7/PAEZOYhg9yYwUEP6Gy7yxoTaR3CQQY7TDdVCZ38+TNSSrHg2ZjQKYcU9oT3PPjbN7owYFktnanlnAozlZNea766p9NNQeGmQmWLjrDRQKfQ1ezDq5Akgsnv7tj9GwNkZXLEZfR1jL4rIJlLg8Q3oLDr3nh654s4V4lrPvmFNXwLMSytD7oSKr6z1IU8RojylA35MHPktBqyRKhHD0co33+2aPZboYywYAUpGbIH1MbT/tzawXjfnP5GhrXEEeMhYB6adP/C5ml4EHzNwyeLGqzo4w+z+NRxSZDsv4/uGRGGKgHGioVFmKGbbB1/9Z+lrhLq4ZURFsceD64p6eMScIi4uCSu4xYmVxaNHNTT4a/vITx/y+NPSdgGiQgWeBIvm7RaLs0em3O7xiMrkcroENSNQhhkfvHpzy9kvZNLLM06Dd9aePTZE7CorfSoQVmdkUymeQ09I9wJYosiznzMmROuYP6xwp48rPmysndj3z9QK6Rv1M52B+BGQxN1sAJLjWWxc9tafr33jJo4VMtA=")
+
 (define (decrypt-password encrypted-string)
   (program-file
     "magic-password-file"
@@ -228,6 +231,9 @@
 
 (define %newsboat-password
   (decrypt-password %newsboat-password-base64))
+
+(define %dbxfs-token
+  (decrypt-password %dbxfs-token-base64))
 
 ;;;
 
@@ -355,6 +361,12 @@
       "check-integrity=true\n"
       "max-connection-per-server=5\n"
       "http-accept-gzip=true\n")))
+
+(define %dbxfs-config
+  (mixed-text-file
+    "config.json"
+    ;; We would use guile-json but I don't want to pull in the dependency
+    "{\"access_token_command\": \"" %dbxfs-token "\", \"asked_send_error_reports\": true}"))
 
 (define %pbuilderrc
   (mixed-text-file
@@ -786,6 +798,7 @@ XTerm*metaSendsEscape: true\n"))
                (list #$(file-append (S "dbxfs") "/bin/dbxfs")
                      "--foreground"
                      "--verbose"
+                     "--config-file" #$%dbxfs-config
                      (string-append (getenv "HOME") "/Dropbox"))
                #:log-file (string-append #$%logdir "/dbxfs.log")))
     (stop #~(make-system-destructor
