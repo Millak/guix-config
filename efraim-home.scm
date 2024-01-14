@@ -237,6 +237,22 @@
 
 ;;;
 
+(define %signature
+  (plain-file
+    "dot-signature"
+    (string-append
+      ;; It shouldn't be this hard to always display correctly.
+      ;; C-V U 0 0 A 0 is a non-breaking space, like below:
+      ;; NB: C-V U 2 0 0 F is a right-to-left mark, C-V U 2 0 0 E is a left-to-right mark.
+      ;; https://en.wikipedia.org/wiki/Bidirectional_text
+      ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
+      "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
+      ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
+      "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
+      "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
+
+;;;
+
 (define %aria2-config
   (plain-file
     "aria2.conf"
@@ -565,20 +581,6 @@ include /run/current-system/profile/share/nano/*.nanorc\n"))
       "altscreen on\n"
       "termcapinfo xterm* ti@:te@\n"
       "hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'\n")))
-
-(define %signature
-  (plain-file
-    "dot-signature"
-    (string-append
-      ;; It shouldn't be this hard to always display correctly.
-      ;; C-V U 0 0 A 0 is a non-breaking space, like below:
-      ;; NB: C-V U 2 0 0 F is a right-to-left mark, C-V U 2 0 0 E is a left-to-right mark.
-      ;; https://en.wikipedia.org/wiki/Bidirectional_text
-      ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
-      "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
-      ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
-      "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
-      "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
 
 (define %streamlink-config
   (mixed-text-file
