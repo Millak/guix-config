@@ -211,7 +211,9 @@
            (service sddm-service-type
                     (sddm-configuration
                       (theme "guix-simplyblack-sddm")
-                      (display-server "wayland")))
+                      ;; This is failing since the update to sddm-0.20.0
+                      ;(display-server "wayland")
+                      ))
 
            (remove (lambda (service)
                      (let ((type (service-kind service)))
