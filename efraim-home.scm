@@ -199,14 +199,14 @@
 
 ;; generate with echo foo | gpg --encrypt -r 0xgpgkey | base64
 
+(define %dbxfs-token-base64
+  "hQIMA7NiANSDITKgAQ//QPzNZW0oatd2gmt0Zfb7ZMJ1WDmaQMtcfxsFTZlfRgA3n5Fbgxah8x6jR33nOFIeG6jjdOUyXmQuYhRXdaV7feRjCwFBxuVdcE1yXzQ0yhyRoV3he9AKrKE80wAoc8plq+1Sj1j67wOuXy1wo3COU9O1G76QTcqCVjxVUP+NBIUO7FdjMMn77HL5ZTmJkDGgu3vCMB5Eb38kAm10y4Na5+SG5zgBXSDJ1y+i32olQ+wDZ5RukJGZpgnoPrzr3OdRFLEaR0A7VZxulQko26/5utFWsr/qmPDxJk9eQTbSW/iRiUM/tVp5oy7/PAEZOYhg9yYwUEP6Gy7yxoTaR3CQQY7TDdVCZ38+TNSSrHg2ZjQKYcU9oT3PPjbN7owYFktnanlnAozlZNea766p9NNQeGmQmWLjrDRQKfQ1ezDq5Akgsnv7tj9GwNkZXLEZfR1jL4rIJlLg8Q3oLDr3nh654s4V4lrPvmFNXwLMSytD7oSKr6z1IU8RojylA35MHPktBqyRKhHD0co33+2aPZboYywYAUpGbIH1MbT/tzawXjfnP5GhrXEEeMhYB6adP/C5ml4EHzNwyeLGqzo4w+z+NRxSZDsv4/uGRGGKgHGioVFmKGbbB1/9Z+lrhLq4ZURFsceD64p6eMScIi4uCSu4xYmVxaNHNTT4a/vITx/y+NPSdgGiQgWeBIvm7RaLs0em3O7xiMrkcroENSNQhhkfvHpzy9kvZNLLM06Dd9aePTZE7CorfSoQVmdkUymeQ09I9wJYosiznzMmROuYP6xwp48rPmysndj3z9QK6Rv1M52B+BGQxN1sAJLjWWxc9tafr33jJo4VMtA=")
+
 (define %email-password-base64
   "hQIMA7NiANSDITKgAQ//cCXlvhNge4cA2zg/ZQFZhbBMYJJXWi1YdEMWc+8tJVDJHNqJDZOct3igmfILo6bVAQywXn3E7zgiNiPiqIIqMWDSwhIuTzdw3hNZEQmiaikpeLGIphLtPkKAH3maMMVWxQquDvYYuXdbYLiww/0POtbOeqcjfo+GRY5LQpsjOrX7pzwvxh5VQJFEUQ9GvdVwRJP9JOHxLSgrzhg0HzHVdnZQzrMpIykfG3qoUsQzgQxgnH1R0lhj7F4vffyWdPiArVV+33rVtW9+GDPO1VlUG2B6mWsjt/LPX3No/dByilmLapGYhFtJiRKaEWOJE/S4ApsAnAli4wLwe/YM1dLv5WOWFKn9XEQRBwB+QM56xL7FZIA5sWUQXVICPxnDrSGKXXQkQJSBGtGadAMwuGTgb3sSNVGc0s65MKZ2BGgol6BjxFqNBwO2+g5oGzKJTmo6vGHcEn3JpKPop0QX76MfCCyA8vujPD03ejVk/0G+mkGY8x4Vnb5zXG7OwEax6p6U+Tu/127/FJ+BRbxPxtqpGP/6jHeqjl9jNl/tVibNjhsxpeLzFkMzL3WU0nD3cnB8ZYgdC78f+sZ773Uzo87pFi5gKzh7cfULUxkiHeBO1HY+KH6bm/qxEj9Sjt3kbkhXmjnjMDOg9AI+izXupfIs+EVT02p0z6qr1QHGHCWPvSrSUgHmO71SpZcMkBs6X95lNsanMeHXNYg9EAm6zSZqrQQ9z8AcufAOWxoXS5hmaIMtef+zqKn3oQ0qvWtYXvpswlVuQgqxeZS/ndoTjnUUJj/Ngq4=")
 
 (define %newsboat-password-base64
   "hQIMA7NiANSDITKgAQ//RJqPOSSxwnLeabuPpWWcirIZpYM1K4U0qRXwE/BSQCO3ZdIBC2Kbk9xCG8dD+kd9NtEbqItbb+ZOz+JCAM3/r5a3mEkXwaEsKRhs3in+7i/EBsmUGidaf7m37g8VZDXGzBMn0KSKtnT9r7vVE9F8goAkWAyD5VewuPS5YIm80nzHrppC2GTYc3Al+wG6OseloyWgh4nQQaeCcv7e2I1H+fkZHAZRTZiqsoMiA4913kcL1cebExPUa8KpzE+0ZsHUZbRYhaPULKXdplTZRxXHSRQaJI/gzTm9tpCrjE7trZABXmiQAATZvgAp+n0Wvm2kF6QUy684fqETiVibEXBV2gKAibbD+ldTIUk7X1VQJdFfVtXeAmrxQKsxXqNZ1D7bjnbhpRFA81TvwH1Ka0QXB1Ga7TK/RHSB8AzSYFSoSroms+qzs36BniRKJt+jtgrTAwWtbG2iaYzvAxsZfPJTpUt6iavyB20tjNqINiIXEwPf1GGbFOt34l+FCnuLr2PeW1mVwno0zSMc+fE5El0gbMrBJ4wJAZoYFhyw7KpppRm8AS5RvbKHx1wS5pTz3Nn901hOXenJQ2As/NmOqK9QByqOzF4UWx/htVNQlDtJr/nJEapGAqO+xZ2Hg2wv9TV39whrigT9xy7UhM2AsmuiBxxMD7JOexREEg3vuTu5pOjSdAFu1HTG87upUby/J8X64ULbGWWDPQzbALnSf1NAd+n6cW62HN6cUJOuKGM3M3q1T3W4iCQtztgQK3pC4ggHrUdRLbRr2vbgHnqRyIHjeP9Q4S/2uJ806fX2p2ns0jDjh/YTZZm/q/0AeTjUEdyloCjspULH")
-
-(define %dbxfs-token-base64
-  "hQIMA7NiANSDITKgAQ//QPzNZW0oatd2gmt0Zfb7ZMJ1WDmaQMtcfxsFTZlfRgA3n5Fbgxah8x6jR33nOFIeG6jjdOUyXmQuYhRXdaV7feRjCwFBxuVdcE1yXzQ0yhyRoV3he9AKrKE80wAoc8plq+1Sj1j67wOuXy1wo3COU9O1G76QTcqCVjxVUP+NBIUO7FdjMMn77HL5ZTmJkDGgu3vCMB5Eb38kAm10y4Na5+SG5zgBXSDJ1y+i32olQ+wDZ5RukJGZpgnoPrzr3OdRFLEaR0A7VZxulQko26/5utFWsr/qmPDxJk9eQTbSW/iRiUM/tVp5oy7/PAEZOYhg9yYwUEP6Gy7yxoTaR3CQQY7TDdVCZ38+TNSSrHg2ZjQKYcU9oT3PPjbN7owYFktnanlnAozlZNea766p9NNQeGmQmWLjrDRQKfQ1ezDq5Akgsnv7tj9GwNkZXLEZfR1jL4rIJlLg8Q3oLDr3nh654s4V4lrPvmFNXwLMSytD7oSKr6z1IU8RojylA35MHPktBqyRKhHD0co33+2aPZboYywYAUpGbIH1MbT/tzawXjfnP5GhrXEEeMhYB6adP/C5ml4EHzNwyeLGqzo4w+z+NRxSZDsv4/uGRGGKgHGioVFmKGbbB1/9Z+lrhLq4ZURFsceD64p6eMScIi4uCSu4xYmVxaNHNTT4a/vITx/y+NPSdgGiQgWeBIvm7RaLs0em3O7xiMrkcroENSNQhhkfvHpzy9kvZNLLM06Dd9aePTZE7CorfSoQVmdkUymeQ09I9wJYosiznzMmROuYP6xwp48rPmysndj3z9QK6Rv1M52B+BGQxN1sAJLjWWxc9tafr33jJo4VMtA=")
 
 (define (decrypt-password encrypted-string)
   (program-file
@@ -226,82 +226,24 @@
                           "--quiet"
                           "--decrypt"))))))))
 
+(define %dbxfs-token
+  (decrypt-password %dbxfs-token-base64))
+
 (define %email-password
   (decrypt-password %email-password-base64))
 
 (define %newsboat-password
   (decrypt-password %newsboat-password-base64))
 
-(define %dbxfs-token
-  (decrypt-password %dbxfs-token-base64))
-
 ;;;
 
-(define %mpv-conf
+(define %aria2-config
   (plain-file
-    "mpv.conf"
+    "aria2.conf"
     (string-append
-      "no-audio-display\n"
-      ;; Upscaling from 720 causes fewer dropped frames.
-      "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n"
-      "gpu-context=wayland\n")))
-
-(define %screenrc
-  (plain-file
-    "dot-screenrc"
-    (string-append
-      "startup_message off\n"
-      "term screen-256color\n"
-      "defscrollback 50000\n"
-      "altscreen on\n"
-      "termcapinfo xterm* ti@:te@\n"
-      "hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'\n")))
-
-(define %wcalcrc
-  (plain-file
-    "dot-wcalcrc"
-    (string-append
-      "color=yes\n")))
-
-(define %wgetrc
-  (plain-file
-    "dot-wgetrc"
-    (string-append
-      "continue=yes\n")))
-
-(define %wgetpaste.conf
-  (plain-file
-    "dot-wgetpaste-conf"
-    (string-append
-      "DEFAULT_NICK=efraim\n"
-      "DEFAULT_EXPIRATION=1month\n")))
-
-;; This clears the defaults, do not use
-(define %lesskey
-  (plain-file
-    "lesskey"
-    (string-append
-      "#env\n"
-      "LESS = --ignore-case --mouse --use-color --RAW-CONTROL-CHARS\n")))
-
-(define %mailcap
-  (mixed-text-file
-    "dot-mailcap"
-    "text/html; " (S "links") "/bin/links -dump %s; nametemplate=%s.html; copiousoutput\n"))
-
-(define %signature
-  (plain-file
-    "dot-signature"
-    (string-append
-      ;; It shouldn't be this hard to always display correctly.
-      ;; C-V U 0 0 A 0 is a non-breaking space, like below:
-      ;; NB: C-V U 2 0 0 F is a right-to-left mark, C-V U 2 0 0 E is a left-to-right mark.
-      ;; https://en.wikipedia.org/wiki/Bidirectional_text
-      ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
-      "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
-      ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
-      "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
-      "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
+      "check-integrity=true\n"
+      "max-connection-per-server=5\n"
+      "http-accept-gzip=true\n")))
 
 (define %curlrc
   (plain-file
@@ -321,119 +263,48 @@
       "rdiff -u\n"
       "release -d\n")))
 
-(define %hgrc
-  (mixed-text-file
-    "hgrc"
-    "[defaults]\n"
-    "log = -v\n"
-    "[diff]\n"
-    "git = True\n"
-    "[email]\n"
-    "method = " (file-append (S "msmtp") "/bin/msmtp") "\n"
-    "[ui]\n"
-    "username = Efraim Flashner <efraim@flashner.co.il\n"
-    "verbose = True\n"
-    "merge = meld\n"
-    "[web]\n"
-    "cacerts = " (or (getenv "GIT_SSL_CAINFO") (getenv "SSL_CERT_FILE")) " \n"))
+(define %gdbinit
+  (plain-file "gdbinit" "\
+# Tell GDB where to look for separate debugging files.
+guile
+(use-modules (gdb))
+(execute (string-append \"set debug-file-directory \"
+                        (string-join
+                          (filter file-exists?
+                                  (append
+                                    (if (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
+                                      (list (getenv \"GDB_DEBUG_FILE_DIRECTORY\"))
+                                      '())
+                                    (list \"~/.guix-home/profile/lib/debug\"
+                                          \"~/.guix-profile/lib/debug\"
+                                          \"/run/current-system/profile/lib/debug\")))
+                          \":\")))
+end
 
-(define %ytdl-config
-  (plain-file
-    "youtube-dl-config"
-    (string-append
-      "--prefer-free-formats\n"
-      "--sub-lang 'en,he'\n"
-      "--sub-format \"srt/best\"\n"
-      "--convert-subtitles srt\n"
-      "--restrict-filenames\n")))
+# Authorize extensions found in the store, such as the
+# pretty-printers of libstdc++.
+set auto-load safe-path /gnu/store/*/lib\n"))
 
-(define %streamlink-config
-  (mixed-text-file
-    "streamlink-config"
-    "verbose\n"
-    "default-stream 720p,720p60,1080p,best\n"
-    "player=mpv\n"))
+(define %guile
+  (plain-file "dot-guile"
+              "(cond ((false-if-exception (resolve-interface '(ice-9 readline)))
+       =>
+       (lambda (module)
+         ;; Enable completion and input history at the REPL.
+         ((module-ref module 'activate-readline))))
+      (else
+       (display \"Consider installing the 'guile-readline' package for
+convenient interactive line editing and input history.\\n\\n\")))
 
-(define %aria2-config
-  (plain-file
-    "aria2.conf"
-    (string-append
-      "check-integrity=true\n"
-      "max-connection-per-server=5\n"
-      "http-accept-gzip=true\n")))
-
-(define %dbxfs-config
-  (mixed-text-file
-    "config.json"
-    ;; We would use guile-json but I don't want to pull in the dependency
-    "{\"access_token_command\": \"" %dbxfs-token "\", \"asked_send_error_reports\": true}"))
-
-(define %pbuilderrc
-  (mixed-text-file
-    "dot-pbuilderrc"
-    ;; https://wiki.debian.org/PbuilderTricks#How_to_build_for_different_distributions
-    "DISTRIBUTION=${DIST:-sid}\n"
-    ;; Replace with (%current-system) -> (%debian-system) ?
-    "ARCHITECTURE=${ARCH:-$(" (S "dpkg") "/bin/dpkg --print-architecture)}\n"
-    "BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
-    "DEBOOTSTRAPOPTS=( '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
-
-    "if [ $ARCHITECTURE == powerpc -o $ARCHITECTURE == riscv64 ]; then\n"
-    ;; These are only needed when it's a ports architecture.
-    "    MIRRORSITE=http://deb.debian.org/debian-ports\n"
-    ;; These two courtesy of John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-    ;; deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main
-    ;; contrib and non-free arch:all packages (i.e. firmware)
-    ;; deb [arch=all] http://deb.debian.org/debian/ sid contrib non-free
-    ;; This one caused `pbuilder create` failures on real ppc hardware.
-    ;"    OTHERMIRROR=\"deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main\"\n"
-    "    DEBOOTSTRAPOPTS=( '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
-    "    EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
-    "fi\n"
-
-    "APTCACHE=/var/cache/apt/archives\n"    ; Same as apt itself.
-    "HOOKDIR=" (or (getenv "XDG_CONFIG_HOME")
-                   (string-append (getenv "HOME") "/.config")) "/pbuilder/hooks\n"
-    "CCACHEDIR=/var/cache/pbuilder/ccache\n"
-    "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
-
-(define %gpg.conf
-  (mixed-text-file
-    "gpg.conf"
-    "default-key CA3D8351\n"
-    "display-charset utf-8\n"
-    "with-fingerprint\n"
-    "keyserver hkp://pgp.net.nz\n"
-    "keyserver-options auto-key-retrieve\n"
-    "keyserver-options include-revoked\n"
-    ;"photo-viewer \"" #$(file-append (S "imv") "/bin/imv $i\"\n"
-    "keyid-format 0xlong\n"
-    ;; For use with 'gpg --locate-external-key'
-    "auto-key-locate wkd cert pka dane hkp://pgpkeys.eu hkp://pgp.surf.nl hkp://pgp.net.nz hkp://keyserver.ubuntu.com hkp://the.earth.li hkp://keys.openpgp.org\n"
-    ;; Some of these settings can be seen in g10/keygen.c in gnupg's source code, in keygen_set_std_prefs
-    ;; or in the output of `gpg --version`
-    ;"personal-cipher-preferences AES256 AES192 AES\n"               ; Drop 3DES
-    ;"personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"     ; Drop SHA1
-    ;"cert-digest-algo SHA512\n"
-    ;"default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
-    ;"default-cache-ttl 900\n"
-    "trust-model tofu+pgp\n"))
-
-;; todo: build gnupg with configure-flags --disable-gpg-idea --disable-gpg-cast5 --disable-gpg-md5 --disable-gpg-rmd160
-
-(define %gpg-agent.conf
-  (mixed-text-file
-    "gpg-agent.conf"
-    #~(if #$guix-system?
-        (if #$headless?
-          (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
-          (string-append "pinentry-program " #$(file-append (S "pinentry-qt") "/bin/pinentry-qt") "\n"))
-        "pinentry-program /usr/bin/pinentry\n")
-    ;"enable-ssh-support\n"
-    ;"allow-emacs-pinentry\n"
-    ;; This forces signing each commit individually.
-    ;"ignore-cache-for-signing\n"
-    ))
+      (unless (getenv \"INSIDE_EMACS\")
+        (cond ((false-if-exception (resolve-interface '(ice-9 colorized)))
+               =>
+               (lambda (module)
+                 ;; Enable completion and input history at the REPL.
+                 ((module-ref module 'activate-colorized))))
+              (else
+               (display \"Consider installing the 'guile-colorized' package
+for a colorful Guile experience.\\n\\n\"))))\n"))
 
 (define %git-config
   (mixed-text-file
@@ -522,6 +393,87 @@
       "GRTAGS\n"
       "GTAGS\n")))
 
+(define %gpg.conf
+  (mixed-text-file
+    "gpg.conf"
+    "default-key CA3D8351\n"
+    "display-charset utf-8\n"
+    "with-fingerprint\n"
+    "keyserver hkp://pgp.net.nz\n"
+    "keyserver-options auto-key-retrieve\n"
+    "keyserver-options include-revoked\n"
+    ;"photo-viewer \"" #$(file-append (S "imv") "/bin/imv $i\"\n"
+    "keyid-format 0xlong\n"
+    ;; For use with 'gpg --locate-external-key'
+    "auto-key-locate wkd cert pka dane hkp://pgpkeys.eu hkp://pgp.surf.nl hkp://pgp.net.nz hkp://keyserver.ubuntu.com hkp://the.earth.li hkp://keys.openpgp.org\n"
+    ;; Some of these settings can be seen in g10/keygen.c in gnupg's source code, in keygen_set_std_prefs
+    ;; or in the output of `gpg --version`
+    ;"personal-cipher-preferences AES256 AES192 AES\n"               ; Drop 3DES
+    ;"personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"     ; Drop SHA1
+    ;"cert-digest-algo SHA512\n"
+    ;"default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
+    ;"default-cache-ttl 900\n"
+    "trust-model tofu+pgp\n"))
+
+;; todo: build gnupg with configure-flags --disable-gpg-idea --disable-gpg-cast5 --disable-gpg-md5 --disable-gpg-rmd160
+
+(define %gpg-agent.conf
+  (mixed-text-file
+    "gpg-agent.conf"
+    #~(if #$guix-system?
+        (if #$headless?
+          (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
+          (string-append "pinentry-program " #$(file-append (S "pinentry-qt") "/bin/pinentry-qt") "\n"))
+        "pinentry-program /usr/bin/pinentry\n")
+    ;"enable-ssh-support\n"
+    ;"allow-emacs-pinentry\n"
+    ;; This forces signing each commit individually.
+    ;"ignore-cache-for-signing\n"
+    ))
+
+(define %hgrc
+  (mixed-text-file
+    "hgrc"
+    "[defaults]\n"
+    "log = -v\n"
+    "[diff]\n"
+    "git = True\n"
+    "[email]\n"
+    "method = " (file-append (S "msmtp") "/bin/msmtp") "\n"
+    "[ui]\n"
+    "username = Efraim Flashner <efraim@flashner.co.il\n"
+    "verbose = True\n"
+    "merge = meld\n"
+    "[web]\n"
+    "cacerts = " (or (getenv "GIT_SSL_CAINFO") (getenv "SSL_CERT_FILE")) " \n"))
+
+;; This clears the defaults, do not use
+(define %lesskey
+  (plain-file
+    "lesskey"
+    (string-append
+      "#env\n"
+      "LESS = --ignore-case --mouse --use-color --RAW-CONTROL-CHARS\n")))
+
+(define %mailcap
+  (mixed-text-file
+    "dot-mailcap"
+    "text/html; " (S "links") "/bin/links -dump %s; nametemplate=%s.html; copiousoutput\n"))
+
+(define %mpv-conf
+  (plain-file
+    "mpv.conf"
+    (string-append
+      "no-audio-display\n"
+      ;; Upscaling from 720 causes fewer dropped frames.
+      "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n"
+      "gpu-context=wayland\n")))
+
+(define %nanorc
+  (plain-file "nanorc" "\
+# Include all the syntax highlighting modules.
+include /run/current-system/profile/share/nano/*.nanorc\n"))
+
 (define %newsboat-config
   (mixed-text-file
     "newsboat-config"
@@ -547,6 +499,35 @@
     ;"proxy-type socks5\n"
     ;"use-proxy yes\n"
     "download-timeout 90\n"))
+
+(define %pbuilderrc
+  (mixed-text-file
+    "dot-pbuilderrc"
+    ;; https://wiki.debian.org/PbuilderTricks#How_to_build_for_different_distributions
+    "DISTRIBUTION=${DIST:-sid}\n"
+    ;; Replace with (%current-system) -> (%debian-system) ?
+    "ARCHITECTURE=${ARCH:-$(" (S "dpkg") "/bin/dpkg --print-architecture)}\n"
+    "BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
+    "DEBOOTSTRAPOPTS=( '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
+
+    "if [ $ARCHITECTURE == powerpc -o $ARCHITECTURE == riscv64 ]; then\n"
+    ;; These are only needed when it's a ports architecture.
+    "    MIRRORSITE=http://deb.debian.org/debian-ports\n"
+    ;; These two courtesy of John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+    ;; deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main
+    ;; contrib and non-free arch:all packages (i.e. firmware)
+    ;; deb [arch=all] http://deb.debian.org/debian/ sid contrib non-free
+    ;; This one caused `pbuilder create` failures on real ppc hardware.
+    ;"    OTHERMIRROR=\"deb http://incoming.ports.debian.org/buildd/ unstable main|deb http://deb.debian.org/debian-ports unreleased main\"\n"
+    "    DEBOOTSTRAPOPTS=( '--keyring' '" (S "debian-ports-archive-keyring") "/share/keyrings/debian-ports-archive-keyring.gpg' '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
+    "    EXTRAPACKAGES=\"debian-ports-archive-keyring\"\n"
+    "fi\n"
+
+    "APTCACHE=/var/cache/apt/archives\n"    ; Same as apt itself.
+    "HOOKDIR=" (or (getenv "XDG_CONFIG_HOME")
+                   (string-append (getenv "HOME") "/.config")) "/pbuilder/hooks\n"
+    "CCACHEDIR=/var/cache/pbuilder/ccache\n"
+    "BINNMU_MAINTAINER=\"Efraim Flashner <efraim@flashner.co.il>\"\n"))
 
 (define %qutebrowser-config-py
   (mixed-text-file
@@ -574,60 +555,79 @@
     "c.fileselect.single_file.command = ['alacritty', '--command', 'vifm', '{}']\n"
     "c.spellcheck.languages = [\"en-US\", \"he-IL\"]\n"))
 
-(define %gdbinit
-  (plain-file "gdbinit" "\
-# Tell GDB where to look for separate debugging files.
-guile
-(use-modules (gdb))
-(execute (string-append \"set debug-file-directory \"
-                        (string-join
-                          (filter file-exists?
-                                  (append
-                                    (if (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
-                                      (list (getenv \"GDB_DEBUG_FILE_DIRECTORY\"))
-                                      '())
-                                    (list \"~/.guix-home/profile/lib/debug\"
-                                          \"~/.guix-profile/lib/debug\"
-                                          \"/run/current-system/profile/lib/debug\")))
-                          \":\")))
-end
+(define %screenrc
+  (plain-file
+    "dot-screenrc"
+    (string-append
+      "startup_message off\n"
+      "term screen-256color\n"
+      "defscrollback 50000\n"
+      "altscreen on\n"
+      "termcapinfo xterm* ti@:te@\n"
+      "hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'\n")))
 
-# Authorize extensions found in the store, such as the
-# pretty-printers of libstdc++.
-set auto-load safe-path /gnu/store/*/lib\n"))
+(define %signature
+  (plain-file
+    "dot-signature"
+    (string-append
+      ;; It shouldn't be this hard to always display correctly.
+      ;; C-V U 0 0 A 0 is a non-breaking space, like below:
+      ;; NB: C-V U 2 0 0 F is a right-to-left mark, C-V U 2 0 0 E is a left-to-right mark.
+      ;; https://en.wikipedia.org/wiki/Bidirectional_text
+      ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
+      "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
+      ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
+      "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
+      "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
 
-(define %guile
-  (plain-file "dot-guile"
-              "(cond ((false-if-exception (resolve-interface '(ice-9 readline)))
-       =>
-       (lambda (module)
-         ;; Enable completion and input history at the REPL.
-         ((module-ref module 'activate-readline))))
-      (else
-       (display \"Consider installing the 'guile-readline' package for
-convenient interactive line editing and input history.\\n\\n\")))
+(define %streamlink-config
+  (mixed-text-file
+    "streamlink-config"
+    "verbose\n"
+    "default-stream 720p,720p60,1080p,best\n"
+    "player=mpv\n"))
 
-      (unless (getenv \"INSIDE_EMACS\")
-        (cond ((false-if-exception (resolve-interface '(ice-9 colorized)))
-               =>
-               (lambda (module)
-                 ;; Enable completion and input history at the REPL.
-                 ((module-ref module 'activate-colorized))))
-              (else
-               (display \"Consider installing the 'guile-colorized' package
-for a colorful Guile experience.\\n\\n\"))))\n"))
+(define %wcalcrc
+  (plain-file
+    "dot-wcalcrc"
+    (string-append
+      "color=yes\n")))
 
-(define %nanorc
-  (plain-file "nanorc" "\
-# Include all the syntax highlighting modules.
-include /run/current-system/profile/share/nano/*.nanorc\n"))
+(define %wgetrc
+  (plain-file
+    "dot-wgetrc"
+    (string-append
+      "continue=yes\n")))
+
+(define %wgetpaste.conf
+  (plain-file
+    "dot-wgetpaste-conf"
+    (string-append
+      "DEFAULT_NICK=efraim\n"
+      "DEFAULT_EXPIRATION=1month\n")))
 
 (define %xdefaults
   (plain-file "dot-Xdefaults" "\
 XTerm*utf8: always
 XTerm*metaSendsEscape: true\n"))
 
+(define %ytdl-config
+  (plain-file
+    "youtube-dl-config"
+    (string-append
+      "--prefer-free-formats\n"
+      "--sub-lang 'en,he'\n"
+      "--sub-format \"srt/best\"\n"
+      "--convert-subtitles srt\n"
+      "--restrict-filenames\n")))
+
 ;;;
+
+(define %dbxfs-config-json
+  (mixed-text-file
+    "config-json"
+    ;; We would use guile-json but I don't want to pull in the dependency
+    "{\"access_token_command\": \"" %dbxfs-token "\", \"asked_send_error_reports\": true}"))
 
 (define %mbsyncrc
   (mixed-text-file
@@ -798,7 +798,7 @@ XTerm*metaSendsEscape: true\n"))
                (list #$(file-append (S "dbxfs") "/bin/dbxfs")
                      "--foreground"
                      "--verbose"
-                     "--config-file" #$%dbxfs-config
+                     "--config-file" #$%dbxfs-config-json
                      (string-append (getenv "HOME") "/Dropbox"))
                #:log-file (string-append #$%logdir "/dbxfs.log")))
     (stop #~(make-system-destructor
