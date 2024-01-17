@@ -7,6 +7,7 @@
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
+  #:use-module (gnu system shadow)
   #:use-module (gnu services)
   #:use-module (gnu packages)
   #:use-module (guix packages)
@@ -279,49 +280,6 @@
       "rdiff -u\n"
       "release -d\n")))
 
-(define %gdbinit
-  (plain-file "gdbinit" "\
-# Tell GDB where to look for separate debugging files.
-guile
-(use-modules (gdb))
-(execute (string-append \"set debug-file-directory \"
-                        (string-join
-                          (filter file-exists?
-                                  (append
-                                    (if (getenv \"GDB_DEBUG_FILE_DIRECTORY\")
-                                      (list (getenv \"GDB_DEBUG_FILE_DIRECTORY\"))
-                                      '())
-                                    (list \"~/.guix-home/profile/lib/debug\"
-                                          \"~/.guix-profile/lib/debug\"
-                                          \"/run/current-system/profile/lib/debug\")))
-                          \":\")))
-end
-
-# Authorize extensions found in the store, such as the
-# pretty-printers of libstdc++.
-set auto-load safe-path /gnu/store/*/lib\n"))
-
-(define %guile
-  (plain-file "dot-guile"
-              "(cond ((false-if-exception (resolve-interface '(ice-9 readline)))
-       =>
-       (lambda (module)
-         ;; Enable completion and input history at the REPL.
-         ((module-ref module 'activate-readline))))
-      (else
-       (display \"Consider installing the 'guile-readline' package for
-convenient interactive line editing and input history.\\n\\n\")))
-
-      (unless (getenv \"INSIDE_EMACS\")
-        (cond ((false-if-exception (resolve-interface '(ice-9 colorized)))
-               =>
-               (lambda (module)
-                 ;; Enable completion and input history at the REPL.
-                 ((module-ref module 'activate-colorized))))
-              (else
-               (display \"Consider installing the 'guile-colorized' package
-for a colorful Guile experience.\\n\\n\"))))\n"))
-
 (define %git-config
   (mixed-text-file
     "git-config"
@@ -485,11 +443,6 @@ for a colorful Guile experience.\\n\\n\"))))\n"))
       "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n"
       "gpu-context=wayland\n")))
 
-(define %nanorc
-  (plain-file "nanorc" "\
-# Include all the syntax highlighting modules.
-include /run/current-system/profile/share/nano/*.nanorc\n"))
-
 (define %newsboat-config
   (mixed-text-file
     "newsboat-config"
@@ -607,11 +560,6 @@ include /run/current-system/profile/share/nano/*.nanorc\n"))
     (string-append
       "DEFAULT_NICK=efraim\n"
       "DEFAULT_EXPIRATION=1month\n")))
-
-(define %xdefaults
-  (plain-file "dot-Xdefaults" "\
-XTerm*utf8: always
-XTerm*metaSendsEscape: true\n"))
 
 (define %ytdl-config
   (plain-file
@@ -1051,7 +999,7 @@ fi")))))
          `((".cvsrc" ,%cvsrc)
            (".gnupg/gpg.conf" ,%gpg.conf)
            (".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
-           (".guile" ,%guile)
+           (".guile" ,%default-dotguile)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
            (".mbsyncrc" ,%mbsyncrc)
@@ -1063,7 +1011,7 @@ fi")))))
            (".wcalcrc" ,%wcalcrc)
            (".wgetrc" ,%wgetrc)
            (".wgetpaste.conf" ,%wgetpaste.conf)
-           (".Xdefaults" ,%xdefaults)
+           (".Xdefaults" ,%default-xdefaults)
 
            (".local/share/qutebrowser/pdfjs"
             ,(file-append (S "pdfjs-legacy") "/share/pdfjs"))
@@ -1079,7 +1027,7 @@ fi")))))
             ,(file-append (S "widevine")
                           "/share/chromium/latest-component-updated-widevine-cdm"))
            ("curlrc" ,%curlrc)
-           ("gdb/gdbinit" ,%gdbinit)
+           ("gdb/gdbinit" ,%default-gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
@@ -1097,7 +1045,7 @@ fi")))))
                           "/lib/main.lua"))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("newsboat/config" ,%newsboat-config)
-           ("nano/nanorc" ,%nanorc)
+           ("nano/nanorc" ,%default-nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
            ("youtube-dl/config" ,%ytdl-config)
@@ -1129,7 +1077,7 @@ fi")))))
          `((".cvsrc" ,%cvsrc)
            ;(".gnupg/gpg.conf" ,%gpg.conf)
            ;(".gnupg/gpg-agent.conf" ,%gpg-agent.conf)
-           (".guile" ,%guile)
+           (".guile" ,%default-dotguile)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
            (".mbsyncrc" ,%mbsyncrc)
@@ -1140,7 +1088,7 @@ fi")))))
            (".wcalcrc" ,%wcalcrc)
            (".wgetrc" ,%wgetrc)
            (".wgetpaste.conf" ,%wgetpaste.conf)
-           ;(".Xdefaults" ,%xdefaults)
+           ;(".Xdefaults" ,%default-xdefaults)
 
            (".local/share/qutebrowser/pdfjs"
             ,(file-append (S "pdfjs") "/share/pdfjs"))
@@ -1152,7 +1100,7 @@ fi")))))
         (service home-xdg-configuration-files-service-type
          `(("aria2/aria2.conf" ,%aria2-config)
            ("curlrc" ,%curlrc)
-           ("gdb/gdbinit" ,%gdbinit)
+           ("gdb/gdbinit" ,%default-gdbinit)
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
@@ -1170,7 +1118,7 @@ fi")))))
            ("mpv/mpv.conf" ,%mpv-conf)
            ("newsboat/config" ,%newsboat-config)
            ;; Specific to Guix System
-           ;("nano/nanorc" ,%nanorc)
+           ;("nano/nanorc" ,%default-nanorc)
            ;("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
            ("youtube-dl/config" ,%ytdl-config)
