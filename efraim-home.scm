@@ -1035,7 +1035,7 @@ fi")))))
            ;; This clears the defaults, do not use.
            ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
-            ,(file-append (S "my-mpv-mpris")
+            ,(file-append (S "mpv-mpris")
                           "/lib/mpris.so"))
            ("mpv/scripts/sponsorblock_minimal/main.lua"
             ,(file-append (S "mpv-sponsorblock-minimal")
@@ -1107,7 +1107,7 @@ fi")))))
            ;; This clears the defaults, do not use.
            ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
-            ,(file-append (S "my-mpv-mpris")
+            ,(file-append (S "mpv-mpris")
                           "/lib/mpris.so"))
            ("mpv/scripts/sponsorblock_minimal/main.lua"
             ,(file-append (S "mpv-sponsorblock-minimal")
