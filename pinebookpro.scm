@@ -214,7 +214,8 @@
                        (sddm-configuration
                          (inherit config)
                          (theme "guix-simplyblack-sddm")
-                         (display-server "wayland")
+                         ;; This is failing since the update to sddm-0.20.0
+                         ;(display-server "wayland")
                          (numlock "off")))
 
                      (guix-service-type
