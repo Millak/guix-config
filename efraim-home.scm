@@ -964,7 +964,7 @@ fi")))))
         ;; Can't seem to get (if headless?) to work
         #;(service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
-                   (gnupg
+                   (pinentry-program
                      (if headless?
                        (file-append (S "pinentry-tty") "/bin/pinentry-tty")
                        (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
