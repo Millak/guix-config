@@ -289,6 +289,8 @@
     "    signingkey = 0xCA3D8351\n"
     "[am]\n"
     "    threeWay = true\n"
+    "[commit]\n"
+    "    verbose = true\n"
     "[core]\n"
     "    editor = vim\n"
     "[checkout]\n"
@@ -348,6 +350,10 @@
     "    gpgSign = true\n"
     "[transfer]\n"
     "    fsckObjects = true\n"
+    ;"[url \"git@github.com\"]\n"
+    ;"    pushInsteadOf = https://github.com/\n"
+    ;"[url \"git@gitlab.com\"]\n"
+    ;"    pushInsteadOf = https://gitlab.com/\n"
     "[web]\n"
     #~(if (or #$headless? #$work-machine?)
         (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
