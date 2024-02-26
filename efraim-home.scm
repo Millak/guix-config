@@ -183,18 +183,18 @@
        (filter (lambda (pkg)
                  (supported-package?
                    (specification->package+output pkg)))
-              (append
-                (if (or headless?
-                        (not guix-system?))
-                  %headless
-                  %GUI-only)
-                (if work-machine?
-                  %work-applications
-                  %not-for-work)
-                (if guix-system?
-                  '()
-                  %guix-system-apps)
-                %cli-apps))))
+               (append
+                 (if (or headless?
+                         (not guix-system?))
+                   %headless
+                   %GUI-only)
+                 (if work-machine?
+                   %work-applications
+                   %not-for-work)
+                 (if guix-system?
+                   '()
+                   %guix-system-apps)
+                 %cli-apps))))
 
 ;;; Helper programs.
 
