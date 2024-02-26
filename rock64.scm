@@ -5,7 +5,7 @@
              (gnu system locale)
              (config filesystems)
              (config guix-daemon)
-             (services tailscale)
+             (dfsg contrib services tailscale)
              (srfi srfi-1))
 (use-service-modules
   linux
