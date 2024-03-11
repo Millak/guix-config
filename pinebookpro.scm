@@ -2,6 +2,8 @@
 (use-modules
   (gnu)
   (gnu system locale)
+  (nongnu packages firmware)
+  (nongnu packages linux)
   (config filesystems)
   (config guix-daemon)
   (dfsg contrib services tailscale)
@@ -67,8 +69,8 @@
 
   (initrd-modules '())
   ;(initrd-modules (list "nvme"))        ; By default none.
-  (kernel linux-libre-arm64-generic)
-  (firmware (list ath9k-htc-firmware))
+  (kernel linux-arm64-generic)
+  (firmware (list ap6256-firmware ath9k-htc-firmware))
 
   (file-systems
     (cons* (file-system
