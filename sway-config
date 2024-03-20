@@ -253,3 +253,5 @@ for_window [title = "IceCat — Sharing Indicator"] floating enable
 
 include /run/current-system/profile/etc/sway/config.d/*
 include /etc/sway/config.d/*
+
+exec dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway

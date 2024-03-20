@@ -1,10 +1,12 @@
 (define-module (efraim-home)
   #:use-module (gnu home)
   #:use-module (gnu home services)
+  #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services mail)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services shepherd)
+  #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
   #:use-module (gnu system shadow)
@@ -967,6 +969,8 @@ fi")))))
 
                        %kdeconnect-user-service))))
 
+        (service home-dbus-service-type)
+
         ;; Can't seem to get (if headless?) to work
         #;(service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
@@ -998,6 +1002,8 @@ fi")))))
         (service home-parcimonie-service-type
           (home-parcimonie-configuration
             (refresh-guix-keyrings? #t)))
+
+        (service home-pipewire-service-type)
 
         (service home-syncthing-service-type)
 
