@@ -14,8 +14,10 @@
   ssh)
 (use-package-modules
   linux)
+(export %pine64-system)
 
-(operating-system
+(define %pine64-system
+ (operating-system
   (host-name "pine64")
   (timezone "Asia/Jerusalem")
   (locale "en_IL.utf8")
@@ -53,6 +55,11 @@
                 (supplementary-groups '("wheel"
                                         "netdev" "kvm")))
                %base-user-accounts))
+
+  (sudoers-file
+    (plain-file "sudoers"
+                (string-append (plain-file-content %sudoers-specification)
+                               (format #f "efraim ALL = NOPASSWD: ALL~%"))))
 
   ;; This is where we specify system-wide packages.
   (packages
@@ -116,7 +123,9 @@
                           %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
-  (name-service-switch %mdns-host-lookup-nss))
+  (name-service-switch %mdns-host-lookup-nss)))
+
+%pine64-system
 
 ;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --system=aarch64-linux
 ;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --target=aarch64-linux-gnu
