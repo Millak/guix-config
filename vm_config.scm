@@ -7,8 +7,6 @@
   linux
   networking
   ssh)
-(use-package-modules
-  certs)
 
 ;; One file, no guix-config checkout.
 (define %efraim-ssh-key
@@ -65,8 +63,7 @@
                %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
-  (packages (cons* nss-certs         ;for HTTPS access
-                   %base-packages))
+  (packages (cons* %base-packages))
 
   (services
     (cons* (service openssh-service-type

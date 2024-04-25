@@ -15,7 +15,6 @@
   ssh
   xorg)
 (use-package-modules
-  certs
   cups
   fonts
   gnome
@@ -73,8 +72,7 @@
                 %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
-  (packages (cons* nss-certs         ;for HTTPS access
-                   gvfs              ;for user mounts
+  (packages (cons* gvfs              ;for user mounts
                    pavucontrol
                    btrfs-progs compsize
                    font-terminus font-dejavu

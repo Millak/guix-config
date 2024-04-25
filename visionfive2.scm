@@ -14,7 +14,6 @@
   networking
   ssh)
 (use-package-modules
-  certs
   connman
   linux)
 
@@ -184,7 +183,6 @@
     (append
       (map specification->package
            (list
-             "nss-certs"
              ;"screen"
              ))
       %base-packages))

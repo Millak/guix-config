@@ -13,7 +13,6 @@
   networking
   ssh)
 (use-package-modules
-  certs
   linux)
 
 ;; OS starts from here:
@@ -62,8 +61,7 @@
                 %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
-  (packages (cons* nss-certs         ;for HTTPS access
-                   ;btrfs-progs compsize
+  (packages (cons* ;btrfs-progs compsize
                    %base-packages))
 
   (services

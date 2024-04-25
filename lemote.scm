@@ -11,7 +11,6 @@
   networking
   ssh)
 (use-package-modules
-  certs
   connman
   linux)
 
@@ -55,8 +54,7 @@
                %base-user-accounts))
 
   ;; This is where we specify system-wide packages.
-  (packages (cons* nss-certs         ;for HTTPS access
-                   ;btrfs-progs compsize
+  (packages (cons* ;btrfs-progs compsize
                    %base-packages))
 
   (services (cons* ;(service agetty-service-type

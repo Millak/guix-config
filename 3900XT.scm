@@ -91,7 +91,6 @@
                  "git-minimal"          ; git-upload-pack
                  "guix-backgrounds"
                  "guix-simplyblack-sddm-theme"  ; sddm theme
-                 "nss-certs"
                  "virt-manager"
                  "xterm"
 

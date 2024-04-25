@@ -14,7 +14,6 @@
   networking
   ssh)
 (use-package-modules
-  certs
   connman
   linux)
 
@@ -265,7 +264,6 @@ bootcmd=run bootcmd_distro"))
     (append
       (map specification->package
            (list
-             "nss-certs"
              ;"screen"
              ))
       %base-packages))

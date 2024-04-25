@@ -67,7 +67,7 @@
       (map specification->package
            (list ;"btrfs-progs"
                  ;"compsize"
-                 "nss-certs"))
+                 ))
       %base-packages))
 
   (services

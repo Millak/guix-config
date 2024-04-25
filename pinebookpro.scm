@@ -103,7 +103,6 @@
            (list "compsize"
                  "guix-backgrounds"
                  "guix-simplyblack-sddm-theme"  ; sddm theme
-                 "nss-certs"
                  "xterm"
 
                  "sway"
