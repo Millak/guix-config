@@ -70,7 +70,7 @@
   (initrd-modules '())
   ;(initrd-modules (list "nvme"))        ; By default none.
   (kernel linux-arm64-generic)
-  (firmware (list ap6256-firmware ath9k-htc-firmware))
+  (firmware (list ap6256-firmware ath9k-htc-ar9271-firmware))
 
   (file-systems
     (cons* (file-system
