@@ -274,7 +274,7 @@
   (plain-file
     "dot-cvsrc"
     (string-append
-      "CVS configuration file from the pkgsrc guide\n"
+      "# CVS configuration file from the pkgsrc guide\n"
       "cvs -q -z2\n"
       "checkout -P\n"
       "update -dP\n"
