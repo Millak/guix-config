@@ -141,6 +141,7 @@
 
            (service dnsmasq-service-type
                     (dnsmasq-configuration
+                      (listen-addresses '("127.0.0.1" "::1"))
                       (no-resolv? #t)
                       (servers '("192.168.1.1"
                                  ;; Tailscale
@@ -191,6 +192,7 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
+                      (qemu (@ (gnu packages virtualization) qemu-7.2.4))
                       ;; We get some architectures for free.
                       (platforms
                         (fold delete %qemu-platforms
