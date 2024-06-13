@@ -577,6 +577,19 @@
       "DEFAULT_NICK=efraim\n"
       "DEFAULT_EXPIRATION=1month\n")))
 
+(define %xdg-user-dirs
+  (plain-file
+    "user-dirs-dirs"
+    (string-append
+      "XDG_DESKTOP_DIR=\"$HOME/Desktop\"\n"
+      "XDG_DOCUMENTS_DIR=\"$HOME/Documents\"\n"
+      "XDG_DOWNLOAD_DIR=\"$HOME/Downloads\"\n"
+      "XDG_MUSIC_DIR=\"$HOME/Music\"\n"
+      "XDG_PICTURES_DIR=\"$HOME/Pictures\"\n"
+      "XDG_PUBLICSHARE_DIR=\"$HOME/Public\"\n"
+      "XDG_TEMPLATES_DIR=\"$HOME/Templates\"\n"
+      "XDG_VIDEOS_DIR=\"$HOME/Videos\"\n")))
+
 (define %ytdl-config
   (plain-file
     "youtube-dl-config"
@@ -1068,6 +1081,7 @@ fi")))))
            ("nano/nanorc" ,%default-nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
+           ("user-dirs.dirs" ,%xdg-user-dirs)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
 
@@ -1141,6 +1155,7 @@ fi")))))
            ;("nano/nanorc" ,%default-nanorc)
            ;("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
+           ("user-dirs.dirs" ,%xdg-user-dirs)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
 
