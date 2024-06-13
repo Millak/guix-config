@@ -178,10 +178,18 @@
 
 ;;
 
-(define S specification->package)
+(define with-transformations
+  (options->transformation
+    (if (string=? (gethostname) "3900XT")
+        `((tune . "znver2"))
+        `())))
+
+(define (S pkg)
+  (with-transformations (specification->package pkg)))
 
 (define package-list
-  (map (compose list specification->package+output)
+  (map with-transformations
+    (map specification->package+output
        (filter (lambda (pkg)
                  (supported-package?
                    (specification->package+output pkg)))
@@ -196,7 +204,7 @@
                  (if guix-system?
                    '()
                    %guix-system-apps)
-                 %cli-apps))))
+                 %cli-apps)))))
 
 ;;; Helper programs.
 
