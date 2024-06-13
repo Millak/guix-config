@@ -2,6 +2,7 @@
 (use-modules
   (gnu)
   (gnu system locale)
+  (guix transformations)
   (config filesystems)
   (config guix-daemon)
   (dfsg contrib services tailscale)
@@ -20,13 +21,20 @@
 (use-package-modules
   cups)
 
+(define with-transformations
+  (options->transformation
+    `((tune . "znver2"))))
+
+(define (S pkg)
+  (with-transformations (specification->package pkg)))
+
 (define %sway-keyboard-function-keys
   (mixed-text-file
     "keyboard-function-keys"
     ;; bindsym XF86Tools
-    "bindsym XF86AudioLowerVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
-    "bindsym XF86AudioRaiseVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
-    "bindsym XF86AudioMute exec " (specification->package "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
+    "bindsym XF86AudioLowerVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
+    "bindsym XF86AudioRaiseVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
+    "bindsym XF86AudioMute exec " (S "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
     ;; bindsym XF86AudioPrev
     ;; bindsym XF86AudioNext
     ;; bindsym XF86AudioPlay
@@ -84,30 +92,31 @@
                       "audio" "video")))
                 %base-user-accounts))
   (packages
-    (append
-      (map specification->package
-           (list "adwaita-icon-theme"
-                 "compsize"
-                 "git-minimal"          ; git-upload-pack
-                 "guix-backgrounds"
-                 "guix-simplyblack-sddm-theme"  ; sddm theme
-                 "virt-manager"
-                 "xterm"
+   (map with-transformations
+        (append
+          (map specification->package
+               (list "adwaita-icon-theme"
+                     "compsize"
+                     "git-minimal"                  ; git-upload-pack
+                     "guix-backgrounds"
+                     "guix-simplyblack-sddm-theme"  ; sddm theme
+                     "virt-manager"
+                     "xterm"
 
-                 "sway"
-                 "swayidle"
-                 "swaylock"
+                     "sway"
+                     "swayidle"
+                     "swaylock"
 
-                 "dunst"
-                 "i3status"
-                 "tofi"))
-      %base-packages))
+                     "dunst"
+                     "i3status"
+                     "tofi"))
+          %base-packages)))
 
   (services
     (cons* (service screen-locker-service-type
                     (screen-locker-configuration
                       (name "swaylock")
-                      (program (file-append (specification->package "swaylock")
+                      (program (file-append (S "swaylock")
                                               "/bin/swaylock"))
                       (allow-empty-password? #f)
                       (using-pam? #t)
@@ -125,8 +134,7 @@
 
            (extra-special-file
              "/usr/share/zoneinfo/tzdata.zi"
-             (file-append (specification->package "tzdata")
-                          "/share/zoneinfo/tzdata.zi"))
+             (file-append (S "tzdata") "/share/zoneinfo/tzdata.zi"))
 
            (service openssh-service-type
                     (openssh-configuration
@@ -137,7 +145,7 @@
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (specification->package "tailscale-bin-amd64"))))
+                      (package (S "tailscale-bin-amd64"))))
 
            (service dnsmasq-service-type
                     (dnsmasq-configuration
@@ -192,7 +200,7 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (qemu (@ (gnu packages virtualization) qemu-7.2.4))
+                      (qemu (S "qemu@7.2.4"))
                       ;; We get some architectures for free.
                       (platforms
                         (fold delete %qemu-platforms
