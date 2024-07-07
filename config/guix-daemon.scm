@@ -10,6 +10,7 @@
   (list "https://bordeaux.guix.gnu.org"
         "https://ci.guix.gnu.org"
         ;"https://4zwzi66wwdaalbhgnix55ea3ab4pvvw66ll2ow53kjub6se4q2bclcyd.onion"
+        "https://cuirass.genenetwork.org"
         "http://guix.genenetwork.org"
         "https://guix.tobias.gr"))
 
@@ -26,6 +27,7 @@
         (local-file "../Extras/starfive-vision2.pub")
         (local-file "../Extras/ci.guix.gnu.org.pub")
         (local-file "../Extras/bordeaux.guix.gnu.org.pub")
+        (local-file "../Extras/cuirass.genenetwork.org.pub")
         (local-file "../Extras/guix.genenetwork.org.pub")
         (local-file "../Extras/guix.tobias.gr.pub")))
 
