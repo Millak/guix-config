@@ -180,9 +180,13 @@
 
 (define with-transformations
   (options->transformation
-    (if (string=? (gethostname) "3900XT")
-        `((tune . "znver2"))
-        `())))
+    (cond
+      ((string=? (gethostname) "3900XT")
+       `((tune . "znver2")))
+      ((target-aarch64?)
+       ;; ZINK tests fail on aarch64.
+       `((without-tests . "gtk")))
+      (#t `()))))
 
 (define (S pkg)
   (with-transformations (specification->package pkg)))
