@@ -309,9 +309,9 @@
     "    editor = vim\n"
     "[checkout]\n"
     "    workers = 0\n"             ; Faster on SSDs
-    #~(if #$work-machine?
+    (if work-machine?
         ""
-        (string-append "[commit]\n"
+        #~(string-append "[commit]\n"
                        "    gpgSign = true\n"))
     "[diff]\n"
     "    algorithm = patience\n"
@@ -330,9 +330,9 @@
     "    useAutoBase = whenAble\n"
     "    signatureFile = " %signature "\n"
     "    thread = shallow\n"
-    #~(if #$work-machine?
+    (if work-machine?
         ""
-        (string-append "[gpg]\n"
+        #~(string-append "[gpg]\n"
                        "    program = " #$(file-append (S "gnupg") "/bin/gpg") "\n"))
     "[imap]\n"
     "    folder = Drafts\n"
@@ -347,11 +347,11 @@
     ;"   gpgSign = if-asked\n"
     "[sendemail]\n"
     "    smtpEncryption = ssl\n"
-    #~(if #$work-machine?
-        (string-append "    smtpServer = flashner.co.il\n"
+    (if work-machine?
+        #~(string-append "    smtpServer = flashner.co.il\n"
                        ;"    smtpsslcertpath = \"\"\n"
         )
-        (string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtp") "\n"))
+        #~(string-append "    smtpServer = " #$(file-append (S "msmtp") "/bin/msmtp") "\n"))
     "    smtpUser = efraim\n"
     "    smtpPort = 465\n"
     "    supresscc = self\n"
@@ -369,8 +369,8 @@
     ;"[url \"git@gitlab.com\"]\n"
     ;"    pushInsteadOf = https://gitlab.com/\n"
     "[web]\n"
-    #~(if (or #$headless? #$work-machine?)
-        (string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
+    (if (or headless? work-machine?)
+        #~(string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
         "    browser = \"qutebrowser --target window\"\n")))
 
 (define %git-ignore
