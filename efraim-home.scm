@@ -414,10 +414,10 @@
 (define %gpg-agent.conf
   (mixed-text-file
     "gpg-agent.conf"
-    #~(if #$guix-system?
-        (if #$headless?
-          (string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
-          (string-append "pinentry-program " #$(file-append (S "pinentry-qt") "/bin/pinentry-qt") "\n"))
+    (if guix-system?
+        (if headless?
+            #~(string-append "pinentry-program " #$(file-append (S "pinentry-tty") "/bin/pinentry-tty") "\n")
+            #~(string-append "pinentry-program " #$(file-append (S "pinentry-qt") "/bin/pinentry-qt") "\n"))
         "pinentry-program /usr/bin/pinentry\n")
     ;"enable-ssh-support\n"
     ;"allow-emacs-pinentry\n"
