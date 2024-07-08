@@ -145,10 +145,10 @@
         "hunspell-dict-he-il"
         "links"
         "myrepos"
-        ;; Currently zig only builds on x86_64-linux but
-        ;; is only gated to 64-bit architectures.
+        ;; Currently zig only has substitutes for some architectures.
         ;(if (supported-package? (specification->package "ncdu@2"))
-        (if (equal? "x86_64-linux" (%current-system))
+        (if (or (target-x86-64?)
+                (target-aarch64?))
           "ncdu@2"
           "ncdu@1")
         "nmap"
