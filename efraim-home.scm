@@ -184,8 +184,10 @@
       ((string=? (gethostname) "3900XT")
        `((tune . "znver2")))
       ((target-aarch64?)
-       ;; ZINK tests fail on aarch64.
-       `((without-tests . "gtk")))
+       `(;; ZINK tests fail on aarch64.
+         (without-tests . "gtk")
+         ;; go-1.16 FTBFS on aarch64.
+         (with-input . "go@1.16=gccgo@11")))
       (#t `()))))
 
 (define (S pkg)
