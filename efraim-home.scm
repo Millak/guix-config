@@ -103,7 +103,7 @@
 
 (define %not-for-work
   (list "btrfs-progs"
-        "ffmpeg"
+        "ffmpeg@6"  ; Newer version conflicts with mpv
         "git-annex"
         "isync"
         ;"keybase"
@@ -212,7 +212,7 @@
 
 ;;; Helper programs.
 
-;; generate with echo foo | gpg --encrypt -r 0xgpgkey | base64
+;; generate with echo foo | gpg --encrypt --recipient 0xgpgkey | base64
 
 (define %dbxfs-token-base64
   "hQIMA7NiANSDITKgAQ//QPzNZW0oatd2gmt0Zfb7ZMJ1WDmaQMtcfxsFTZlfRgA3n5Fbgxah8x6jR33nOFIeG6jjdOUyXmQuYhRXdaV7feRjCwFBxuVdcE1yXzQ0yhyRoV3he9AKrKE80wAoc8plq+1Sj1j67wOuXy1wo3COU9O1G76QTcqCVjxVUP+NBIUO7FdjMMn77HL5ZTmJkDGgu3vCMB5Eb38kAm10y4Na5+SG5zgBXSDJ1y+i32olQ+wDZ5RukJGZpgnoPrzr3OdRFLEaR0A7VZxulQko26/5utFWsr/qmPDxJk9eQTbSW/iRiUM/tVp5oy7/PAEZOYhg9yYwUEP6Gy7yxoTaR3CQQY7TDdVCZ38+TNSSrHg2ZjQKYcU9oT3PPjbN7owYFktnanlnAozlZNea766p9NNQeGmQmWLjrDRQKfQ1ezDq5Akgsnv7tj9GwNkZXLEZfR1jL4rIJlLg8Q3oLDr3nh654s4V4lrPvmFNXwLMSytD7oSKr6z1IU8RojylA35MHPktBqyRKhHD0co33+2aPZboYywYAUpGbIH1MbT/tzawXjfnP5GhrXEEeMhYB6adP/C5ml4EHzNwyeLGqzo4w+z+NRxSZDsv4/uGRGGKgHGioVFmKGbbB1/9Z+lrhLq4ZURFsceD64p6eMScIi4uCSu4xYmVxaNHNTT4a/vITx/y+NPSdgGiQgWeBIvm7RaLs0em3O7xiMrkcroENSNQhhkfvHpzy9kvZNLLM06Dd9aePTZE7CorfSoQVmdkUymeQ09I9wJYosiznzMmROuYP6xwp48rPmysndj3z9QK6Rv1M52B+BGQxN1sAJLjWWxc9tafr33jJo4VMtA=")
@@ -325,6 +325,7 @@
     "[fetch]\n"
     "    prune = true\n"
     "    parallel = 0\n"
+    "    writeCommitGraph = true\n"
     "[format]\n"
     "    coverLetter = auto\n"
     "    useAutoBase = whenAble\n"
