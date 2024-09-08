@@ -554,7 +554,7 @@
       "defscrollback 50000\n"
       "altscreen on\n"
       "termcapinfo xterm* ti@:te@\n"
-      "hardstatus alwayslastline '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'\n")))
+      "hardstatus alwayslastline '%{= 2}[ %{2}%H %{2}][ %{= 7}%?%-Lw%?%{= 1}%n%f %t%?%{= 1}(%u)%?%{= 7}%+Lw%= %{= 2}][%{4}%Y-%m-%d %{7}%c %{2}]'\n")))
 
 (define %streamlink-config
   (mixed-text-file
