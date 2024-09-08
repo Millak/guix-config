@@ -248,6 +248,7 @@ for_window [app_id="imv"] floating enable
 for_window [app_id="mpv"] floating enable
 for_window [title = "KeePassXC -  Access Request"] floating enable
 for_window [title = "IceCat — Sharing Indicator"] floating enable
+for_window [title = "Join Channel"] floating enable
 #for_window [window_type="dialog"] floating enable
 #for_window [window_role="dialog"] floating enable
 
