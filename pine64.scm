@@ -127,5 +127,5 @@
 
 %pine64-system
 
-;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --system=aarch64-linux
-;; guix system image --image-type=pine64-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --target=aarch64-linux-gnu
+;; guix system image --image-type=pine64-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --system=aarch64-linux
+;; guix system image --image-type=pine64-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --target=aarch64-linux-gnu
