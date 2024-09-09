@@ -7,8 +7,8 @@
         (operating-system %pine64-system)
         (environment managed-host-environment-type)
         (configuration (machine-ssh-configuration
-                         ;(host-name "pine64")
-                         (host-name "192.168.1.161")
+                         ;(host-name "pine64.unicorn-typhon.ts.net")
+                         (host-name "192.168.68.63")
                          (system "aarch64-linux")
                          (port 22)
                          (user "efraim")
