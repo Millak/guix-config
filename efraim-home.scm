@@ -255,26 +255,31 @@
 (define %signature
   (plain-file
     "dot-signature"
-    (string-append
+    (string-join
       ;; It shouldn't be this hard to always display correctly.
       ;; C-V U 0 0 A 0 is a non-breaking space, like below:
       ;; NB: C-V U 2 0 0 F is a right-to-left mark, C-V U 2 0 0 E is a left-to-right mark.
       ;; https://en.wikipedia.org/wiki/Bidirectional_text
-      ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים\n"
-      "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא\n"
-      ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר\n"
-      "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351\n"
-      "Confidentiality cannot be guaranteed on emails sent or received unencrypted\n")))
+      (list
+        ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים"
+        "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא"
+        ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר"
+        "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351"
+        "Confidentiality cannot be guaranteed on emails sent or received unencrypted")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 ;;;
 
 (define %aria2-config
   (plain-file
     "aria2.conf"
-    (string-append
-      "check-integrity=true\n"
-      "max-connection-per-server=5\n"
-      "http-accept-gzip=true\n")))
+    (string-join
+      (list "check-integrity=true"
+            "max-connection-per-server=5"
+            "http-accept-gzip=true")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %curlrc
   (plain-file
@@ -285,14 +290,16 @@
 (define %cvsrc
   (plain-file
     "dot-cvsrc"
-    (string-append
-      "# CVS configuration file from the pkgsrc guide\n"
-      "cvs -q -z2\n"
-      "checkout -P\n"
-      "update -dP\n"
-      "diff -upN\n"
-      "rdiff -u\n"
-      "release -d\n")))
+    (string-join
+      (list "# CVS configuration file from the pkgsrc guide"
+            "cvs -q -z2"
+            "checkout -P"
+            "update -dP"
+            "diff -upN"
+            "rdiff -u"
+            "release -d")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %git-config
   (mixed-text-file
@@ -377,16 +384,18 @@
 (define %git-ignore
   (plain-file
     "git-ignore"
-    (string-append
-      "*~\n"
-      ".exrc\n"
-      "*sw?\n"
-      ".vimrc\n"
-      ".envrc\n"
-      "gtags.files\n"
-      "GPATH\n"
-      "GRTAGS\n"
-      "GTAGS\n")))
+    (string-join
+      (list "*~"
+            "*sw?"
+            ".exrc"
+            ".vimrc"
+            ".envrc"
+            "gtags.files"
+            "GPATH"
+            "GRTAGS"
+            "GTAGS")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %gpg.conf
   (mixed-text-file
@@ -458,11 +467,13 @@
 (define %mpv-conf
   (plain-file
     "mpv.conf"
-    (string-append
-      "no-audio-display\n"
-      ;; Upscaling from 720 causes fewer dropped frames.
-      "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'\n"
-      "gpu-context=wayland\n")))
+    (string-join
+      (list "no-audio-display"
+            ;; Upscaling from 720 causes fewer dropped frames.
+            "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'"
+            "gpu-context=wayland")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %newsboat-config
   (mixed-text-file
@@ -548,13 +559,15 @@
 (define %screenrc
   (plain-file
     "dot-screenrc"
-    (string-append
-      "startup_message off\n"
-      "term screen-256color\n"
-      "defscrollback 50000\n"
-      "altscreen on\n"
-      "termcapinfo xterm* ti@:te@\n"
-      "hardstatus alwayslastline '%{= 2}[ %{= 2}%H %{= 2}][ %{= 7}%?%-Lw%?%{= 1}%n%f %t%?%{= 1}(%u)%?%{= 7}%+Lw%= %{= 2}][ %{= 4}%Y-%m-%d %{= 7}%c %{= 2}]'\n")))
+    (string-join
+      (list "startup_message off"
+            "term screen-256color"
+            "defscrollback 50000"
+            "altscreen on"
+            "termcapinfo xterm* ti@:te@"
+            "hardstatus alwayslastline '%{= 2}[ %{= 2}%H %{= 2}][ %{= 7}%?%-Lw%?%{= 1}%n%f %t%?%{= 1}(%u)%?%{= 7}%+Lw%= %{= 2}][ %{= 4}%Y-%m-%d %{= 7}%c %{= 2}]'")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %streamlink-config
   (mixed-text-file
@@ -585,25 +598,29 @@
 (define %xdg-user-dirs
   (plain-file
     "user-dirs-dirs"
-    (string-append
-      "XDG_DESKTOP_DIR=\"$HOME/Desktop\"\n"
-      "XDG_DOCUMENTS_DIR=\"$HOME/Documents\"\n"
-      "XDG_DOWNLOAD_DIR=\"$HOME/Downloads\"\n"
-      "XDG_MUSIC_DIR=\"$HOME/Music\"\n"
-      "XDG_PICTURES_DIR=\"$HOME/Pictures\"\n"
-      "XDG_PUBLICSHARE_DIR=\"$HOME/Public\"\n"
-      "XDG_TEMPLATES_DIR=\"$HOME/Templates\"\n"
-      "XDG_VIDEOS_DIR=\"$HOME/Videos\"\n")))
+    (string-join
+      (list "XDG_DESKTOP_DIR=\"$HOME/Desktop\""
+            "XDG_DOCUMENTS_DIR=\"$HOME/Documents\""
+            "XDG_DOWNLOAD_DIR=\"$HOME/Downloads\""
+            "XDG_MUSIC_DIR=\"$HOME/Music\""
+            "XDG_PICTURES_DIR=\"$HOME/Pictures\""
+            "XDG_PUBLICSHARE_DIR=\"$HOME/Public\""
+            "XDG_TEMPLATES_DIR=\"$HOME/Templates\""
+            "XDG_VIDEOS_DIR=\"$HOME/Videos\"")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %ytdl-config
   (plain-file
     "youtube-dl-config"
-    (string-append
-      "--prefer-free-formats\n"
-      "--sub-lang 'en,he'\n"
-      "--sub-format \"srt/best\"\n"
-      "--convert-subtitles srt\n"
-      "--restrict-filenames\n")))
+    (string-join
+      (list "--prefer-free-formats"
+            "--sub-lang 'en,he'"
+            "--sub-format \"srt/best\""
+            "--convert-subtitles srt"
+            "--restrict-filenames")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 ;;;
 
