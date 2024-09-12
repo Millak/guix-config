@@ -13,6 +13,7 @@
   networking
   ssh)
 (use-package-modules
+  gcc
   linux)
 
 ;; OS starts from here:
@@ -91,6 +92,13 @@
 
            (service earlyoom-service-type
                     (earlyoom-configuration
+                      (earlyoom
+                        (package
+                          (inherit earlyoom)
+                          (native-inputs
+                           ;; Almost any version of go will work here.
+                           (modify-inputs (package-native-inputs earlyoom)
+                                          (replace "go" gccgo-12)))))
                       (prefer-regexp "(cc1(plus)?|.rustc-real|Web Content)")
                       (avoid-regexp "guile")))
 
