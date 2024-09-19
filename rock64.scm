@@ -14,8 +14,10 @@
   ssh)
 (use-package-modules
   linux)
+(export %rock64-system)
 
-(operating-system
+(define %rock64-system
+ (operating-system
   (host-name "rock64")
   (timezone "Asia/Jerusalem")
   (locale "en_IL.utf8")
@@ -38,7 +40,7 @@
 
   (file-systems
     (cons* (file-system
-             (device (file-system-label "root"))
+             (device (file-system-label "Guix_image"))
              (mount-point "/")
              (type "ext4"))
            %guix-temproots
@@ -54,13 +56,18 @@
                                         "netdev" "kvm")))
                %base-user-accounts))
 
+  (sudoers-file
+    (plain-file "sudoers"
+                (string-append (plain-file-content %sudoers-specification)
+                               (format #f "efraim ALL = NOPASSWD: ALL~%"))))
+
   ;; This is where we specify system-wide packages.
   (packages
     (append
       (map specification->package
            (list ;"btrfs-progs"
                  ;"compsize"
-                 ))
+                 "screen"))
       %base-packages))
 
   (services
@@ -76,6 +83,8 @@
 
            (service mcron-service-type
                     (mcron-configuration
+                      ;; Image created with ext4
+                      ;(jobs (%btrfs-maintenance-jobs "/"))
                       (jobs
                         (list
                           #~(job '(next-hour '(3))
@@ -87,8 +96,7 @@
 
            (service ntp-service-type)
 
-           (service connman-service-type)
-           (service wpa-supplicant-service-type)
+           (service dhcp-client-service-type)
 
            (service earlyoom-service-type
                     (earlyoom-configuration
@@ -115,7 +123,9 @@
                           %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
-  (name-service-switch %mdns-host-lookup-nss))
+  (name-service-switch %mdns-host-lookup-nss)))
+
+%rock64-system
 
 ;; guix system image --image-type=rock64-raw -L ~/workspace/my-guix -L ~/workspace/guix-config/ ~/workspace/guix-config/rock64.scm --system=aarch64-linux
 ;; guix system image --image-type=rock64-raw -L ~/workspace/my-guix -L ~/workspace/guix-config/ ~/workspace/guix-config/rock64.scm --target=aarch64-linux-gnu
