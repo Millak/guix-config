@@ -22,6 +22,7 @@
 
 ;; To create a temporary directory in XDG_RUNTIME_DIR
 ;; (mkdtemp (string-append (getenv "XDG_RUNTIME_DIR") "/XXXXXX"))
+;; from shell $(mktemp --directory --tmpdir=$XDG_RUNTIME_DIR)
 
 (define %logdir
   (string-append
@@ -86,7 +87,6 @@
         (if (supported-package? (specification->package "qutebrowser-with-adblock"))
           "qutebrowser-with-adblock"
           "qutebrowser")
-        "telegram-desktop"
         "tofi"
         "tuba"
         "wl-clipboard"
@@ -627,7 +627,7 @@
 (define %dbxfs-config-json
   (mixed-text-file
     "config-json"
-    ;; We would use guile-json but I don't want to pull in the dependency
+    ;; We would use guile-json but I don't want to pull in the dependency.
     "{\"access_token_command\": \"" %dbxfs-token "\", \"asked_send_error_reports\": true}"))
 
 (define %mbsyncrc
