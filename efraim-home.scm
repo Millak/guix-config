@@ -82,7 +82,7 @@
         "my-moreutils"
         "nheko"
         "pavucontrol"
-        "qtwayland@5"
+        "qtwayland-helper"
         "quasselclient"
         (if (supported-package? (specification->package "qutebrowser-with-adblock"))
           "qutebrowser-with-adblock"
