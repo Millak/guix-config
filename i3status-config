@@ -20,7 +20,7 @@ order += "cpu_temperature_0"
 order += "disk /tmp"
 order += "load"
 order += "memory"
-#order += "volume master"
+order += "volume master"
 order += "tztime local"
 
 wireless _first_ {
