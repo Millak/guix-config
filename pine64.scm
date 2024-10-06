@@ -65,9 +65,7 @@
   (packages
     (append
       (map specification->package
-           (list ;"btrfs-progs"
-                 ;"compsize"
-                 "screen"))
+           (list "screen"))
       %base-packages))
 
   (services
@@ -83,8 +81,6 @@
 
            (service mcron-service-type
                     (mcron-configuration
-                      ;; Image created with ext4
-                      ;(jobs (%btrfs-maintenance-jobs "/"))
                       (jobs
                         (list
                           #~(job '(next-hour '(3))
@@ -115,7 +111,7 @@
                config =>
                (guix-configuration
                  (inherit config)
-                 (substitute-urls %substitute-urls)
+                 (substitute-urls '())   ; Offload machine
                  (authorized-keys %authorized-keys)
                  (extra-options
                    (cons* "--cores=2"
@@ -129,3 +125,7 @@
 
 ;; guix system image --image-type=pine64-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --system=aarch64-linux
 ;; guix system image --image-type=pine64-raw -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ ~/workspace/guix-config/pine64.scm --target=aarch64-linux-gnu
+
+;; sudo cfdisk /dev/sdX to resize /dev/sdX1 to use the remaining space left at the end of the µSD card
+;; guix shell e2fsprogs -- sudo resize2fs /dev/sdX1
+;; guix shell e2fsck-static -- sudo -E e2fsck /dev/sdX1

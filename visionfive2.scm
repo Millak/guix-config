@@ -1,6 +1,5 @@
 (define-module (visionfive2))
 (use-modules (guix packages)
-             (guix utils)
              (gnu)
              (gnu bootloader u-boot)
              (gnu system locale)
@@ -15,11 +14,11 @@
   networking
   ssh)
 (use-package-modules
-  connman
   linux)
+(export %visionfive2-system)
 
-;; OS starts from here:
-(operating-system
+(define %visionfive2-system
+ (operating-system
   (inherit visionfive2-barebones-os)
   (host-name "visionfive2")
   (timezone "Asia/Jerusalem")
@@ -32,13 +31,14 @@
   (keyboard-layout
     (keyboard-layout "us" "altgr-intl"))
 
-  (bootloader (bootloader-configuration
-                (bootloader u-boot-starfive-visionfive2-bootloader)
-                (targets '("/dev/mmcblk0"))))   ; SD card/eMMC (SD priority) storage
+  (bootloader
+    (bootloader-configuration
+      (bootloader u-boot-starfive-visionfive2-bootloader)
+      (targets '("/dev/mmcblk0"))))     ; SD card/eMMC (SD priority) storage
 
-  (firmware '())
   ;(initrd-modules '())
   ;(kernel linux-libre-riscv64-generic)
+  (firmware '())
 
   (file-systems
     (cons* (file-system
@@ -50,7 +50,7 @@
 
   (users (cons (user-account
                 (name "efraim")
-                (comment "Efraim Flashner")
+                (comment "Efraim")
                 (group "users")
                 (home-directory "/home/efraim")
                 (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
@@ -94,7 +94,7 @@
 
            (service earlyoom-service-type
                     (earlyoom-configuration
-                      (prefer-regexp "(cc1(plus)?|.rustc-real|Web Content)")
+                      (prefer-regexp "(cc1(plus)?|.rustc-real|ghc|Web Content)")
                       (avoid-regexp "guile")))
 
            (service zram-device-service-type
@@ -112,10 +112,13 @@
                  (substitute-urls '())   ; Offload machine
                  (authorized-keys %authorized-keys)
                  (extra-options
-                   (cons* "--cache-failures" %extra-options)))))))
+                   (cons* "--cache-failures"
+                          %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
-  (name-service-switch %mdns-host-lookup-nss))
+  (name-service-switch %mdns-host-lookup-nss)))
+
+%visionfive2-system
 
 ;; guix system image --image-type=visionfive2-raw -L ~/workspace/my-guix -L ~/workspace/guix-config ~/workspace/guix-config/visionfive2.scm --system=riscv64-linux
 ;; guix system image --image-type=visionfive2-raw -L ~/workspace/my-guix -L ~/workspace/guix-config ~/workspace/guix-config/visionfive2.scm --target=riscv64-linux-gnu
