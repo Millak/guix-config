@@ -1064,7 +1064,6 @@ fi\n")))))
            (".guile" ,%default-dotguile)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
-           (".mbsyncrc" ,%mbsyncrc)
            ;; https://salsa.debian.org/med-team/parallel/-/blob/2f4412d851ea9f9c41667b5f6821cd1102bb107a/debian/patches/remove-overreaching-citation-request.patch
            (".parallel/will-cite" ,(plain-file "will-cite" ""))
            (".pbuilderrc" ,%pbuilderrc)
@@ -1093,6 +1092,7 @@ fi\n")))))
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
+           ("isyncrc" ,%mbsyncrc)
            ;("lagrange/fonts" "../../.guix-home/profile/share/fonts")
            ;; This clears the defaults, do not use.
            ; ("lesskey" ,%lesskey)
@@ -1143,7 +1143,6 @@ fi\n")))))
            (".guile" ,%default-dotguile)
            ;; Not sure about using this one.
            ; (".mailcap" ,%mailcap)
-           (".mbsyncrc" ,%mbsyncrc)
            (".parallel/will-cite" ,(plain-file "will-cite" ""))
            ;(".pbuilderrc" ,%pbuilderrc)
            (".screenrc" ,%screenrc)
@@ -1167,6 +1166,7 @@ fi\n")))))
            ("git/config" ,%git-config)
            ("git/ignore" ,%git-ignore)
            ("hg/hgrc" ,%hgrc)
+           ("isyncrc" ,%mbsyncrc)
            ;; This clears the defaults, do not use.
            ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
