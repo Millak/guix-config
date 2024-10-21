@@ -991,13 +991,20 @@
                    (bash-profile
                      (list
                        (mixed-text-file "bash-profile" "\
+# Run the given command via 'guix shell'
+function guix-run
+{
+    pkg_ver=\"$(set -o pipefail; guix locate \"$1\" | grep /bin/ | head -n1 | cut -f1)\"
+    pkg=\"$(echo $pkg_ver | cut -d@ -f1)\"
+    test -n \"$pkg\" && guix shell \"$pkg\" -- \"$@\"
+}
 unset SSH_AGENT_PID
 if [ \"${gnupg_SSH_AUTH_SOCK_by:-0}\" -ne $$ ]; then
     export SSH_AUTH_SOCK=\"$(" (S "gnupg") "/bin/gpgconf --list-dirs agent-ssh-socket)\"
 fi
 if [ -d ${XDG_DATA_HOME}/flatpak/exports/share ]; then
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${XDG_DATA_HOME}/flatpak/exports/share
-fi")))))
+fi\n")))))
 
         (service home-shepherd-service-type
                  (home-shepherd-configuration
