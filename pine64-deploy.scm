@@ -12,7 +12,7 @@
                          (system "aarch64-linux")
                          (port 22)
                          (user "efraim")
-                         (identity "/home/efraim/ssh/id_ecdsa")
+                         (identity "/home/efraim/.ssh/id_ecdsa")
                          (host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAhNEOFzg4QMgRzivcJwHQHhbVY0AAHwx9l+65wDMO6X")))))
 
 ;; For /etc/passwd
