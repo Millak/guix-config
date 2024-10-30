@@ -30,7 +30,7 @@
     ;; bindsym XF86Sleep
     "bindsym XF86MonBrightnessUp exec " (specification->package "brightnessctl") "/bin/brightnessctl set 5%+\n"
     "bindsym XF86MonBrightnessDown exec " (specification->package "brightnessctl") "/bin/brightnessctl set 5%-\n"
-    ;; Fn + F4 doesn't register as a key
+    ;; Fn + F3 doesn't register as a key
     "bindsym XF86AudioMute exec " (specification->package "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
     "bindsym XF86AudioLowerVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
     "bindsym XF86AudioRaiseVolume exec " (specification->package "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
