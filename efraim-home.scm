@@ -263,8 +263,8 @@
       ;; https://en.wikipedia.org/wiki/Bidirectional_text
       (list
         ;"Efraim Flashner   <efraim@flashner.co.il>   פלשנר אפרים"
-        "Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא"
-        ;"Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר"
+        ;"Efraim Flashner   <efraim@flashner.co.il>   רנשלפ םירפא"
+        "Efraim Flashner   <efraim@flashner.co.il>   אפרים פלשנר"
         "GPG key = A28B F40C 3E55 1372 662D  14F7 41AA E7DC CA3D 8351"
         "Confidentiality cannot be guaranteed on emails sent or received unencrypted")
       ;; End with a newline.
