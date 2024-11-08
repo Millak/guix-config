@@ -158,6 +158,7 @@
         "python-codespell"
         "qrencode"
         "rsync"
+        "shepherd-run"
         "screen"
         "tig"
         "torsocks"
