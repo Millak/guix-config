@@ -1076,7 +1076,7 @@ fi\n")))))
            (".Xdefaults" ,%default-xdefaults)
 
            (".local/share/qutebrowser/pdfjs"
-            ,(file-append (S "pdfjs-legacy") "/share/pdfjs"))
+            ,(file-append (S "pdfjs") "/share/pdfjs"))
            ;; Also files into the bin directory.
            ;("bin/GN_vpn_connect" ,%connect-to-UTHSC-VPN)
            ("bin/update-guix-keyring" ,%update-guix-gpg-keyring)
