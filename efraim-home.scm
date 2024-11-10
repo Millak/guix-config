@@ -784,7 +784,8 @@
                      " "))
         (swaylock . ,#~(string-join
                          (list
-                           #$(file-append (S "swaylock") "/bin/swaylock")
+                           ;; Use swaylock from the screen-locker-service-type
+                           "/run/current-system/profile/bin/swaylock"
                            "--daemonize"
                            "--indicator-radius" "85"
                            "--ring-color" "1a1a1a"
