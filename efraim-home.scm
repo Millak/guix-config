@@ -8,7 +8,9 @@
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
+  #:use-module (gnu home services sway)
   #:use-module (gnu home services syncthing)
+  #:use-module (gnu system keyboard)
   #:use-module (gnu system shadow)
   #:use-module (gnu services)
   #:use-module (gnu packages)
@@ -762,6 +764,107 @@
                                    "  ControlPath ${XDG_RUNTIME_DIR}/%r@%h-%p\n"
                                    "  ControlPersist 600\n")))))
 
+(define %home-sway-configuration
+  (sway-configuration
+    (variables
+      `(;,@((@ (srfi srfi-1) fold) delete %sway-default-variables
+        ;      '("term" "menu"))
+        (mod   . "Mod4")
+        (left  . "h")
+        (down  . "j")
+        (up    . "k")
+        (right . "l")
+        (term . ,(file-append (S "alacritty") "/bin/alacritty"))
+        (menu . ,#~(string-join
+                     (list #$(file-append (S "tofi") "/bin/tofi-drun")
+                           "|"
+                           #$(file-append (S "findutils") "/bin/xargs")
+                           #$(file-append (S "sway") "/bin/swaymsg")
+                           "exec" "--")
+                     " "))
+        (swaylock . ,#~(string-join
+                         (list
+                           #$(file-append (S "swaylock") "/bin/swaylock")
+                           "--daemonize"
+                           "--indicator-radius" "85"
+                           "--ring-color" "1a1a1a"
+                           "--key-hl-color" "ffb638"
+                           "--image"
+                           #$(file-append (S "guix-backgrounds")
+                                          "/share/backgrounds/guix/guix-checkered-16-9.svg"))
+                         " "))))
+    (keybindings
+     `(,@%sway-default-keybindings
+       ($mod+Shift+x . "exec $swaylock")
+       ($mod+Alt+$left . "workspace prev")
+       ($mod+Alt+$right . "workspace next")
+       ($mod+Alt+Left . "workspace prev")
+       ($mod+Alt+Right . "workspace next")))
+    (gestures `())
+    (inputs
+     (list (sway-input
+             (identifier "type:keyboard")
+             (layout
+               (keyboard-layout "us,il" "altgr-intl,"
+                                #:options
+                                  (list "grp:lalt_lshift_toggle"; Lalt + Lshift to switch languages
+                                        "compose:caps"          ; capslock->compose
+                                        "lv3:ralt_switch"       ; Ralt for lvl 3
+                                        "eurosign:e")))         ; euro on e
+               (extra-content '("xkb_numlock enabled")))))
+    (outputs
+     (list (sway-output
+             (identifier "DVI-I-1")
+             (resolution "1920x1080")
+             (position (point (x 0)
+                              (y 0))))
+           (sway-output
+             (identifier "HDMI-A-1")
+             (resolution "1920x1080")
+             (position (point (x 1920)
+                              (y 0))))
+           (sway-output
+             (identifier '*)
+             (background
+               (file-append (S "guix-backgrounds")
+                            "/share/backgrounds/guix/guix-checkered-16-9.svg")))))
+    (bar
+      (sway-bar
+        (identifier 'bar0)
+        (position 'top)
+        (colors (sway-color
+                  (background "#323232")
+                  (statusline "#ffffff")
+                  (inactive-workspace
+                    (sway-border-color (border "#32323200")
+                                       (background "#32323200")
+                                       (text "#5c5c5c")))))
+        (status-command (file-append (S "i3status") "/bin/i3status"))))
+    (startup-programs
+      (list
+        #~(string-append #$(S "swayidle") "/bin/swayidle -w \\\n    "
+                         "timeout 300 $swaylock \\\n    "
+                         "timeout 600 '" #$(S "sway") "/bin/swaymsg \"output * dpms off\"' \\\n    "
+                         "resume '" #$(S "sway") "/bin/swaymsg \"output * dpms on\"'")
+        #~(string-join
+            (list #$(file-append (S "dbus") "/bin/dbus-update-activation-environment")
+                  "DISPLAY"
+                  "I3SOCK"
+                  "SWAYSOCK"
+                  "WAYLAND_DISPLAY"
+                  "XDG_CURRENT_DESKTOP=sway")
+            " ")))
+    (extra-content
+      (list
+        "floating_modifier $mod normal"
+        "for_window [app_id=\"imv\"] floating enable"
+        "for_window [app_id=\"mpv\"] floating enable"
+        "for_window [title = \"KeePassXC -  Access Request\"] floating enable"
+        "for_window [title = \"IceCat — Sharing Indicator\"] floating enable"
+        "for_window [title = \"Join Channel\"] floating enable"
+        "include /run/current-system/profile/etc/sway/config.d/*"
+        "include /etc/sway/config.d/*"))))
+
 ;;; Executables for the $HOME/bin folder.
 
 (define %connect-to-UTHSC-VPN
@@ -1066,6 +1169,9 @@ rm ${XDG_CACHE_HOME:-~/.cache}/tofi-drun\n")))))
             (refresh-guix-keyrings? #t)))
 
         (service home-pipewire-service-type)
+
+        (service home-sway-service-type
+                 %home-sway-configuration)
 
         (service home-syncthing-service-type)
 
