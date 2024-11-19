@@ -474,7 +474,14 @@
       (list "no-audio-display"
             ;; Upscaling from 720 causes fewer dropped frames.
             "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'"
-            "gpu-context=wayland")
+            "gpu-context=wayland"
+            "[twitch]"
+            "profile-cond=get('path', ''):find('^https?://[wm]w?w?.twitch.tv/') ~= nil"
+            "profile-restore=copy-equal"
+            "sub-font-size=16"
+            "sub-align-x=right"
+            "sub-align-y=top"
+            "slang=rechat")
       ;; End with a newline.
       "\n" 'suffix)))
 
