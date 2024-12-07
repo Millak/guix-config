@@ -9,7 +9,6 @@
              (srfi srfi-1))
 (use-service-modules
   linux
-  ;mcron
   networking
   ssh)
 (use-package-modules
@@ -38,10 +37,6 @@
   (initrd-modules '())
   (kernel linux-libre-riscv64-generic)
 
-  #;(swap-devices
-    (list (swap-space
-            (target "/swapfile"))))
-
   (file-systems
     (cons* (file-system
              (device (file-system-label "Guix_image"))
@@ -56,14 +51,20 @@
                   (group "users")
                   (home-directory "/home/efraim")
                   (password "$6$4t79wXvnVk$bjwOl0YCkILfyWbr1BBxiPxJ0GJhdFrPdbBjndFjZpqHwd9poOpq2x5WtdWPWElK8tQ8rHJLg3mJ4ZfjrQekL1")
-                  (supplementary-groups
-                    '("wheel" "netdev"
-                      "audio" "video")))
+                  (supplementary-groups '("wheel" "netdev" "kvm")))
                 %base-user-accounts))
 
+  (sudoers-file
+    (plain-file "sudoers"
+                (string-append (plain-file-content %sudoers-specification)
+                               (format #f "efraim ALL = NOPASSWD: ALL~%"))))
+
   ;; This is where we specify system-wide packages.
-  (packages (cons* ;btrfs-progs compsize
-                   %base-packages))
+  (packages
+    (append
+      (map specification->package
+           (list "screen"))
+      %base-packages))
 
   (services
     (cons* (service openssh-service-type
@@ -76,11 +77,6 @@
                     (tailscaled-configuration
                       (package (specification->package "tailscale-bin-riscv64"))
                       (dev-net-tun? #f)))
-
-           ;; Image created with ext4
-           ;(service mcron-service-type
-           ;         (mcron-configuration
-           ;           (jobs (%btrfs-maintenance-jobs "/"))))
 
            (service openntpd-service-type
                     (openntpd-configuration
@@ -122,4 +118,4 @@
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
 
-;; guix system image --image-type=unmatched-raw -L ~/workspace/guix-config/ ~/workspace/guix-config/unmatched.scm --system=riscv64-linux
+;; guix system image --image-type=unmatched-raw -L ~/workspace/my-guix -L ~/workspace/guix-config/ ~/workspace/guix-config/unmatched.scm --system=riscv64-linux
