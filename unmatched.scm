@@ -14,10 +14,12 @@
 (use-package-modules
   gcc
   linux)
+(export %unmatched-system)
 
 ;; OS starts from here:
 
-(operating-system
+(define %unmatched-system
+ (operating-system
   (host-name "unmatched")
   (timezone "Asia/Jerusalem")
   (locale "en_IL.utf8")
@@ -116,6 +118,8 @@
                    (cons* "--cache-failures" %extra-options)))))))
 
   ;; Allow resolution of '.local' host names with mDNS.
-  (name-service-switch %mdns-host-lookup-nss))
+  (name-service-switch %mdns-host-lookup-nss)))
+
+%unmatched-system
 
 ;; guix system image --image-type=unmatched-raw -L ~/workspace/my-guix -L ~/workspace/guix-config/ ~/workspace/guix-config/unmatched.scm --system=riscv64-linux
