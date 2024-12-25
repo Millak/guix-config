@@ -826,10 +826,10 @@
              (layout
                (keyboard-layout "us,il" "altgr-intl,"
                                 #:options
-                                  (list "grp:lalt_lshift_toggle"; Lalt + Lshift to switch languages
-                                        "compose:caps"          ; capslock->compose
-                                        "lv3:ralt_switch"       ; Ralt for lvl 3
-                                        "eurosign:e")))         ; euro on e
+                                (list "grp:lalt_lshift_toggle"  ; Lalt + Lshift to switch languages
+                                      "compose:caps"            ; capslock->compose
+                                      "lv3:ralt_switch"         ; Ralt for lvl 3
+                                      "eurosign:e")))           ; euro on e
                (extra-content '("xkb_numlock enabled")))))
     (outputs
      (list (sway-output
@@ -907,6 +907,16 @@
     "update-guix-members-gpg-keys"
     #~(let ((gpg-keyring (tmpnam))
             (keyring-file "https://savannah.gnu.org/project/memberlist-gpgkeys.php?group=guix&download=1"))
+        ((@ (guix build download) url-fetch) keyring-file gpg-keyring)
+        (system* "gpg" "--import" gpg-keyring)
+        ;; Clean up after ourselves.
+        (delete-file gpg-keyring))))
+
+(define %update-gnu-gpg-keyring
+  (program-file
+    "update-gnu-members-gpg-keys"
+    #~(let ((gpg-keyring (tmpnam))
+            (keyring-file "https://ftp.gnu.org/gnu/gnu-keyring.gpg"))
         ((@ (guix build download) url-fetch) keyring-file gpg-keyring)
         (system* "gpg" "--import" gpg-keyring)
         ;; Clean up after ourselves.
