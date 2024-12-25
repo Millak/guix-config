@@ -373,6 +373,9 @@
     "    recurse = true\n"
     "[tag]\n"
     "    gpgSign = true\n"
+    "[tig]\n"
+    "    mailmap = yes\n"
+    "    main-view-id-display = yes\n"
     "[transfer]\n"
     "    fsckObjects = true\n"
     ;"[url \"git@github.com\"]\n"
@@ -585,6 +588,14 @@
     "verbose\n"
     "default-stream 720p,720p60,1080p,best\n"
     "player=mpv\n"))
+
+(define %tig-config
+  (plain-file
+    "tig-config"
+    (string-join
+      (list "set main-view-id-display = yes")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %wcalcrc
   (plain-file
@@ -1236,6 +1247,7 @@ rm ${XDG_CACHE_HOME:-~/.cache}/tofi-drun\n")))))
            ("nano/nanorc" ,%default-nanorc)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("streamlink/config" ,%streamlink-config)
+           ;("tig/config" ,%tig-config)
            ("user-dirs.dirs" ,%xdg-user-dirs)
            ("youtube-dl/config" ,%ytdl-config)
            ("yt-dlp/config" ,%ytdl-config)))))))
