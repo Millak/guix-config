@@ -479,7 +479,7 @@
             "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'"
             "gpu-context=wayland"
             "[twitch]"
-            "profile-cond=get('path', ''):find('^https?://[wm]w?w?.twitch.tv/') ~= nil"
+            "profile-cond=get('path', ''):find('^https?://([m|www].)?twitch.tv/') ~= nil"
             "profile-restore=copy-equal"
             "sub-font-size=16"
             "sub-align-x=right"
