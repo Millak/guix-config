@@ -1,5 +1,6 @@
 (define-module (unmatched))
 (use-modules (guix packages)
+             (guix utils)
              (gnu)
              (gnu bootloader u-boot)
              (gnu system locale)
@@ -112,6 +113,15 @@
                config =>
                (guix-configuration
                  (inherit config)
+                 ;; If there's no substitute for guix then skip the tests.
+                 ;; Uncomment or comment out this block as needed.
+                 (guix
+                   (let ((base (specification->package "guix")))
+                     (package
+                       (inherit base)
+                       (arguments
+                        (substitute-keyword-arguments (package-arguments base)
+                          ((#:tests? _ #f) #f))))))
                  (substitute-urls '())   ; Offload machine
                  (authorized-keys %authorized-keys)
                  (extra-options
