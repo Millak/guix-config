@@ -8,7 +8,7 @@
         (environment managed-host-environment-type)
         (configuration (machine-ssh-configuration
                          ;(host-name "unmatched.unicorn-typhon.ts.net")
-                         (host-name "192.168.68.51")
+                         (host-name "192.168.68.64")
                          (system "riscv64-linux")
                          (port 22)
                          (user "efraim")
@@ -17,4 +17,4 @@
 
 ;; For /etc/passwd
 ;; efraim ALL = NOPASSWD: ALL
-;; time guix deploy -L ~/workspace/my-guix -L ~/workspace/guix-config ~/workspace/guix-config/rock64-deploy.scm
+;; time guix deploy -L ~/workspace/my-guix -L ~/workspace/guix-config ~/workspace/guix-config/unmatched-deploy.scm
