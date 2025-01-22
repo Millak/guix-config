@@ -184,9 +184,8 @@
             (delete 'set-layer-path-in-manifests)))))
     (inputs
      (modify-inputs (package-inputs mesa)
-                    (prepend (list zstd "lib"))
                     ;; TODO: Can this be taken care of with use-minimized-inputs?
-                    (replace "llvm" llvm-minimal)
+                    ;(replace "llvm" llvm-minimal)
                     (delete "wayland" "wayland-protocols")))))
 
 ;; We could use a newer version of llvm, but this is the version mesa
@@ -214,9 +213,9 @@
       ("gtk+" . ,(const gtk+-minimal))
       ;("harfbuzz" . ,(const harfbuzz-minimal))
       ;("libelf" . ,(const libelf-smaller))
-      ("llvm" . ,(const llvm-minimal))
-      ("mesa" . ,(const mesa-smaller))
-      ("parted" . ,(const parted-minimal))
+      ;("llvm" . ,(const llvm-minimal))
+      ;("mesa" . ,(const mesa-smaller))             ; breaks xorg-server tests?
+      ;("parted" . ,(const parted-minimal))
       ;("readline" . ,(const readline-smaller))
       ;("util-linux" . ,(const util-linux-minimal))
       )))
@@ -272,7 +271,9 @@
   (label (string-append "GNU Guix " (package-version guix) " with GParted"))
 
   (bootloader (bootloader-configuration
-               (bootloader grub-bootloader)
+               (bootloader
+                 (bootloader (inherit grub-bootloader)
+                             (package (minimized-package (specification->package "grub")))))
                (targets '("/dev/vda"))
                (terminal-outputs '(console))))
   (file-systems (cons (file-system
@@ -321,7 +322,7 @@
 
   ;; Use a modified list of setuid-programs.
   ;; Are there any we need? We run as root.
-  (setuid-programs
+  (privileged-programs
     (list
   ;    (setuid-program (program (file-append foo "/bin/foo")))
     ))
@@ -330,6 +331,7 @@
    (append
      (list (service slim-service-type
                     (slim-configuration
+                      (slim (minimized-package (specification->package "slim")))
                       (auto-login? #t)
                       (default-user "root")
                       (xorg-configuration
@@ -351,12 +353,13 @@
                          guix-service-type          ; not actually needed
                          log-cleanup-service-type
                          nscd-service-type          ; no networking
-                         rottlog-service-type))))
+                         log-rotation-service-type))))
              (modify-services
                %base-services
                (udev-service-type
                  config =>
                  (udev-configuration
+                   (udev (minimized-package (specification->package "eudev")))
                    (rules (list fuse-minimized
                                 lvm2-minimized
                                 mdadm-minimized)))))))))
