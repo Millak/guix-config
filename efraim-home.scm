@@ -415,13 +415,8 @@
     ;"photo-viewer \"" #$(file-append (S "imv") "/bin/imv $i\"\n"
     "keyid-format 0xlong\n"
     ;; For use with 'gpg --locate-external-key'
-    "auto-key-locate wkd cert pka dane hkp://pgpkeys.eu hkp://pgp.surf.nl hkp://pgp.net.nz hkp://keyserver.ubuntu.com hkp://the.earth.li hkp://keys.openpgp.org\n"
-    ;; Some of these settings can be seen in g10/keygen.c in gnupg's source code, in keygen_set_std_prefs
-    ;; or in the output of `gpg --version`
-    ;"personal-cipher-preferences AES256 AES192 AES\n"               ; Drop 3DES
-    ;"personal-digest-preferences SHA512 SHA384 SHA256 SHA224\n"     ; Drop SHA1
-    ;"cert-digest-algo SHA512\n"
-    ;"default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed\n"
+    ;; This is incompatible with sequoia-chameleon-gnupg
+    ;"auto-key-locate wkd cert pka dane hkp://pgpkeys.eu hkp://pgp.surf.nl hkp://pgp.net.nz hkp://keyserver.ubuntu.com hkp://the.earth.li hkp://keys.openpgp.org\n"
     ;"default-cache-ttl 900\n"
     "trust-model tofu+pgp\n"))
 
