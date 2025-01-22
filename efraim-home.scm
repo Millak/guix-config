@@ -183,13 +183,17 @@
 
 (define with-transformations
   (options->transformation
-    (cond
-      ((string=? (gethostname) "3900XT")
-       `((tune . "znver2")))
-      ((target-aarch64?)
-       `(;; go-1.16 FTBFS on aarch64.
-         (with-input . "go@1.16=gccgo@11")))
-      (#t `()))))
+    (append
+      ;; Don't use gnupg versions newer than 2.3.0!
+      ;; Stick with the OpenPGP standard, not LibrePGP
+      `((with-version . "gnupg=2.2.44"))
+      (cond
+        ((string=? (gethostname) "3900XT")
+         `((tune . "znver2")))
+        ((target-aarch64?)
+         `(;; go-1.16 FTBFS on aarch64.
+           (with-input . "go@1.16=gccgo@11")))
+        (#t `())))))
 
 (define (S pkg)
   (with-transformations (specification->package pkg)))
