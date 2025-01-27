@@ -830,24 +830,33 @@
                                 (list "grp:lalt_lshift_toggle"  ; Lalt + Lshift to switch languages
                                       "compose:caps"            ; capslock->compose
                                       "lv3:ralt_switch"         ; Ralt for lvl 3
-                                      "eurosign:e")))           ; euro on e
-               (extra-content '("xkb_numlock enabled")))))
+                                      "eurosign:e"))))))        ; euro on e
     (outputs
-     (list (sway-output
-             (identifier "DVI-I-1")
-             (resolution "1920x1080")
-             (position (point (x 0)
-                              (y 0))))
-           (sway-output
-             (identifier "HDMI-A-1")
-             (resolution "1920x1080")
-             (position (point (x 1920)
-                              (y 0))))
-           (sway-output
-             (identifier '*)
-             (background
-               (file-append (S "guix-backgrounds")
-                            "/share/backgrounds/guix/guix-checkered-16-9.svg")))))
+     (append
+      (cond
+        ((string=? (gethostname) "3900XT")
+         (list (sway-output
+                 (identifier "DVI-I-1")
+                 (resolution "1920x1080")
+                 (position (point (x 0)
+                                  (y 0))))
+               (sway-output
+                 (identifier "HDMI-A-1")
+                 (resolution "1920x1080")
+                 (position (point (x 1920)
+                                  (y 0))))))
+        ((string=? (gethostname) "pbp")
+         (list (sway-output
+                 (identifier "eDP-1")
+                 (resolution "1920x1080")
+                 (position (point (x 0)
+                                  (y 0))))))
+        (#t '()))
+      (list (sway-output
+              (identifier '*)
+              (background
+                (file-append (S "guix-backgrounds")
+                             "/share/backgrounds/guix/guix-checkered-16-9.svg"))))))
     (bar
       (sway-bar
         (identifier 'bar0)
