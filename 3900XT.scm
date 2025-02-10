@@ -145,7 +145,7 @@
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (S "tailscale-bin-amd64"))))
+                      (package (S "tailscale"))))
 
            (service dnsmasq-service-type
                     (dnsmasq-configuration
