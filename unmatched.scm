@@ -67,7 +67,7 @@
     (append
       (map specification->package
            (list "screen"))
-      %base-packages))
+      (delete (specification->package "guix-icons") %base-packages)))
 
   (services
     (cons* (service openssh-service-type

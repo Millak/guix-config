@@ -266,7 +266,7 @@ bootcmd=run bootcmd_distro"))
            (list
              ;"screen"
              ))
-      %base-packages))
+      (delete (specification->package "guix-icons") %base-packages)))
 
   (services
     (cons* (service openssh-service-type

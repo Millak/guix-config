@@ -55,7 +55,7 @@
 
   ;; This is where we specify system-wide packages.
   (packages (cons* ;btrfs-progs compsize
-                   %base-packages))
+                   (delete (specification->package "guix-icons") %base-packages)))
 
   (services (cons* ;(service agetty-service-type
                    ;         (agetty-configuration
