@@ -9,18 +9,18 @@
   (dfsg contrib services tailscale)
   (srfi srfi-1))
 (use-service-modules
-  cups
   dns
   desktop
   linux
   mcron
   networking
+  pm
   sddm
   ssh
   virtualization
   xorg)
 (use-package-modules
-  cups)
+  linux)
 
 (define with-transformations
   (options->transformation
@@ -36,7 +36,7 @@
     "bindsym XF86AudioMute exec " (S "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
     "bindsym XF86AudioLowerVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
     "bindsym XF86AudioRaiseVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
-    ;; "bindsym XF86AudioMicMute exec " (S "pulseaudio") "/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle\n"
+    "bindsym XF86AudioMicMute exec " (S "pulseaudio") "/bin/pactl set-source-mute @DEFAULT_SOURCE@ toggle\n"
     "bindsym XF86MonBrightnessDown exec " (S "brightnessctl") "/bin/brightnessctl set 5%-\n"
     "bindsym XF86MonBrightnessUp exec " (S "brightnessctl") "/bin/brightnessctl set 5%+\n"
     ;; bindsym XF86Display
@@ -66,7 +66,12 @@
       (keyboard-layout keyboard-layout)))
 
   (kernel linux)
-  (firmware (list i915-firmware ibt-hw-firmware iwlwifi-firmware))
+  (firmware
+    (list i915-firmware
+          ibt-hw-firmware
+          iwlwifi-firmware
+          sof-firmware
+          wireless-regdb))
 
   (file-systems
     (cons* (file-system
@@ -91,7 +96,6 @@
                   (home-directory "/home/efraim")
                   (supplementary-groups
                     '("wheel" "netdev" "kvm"
-                      "libvirt"
                       ;"plugdev"
                       "audio" "video")))
                 %base-user-accounts))
@@ -130,20 +134,18 @@
                            `(("sway/config.d/function-keys"
                               ,%sway-keyboard-function-keys)))
 
-           (extra-special-file
-             "/usr/share/zoneinfo/tzdata.zi"
-             (file-append (S "tzdata") "/share/zoneinfo/tzdata.zi"))
+           (service tlp-service-type)
 
            (service openssh-service-type
                     (openssh-configuration
                       (password-authentication? #t)))
            ;; guix system: error: symlink: File exists: "/etc/ssh"
            ;(simple-service 'ssh-known-hosts etc-service-type
-           ;                `(("ssh/ssh-known-hosts" ,(local-file "Extras/ssh-known-hosts"))))
+           ;                `(("ssh/ssh_known_hosts" ,(local-file "Extras/ssh-known-hosts"))))
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (S "tailscale-bin-amd64"))))
+                      (package (S "tailscale"))))
 
            (service dnsmasq-service-type
                     (dnsmasq-configuration
@@ -160,29 +162,11 @@
 
            (service tor-service-type
                     (tor-configuration
-                      (config-file
-                        (plain-file
-                          "extra-torrc-bits"
-                          (string-append
-                            "# NumCPUs only affects relays, but we want to silence the warnings\n"
-                            "NumCPUs 2\n")))
                       (hidden-services
                         (list
                           (tor-onion-service-configuration
                             (name "ssh")
-                            (mapping '((22 "127.0.0.1:22"))))
-                          (tor-onion-service-configuration
-                            (name "guix-publish")
-                            ;; XXX
-                            (mapping '((3000 "127.0.0.1:3000"))))))))
-
-           #;
-	   (service cups-service-type
-                    (cups-configuration
-                      (web-interface? #t)
-                      (default-paper-size "A4")
-                      (extensions
-                        (list cups-filters hplip-minimal))))
+                            (mapping '((22 "127.0.0.1:22"))))))))
 
            ;(udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
 
@@ -191,11 +175,6 @@
                       (jobs (append
                               %btrfs-defrag-var-guix
                               (%btrfs-maintenance-jobs "/")))))
-
-           (service libvirt-service-type
-                    (libvirt-configuration
-                      (unix-sock-group "libvirt")))
-           (service virtlog-service-type)
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
