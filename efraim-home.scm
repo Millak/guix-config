@@ -766,7 +766,7 @@
                   (extra-content "  RemoteForward /run/user/1000/gnupg/S.gpg-agent /run/user/$i/gnupg/S.gpg-agent.extra\n"))
     (openssh-host (name "git.sv.gnu.org git.savannah.gnu.org")
                   (identity-file "~/.ssh/id_ed25519_savannah"))
-    (openssh-host (name "gitlab.com gitlab.inria.fr")
+    (openssh-host (name "gitlab.com gitlab.inria.fr codeberg.org")
                   (identity-file "~/.ssh/id_ed25519_gitlab"))
     (openssh-host (name "salsa.debian.org")
                   (identity-file "~/.ssh/id_ed25519_debian"))
