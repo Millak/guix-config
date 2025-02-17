@@ -105,6 +105,7 @@
 
 (define %not-for-work
   (list "btrfs-progs"
+        "codeberg-cli"
         "ffmpeg@6"  ; Newer version conflicts with mpv
         "git-annex"
         "isync"
@@ -115,9 +116,11 @@
         "msmtp"
         "mutt"
         "newsboat"
+        "shepherd-run"
         "sshfs"
         "syncthing"
         "toot"
+        "urlscan"
         "vdirsyncer"
         "yt-dlp"))
 
@@ -145,7 +148,6 @@
         "gnupg"
         "hunspell-dict-en-us"
         "hunspell-dict-he-il"
-        "links"
         "myrepos"
         ;; Currently zig only has substitutes for some architectures.
         ;(if (supported-package? (specification->package "ncdu@2"))
@@ -160,13 +162,13 @@
         "python-codespell"
         "qrencode"
         "rsync"
-        "shepherd-run"
+        "sequoia"
+        "sequoia-chameleon-gnupg"
         "screen"
         "tig"
         "torsocks"
         "translate-shell"
         "tree"
-        "urlscan"
         "vifm"
         "vim"
         "vim-airline"
