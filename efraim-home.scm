@@ -397,6 +397,8 @@
     ;"    fetch = +refs/pull/*/head:refs/remotes/gitlab/pr/*\n"
     "[url \"ssh://git.savannah.gnu.org:/srv/\"]\n"
     "    pushInsteadOf = https://git.savannah.gnu.org/\n"
+    "[url \"git@git.sr.ht:\"]\n"
+    "    pushInsteadOf = https://git.sr.ht/\n"
     "[web]\n"
     (if (or headless? work-machine?)
         #~(string-append "    browser = " #$(file-append (S "links") "/bin/links") "\n")
