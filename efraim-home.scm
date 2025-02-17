@@ -148,6 +148,7 @@
         "gnupg"
         "hunspell-dict-en-us"
         "hunspell-dict-he-il"
+        "links"
         "myrepos"
         ;; Currently zig only has substitutes for some architectures.
         ;(if (supported-package? (specification->package "ncdu@2"))
