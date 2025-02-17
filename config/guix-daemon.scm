@@ -20,6 +20,7 @@
         (local-file "../Extras/pinebookpro_publish.pub")
         (local-file "../Extras/pine64_publish.pub")
         (local-file "../Extras/rock64-1.pub")
+        (local-file "../Extras/X1.pub")
         (local-file "../Extras/rpi5b.pub")
         (local-file "../Extras/g4_publish.pub")
         (local-file "../Extras/unmatched_publish.pub")
