@@ -891,14 +891,14 @@
         (swaylock . ,#~(string-join
                          (list
                            ;; Use swaylock from the screen-locker-service-type
-                           "/run/current-system/profile/bin/swaylock"
+                           "'/run/current-system/profile/bin/swaylock"
                            "--daemonize"
                            "--indicator-radius" "85"
                            "--ring-color" "1a1a1a"
                            "--key-hl-color" "ffb638"
                            "--image"
                            #$(file-append (S "guix-backgrounds")
-                                          "/share/backgrounds/guix/guix-checkered-16-9.svg"))
+                                          "/share/backgrounds/guix/guix-checkered-16-9.svg'"))
                          " "))))
     (keybindings
      `(,@%sway-default-keybindings
@@ -967,7 +967,7 @@
         #~(string-append #$(S "swayidle") "/bin/swayidle -w \\\n    "
                          "timeout 300 $swaylock \\\n    "
                          "timeout 600 '" #$(S "sway") "/bin/swaymsg \"output * dpms off\"' \\\n    "
-                         "resume '" #$(S "sway") "/bin/swaymsg \"output * dpms on\"'")
+                         "resume '" #$(S "sway") "/bin/swaymsg \"output * dpms on\"'\n")
         #~(string-join
             (list #$(file-append (S "dbus") "/bin/dbus-update-activation-environment")
                   "DISPLAY"
