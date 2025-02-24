@@ -932,6 +932,12 @@
                  (resolution "1920x1080")
                  (position (point (x 1920)
                                   (y 0))))))
+        ((string=? (gethostname) "X1")
+         (list (sway-output
+                 (identifier "eDP-1")
+                 (resolution "3840x2400")
+                 (position (point (x 0)
+                                  (y 0))))))
         ((string=? (gethostname) "pbp")
          (list (sway-output
                  (identifier "eDP-1")
