@@ -641,6 +641,7 @@
     "config.bind(',M', 'hint links spawn mpv {hint-url}')\n"
     "config.bind(',j', 'jseval (function() {    location.href = \"https://12ft.io/\" + location.href;})();')\n"
     "c.auto_save.session = True\n"
+    "c.colors.webpage.darkmode.enabled = True\n"
     "c.content.cookies.accept = 'no-3rdparty'\n"
     "c.content.default_encoding = 'utf-8'\n"
     "c.content.pdfjs = True\n"
