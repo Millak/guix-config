@@ -424,10 +424,10 @@
 (define %gpg.conf
   (mixed-text-file
     "gpg.conf"
-    "default-key CA3D8351\n"
+    "default-key 0x41AAE7DCCA3D8351\n"
     "display-charset utf-8\n"
     "with-fingerprint\n"
-    "keyserver hkp://pgp.net.nz\n"
+    "keyserver hkp://keys.openpgp.org\n"
     "keyserver-options auto-key-retrieve\n"
     "keyserver-options include-revoked\n"
     ;"photo-viewer \"" #$(file-append (S "imv") "/bin/imv $i\"\n"
@@ -437,8 +437,6 @@
     ;"auto-key-locate wkd cert pka dane hkp://pgpkeys.eu hkp://pgp.surf.nl hkp://pgp.net.nz hkp://keyserver.ubuntu.com hkp://the.earth.li hkp://keys.openpgp.org\n"
     ;"default-cache-ttl 900\n"
     "trust-model tofu+pgp\n"))
-
-;; todo: build gnupg with configure-flags --disable-gpg-idea --disable-gpg-cast5 --disable-gpg-md5 --disable-gpg-rmd160
 
 (define %gpg-agent.conf
   (mixed-text-file
