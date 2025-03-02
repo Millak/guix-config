@@ -1175,6 +1175,8 @@
                           `())
                       ("MOZ_ENABLE_WAYLAND" . "1")
 
+                      ;("GUIX_GPGV_COMMAND" . "gpgv-sq")
+                      ;("GUIX_GPG_COMMAND" . "gpg-sq")
                       ("CVS_RSH" . "ssh")
                       ("EDITOR" . "vim")
                       ("GPG_TTY" . "$(tty)")
