@@ -42,7 +42,7 @@
     "bindsym XF86MonBrightnessUp exec " (S "brightnessctl") "/bin/brightnessctl set 5%+\n"
     ;; bindsym XF86Display
     "bindsym XF86WLAN exec " (S "util-linux") "/sbin/rfkill toggle all\n"
-    "bindsym XF86NotificationCenter exec " (S "dunst") "/bin/dunstctl set-paused toggle\n")
+    "bindsym XF86NotificationCenter exec " (S "dunst") "/bin/dunstctl set-paused toggle\n"
     ;; bindsym XF86PickupPhone
     ;; bindsym XF86HangupPhone
     ;; bindsym XF86Favorites
