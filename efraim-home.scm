@@ -187,9 +187,7 @@
 (define with-transformations
   (options->transformation
     (append
-      ;; Don't use gnupg versions newer than 2.3.0!
-      ;; Stick with the OpenPGP standard, not LibrePGP
-      `((with-version . "gnupg=2.2.44"))
+      `()
       (cond
         ((string=? (gethostname) "3900XT")
          `((tune . "znver2")))
