@@ -200,7 +200,6 @@
 
            (service qemu-binfmt-service-type
                     (qemu-binfmt-configuration
-                      (qemu (S "qemu@7.2.4"))
                       ;; We get some architectures for free.
                       (platforms
                         (fold delete %qemu-platforms
