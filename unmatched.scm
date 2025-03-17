@@ -78,7 +78,7 @@
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (specification->package "tailscale-bin-riscv64"))
+                      (package (specification->package "tailscale"))
                       (dev-net-tun? #f)))
 
            (service openntpd-service-type

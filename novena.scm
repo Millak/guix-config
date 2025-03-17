@@ -78,7 +78,7 @@
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (specification->package "tailscale-bin-arm"))))
+                      (package (specification->package "tailscale"))))
 
            (service mcron-service-type
                     (mcron-configuration

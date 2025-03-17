@@ -140,7 +140,7 @@
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (specification->package "tailscale-bin-arm64"))))
+                      (package (specification->package "tailscale"))))
 
            (service dnsmasq-service-type
                     (dnsmasq-configuration

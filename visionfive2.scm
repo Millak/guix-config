@@ -79,7 +79,7 @@
 
            (service tailscaled-service-type
                     (tailscaled-configuration
-                      (package (specification->package "tailscale-bin-riscv64"))))
+                      (package (specification->package "tailscale"))))
 
            (service mcron-service-type
                     (mcron-configuration
