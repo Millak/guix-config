@@ -488,6 +488,8 @@
             ;; Upscaling from 720 causes fewer dropped frames.
             "ytdl-format='bv*[height<=720]+ba/b[height<=720]/bv*[height<=1080]+ba/b[height<1080]/bv+ba/b'"
             "gpu-context=wayland"
+            "[youtube]"
+            "ytdl-raw-options='ignore-config=,sub-langs=\"^en.*\",write-subs=,write-auto-subs='"
             "[twitch]"
             "profile-cond=get('path', ''):find('^https?://[wm]w?w?.twitch.tv/') ~= nil"
             "profile-restore=copy-equal"
