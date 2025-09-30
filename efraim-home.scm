@@ -106,7 +106,7 @@
 (define %not-for-work
   (list "btrfs-progs"
         "codeberg-cli"
-        "ffmpeg@6"  ; Newer version conflicts with mpv
+        "ffmpeg"
         "git-annex"
         "isync"
         ;"keybase"
