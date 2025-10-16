@@ -502,6 +502,19 @@
       ;; End with a newline.
       "\n" 'suffix)))
 
+(define %mpv-sponsorblock-minimal-conf
+  (plain-file
+    "sponsorblock_minimal.conf"
+    (string-join
+      (list
+        ;; List of categories can be found here: https://wiki.sponsor.ajay.app/w/Types
+        ;; categories=sponsor;selfpromo;interaction;intro;outro;preview;hook
+        "categories=sponsor"
+        "hash="
+        "server=https://sponsor.ajay.app/api/skipSegments")
+      ;; End with a newline.
+      "\n" 'suffix)))
+
 (define %mutt-pgp-gnupg.rc
   ;; I don't know how long I've had this config snippet for :/
   (plain-file
@@ -1390,6 +1403,8 @@ rm ${XDG_CACHE_HOME:-~/.cache}/tofi-drun\n")))))
            ("mpv/scripts/twitch-chat/main.lua"
             ,(file-append (S "mpv-twitch-chat")
                           "/lib/main.lua"))
+           ("mpv/script-opts/sponsorblock_minimal.conf"
+            ,%mpv-sponsorblock-minimal-conf)
            ("mpv/mpv.conf" ,%mpv-conf)
            ("mutt/pgp-gnupg.rc" ,%mutt-pgp-gnupg.rc)
            ("mutt/pgp-sq.rc" ,%mutt-pgp-sq.rc)
