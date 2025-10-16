@@ -742,6 +742,15 @@
       ;; End with a newline.
       "\n" 'suffix)))
 
+(define %zathurarc
+  (plain-file
+    "dot-zathurarc"
+    (string-join
+      ;; Check database default in zathurarc(5).
+      (list "set database sqlite")
+      ;; End with a newline.
+      "\n" 'suffix)))
+
 ;;;
 
 (define %dbxfs-config-json
@@ -1392,7 +1401,8 @@ rm ${XDG_CACHE_HOME:-~/.cache}/tofi-drun\n")))))
            ;("tig/config" ,%tig-config)
            ("user-dirs.dirs" ,%xdg-user-dirs)
            ("youtube-dl/config" ,%ytdl-config)
-           ("yt-dlp/config" ,%ytdl-config)))))))
+           ("yt-dlp/config" ,%ytdl-config)
+           ("zathura/zathurarc" ,%zathurarc)))))))
 
 (define efraim-offload-home-environment
   (home-environment
