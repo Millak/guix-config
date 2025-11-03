@@ -194,9 +194,6 @@
          `((tune . "znver2")))
         ((string=? (gethostname) "X1")
          `((tune . "cannonlake")))
-        ((target-aarch64?)
-         `(;; go-1.16 FTBFS on aarch64.
-           (with-input . "go@1.16=gccgo@11")))
         (#t `())))))
 
 (define (S pkg)
