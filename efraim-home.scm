@@ -621,7 +621,7 @@
     "BASETGZ=/var/cache/pbuilder/base-$DISTRIBUTION-$ARCHITECTURE.tgz\n"
     "DEBOOTSTRAPOPTS=( '--arch' $ARCHITECTURE ${DEBOOTSTRAPOPTS[@]} )\n"
 
-    "if [ $ARCHITECTURE == powerpc -o $ARCHITECTURE == riscv64 ]; then\n"
+    "if [ $ARCHITECTURE == powerpc ]; then\n"
     ;; These are only needed when it's a ports architecture.
     "    MIRRORSITE=http://deb.debian.org/debian-ports\n"
     ;; These two courtesy of John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
