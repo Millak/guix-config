@@ -688,7 +688,7 @@
     "[encrypt]\n"
     (string-append "for-self = [\"" %self-gpg-signature "\"]\n")
     "[pki]\n"
-    (string-append "vouch.certifier-self = [\"" %self-gpg-signature "\"]\n")
+    (string-append "vouch.certifier-self = \"" %self-gpg-signature "\"\n")
     "[sign]\n"
     (string-append "signer-self = [\"" %self-gpg-signature "\"]\n")))
 
