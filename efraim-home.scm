@@ -613,6 +613,12 @@
     ;"use-proxy yes\n"
     "download-timeout 90\n"))
 
+(define %onedrive-config
+  (mixed-text-file
+    "onedrive-config"
+    "log_dir = \"" %logdir "/log/onedrive/\"\n"
+    "use_recycle_bin = \"true\"\n"))
+
 (define %pbuilderrc
   (mixed-text-file
     "dot-pbuilderrc"
@@ -1075,10 +1081,11 @@
                (list #$(file-append (S "onedrive") "/bin/onedrive")
                      "--monitor"
                      "--verbose"
-                     (string-append (getenv "HOME") "/Onedrive"))
+                     "--enable-logging"
+                     "--syncdir"
+                     (string-append (getenv "HOME") "/OneDrive"))
                #:log-file (string-append #$%logdir "/onedrive.log")))
-    (stop #~(make-system-destructor
-              (string-append "fusermount -u " (getenv "HOME") "/Onedrive")))
+    (stop #~(make-kill-destructor))
     (auto-start? #f)        ; Needs network.
     (respawn? #f)))
 
@@ -1392,6 +1399,7 @@ rm ${XDG_CACHE_HOME:-~/.cache}/tofi-drun\n")))))
            ("mutt/pgp-sq.rc" ,%mutt-pgp-sq.rc)
            ("newsboat/config" ,%newsboat-config)
            ("nano/nanorc" ,%default-nanorc)
+           ;("onedrive/config" ,%onedrive-config)
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("sequoia/sq/config.toml" ,%sq-config)
            ("streamlink/config" ,%streamlink-config)
