@@ -1394,7 +1394,7 @@ fi")))))
            ; ("lesskey" ,%lesskey)
            ("mpv/scripts/mpris.so"
             ,(file-append (S "mpv-mpris")
-                          "/lib/mpris.so"))
+                          "/lib/mpv-mpris/mpris.so"))
            ("mpv/scripts/sponsorblock_minimal/main.lua"
             ,(file-append (S "mpv-sponsorblock-minimal")
                           "/lib/sponsorblock_minimal.lua"))
