@@ -695,14 +695,15 @@
       "\n" 'suffix)))
 
 (define %sq-config
+  ;; See the options with `sq config template | less`
   (mixed-text-file
     "sq-config.toml"
     "[encrypt]\n"
     (string-append "for-self = [\"" %self-gpg-signature "\"]\n")
-    "[pki]\n"
-    (string-append "vouch.certifier-self = \"" %self-gpg-signature "\"\n")
     "[sign]\n"
-    (string-append "signer-self = [\"" %self-gpg-signature "\"]\n")))
+    (string-append "signer-self = [\"" %self-gpg-signature "\"]\n")
+    "[pki]\n"
+    (string-append "vouch.certifier-self = \"" %self-gpg-signature "\"\n")))
 
 
 (define %streamlink-config
