@@ -1,4 +1,5 @@
 (define-module (efraim-home)
+  #:use-module (dfsg contrib services dropbox)
   #:use-module (gnu home)
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
@@ -1305,7 +1306,7 @@ fi")))))
                  (home-shepherd-configuration
                    (services
                      (list
-                       %dropbox-user-service
+                       ;%dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
 
@@ -1315,6 +1316,14 @@ fi")))))
                        %kdeconnect-user-service))))
 
         (service home-dbus-service-type)
+
+        (service home-dbxfs-service-type
+                 (dbxfs-configuration
+                   (package (S "dbxfs"))
+                   (config-json %dbxfs-config-json)
+                   ;; Needs gpg key to unlock.
+                   (autostart? #f)
+                   (verbosity 1)))
 
         ;; Can't seem to get (if headless?) to work
         #;(service home-gpg-agent-service-type
