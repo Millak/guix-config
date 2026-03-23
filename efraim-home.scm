@@ -1140,38 +1140,6 @@
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
-;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/keybase.service
-(define %keybase-user-service
-  (shepherd-service
-    (documentation "Provide access to Keybase™")
-    (provision '(keybase))
-    (start #~(make-forkexec-constructor
-               (list #$(file-append (S "keybase") "/bin/keybase")
-                     "service")
-               #:log-file (string-append #$%logdir "/keybase.log")))
-    (stop #~(make-system-destructor
-              (string-append #$(file-append (S "keybase")
-                                            "/bin/keybase")
-                             " ctl stop")))
-    ;; Starts too fast at login.
-    (auto-start? #f)
-    (respawn? #t)))
-
-;; https://github.com/keybase/client/blob/master/packaging/linux/systemd/kbfs.service
-(define %keybase-fuse-user-service
-  (shepherd-service
-    (documentation "Provide access to Keybase™ fuse store")
-    (requirement '(keybase))
-    (provision '(kbfs))
-    (start #~(make-forkexec-constructor
-               (list #$(file-append (S "keybase") "/bin/kbfsfuse")
-                     "-log-to-file")
-               #:log-file (string-append #$%logdir "/kbfs.log")))
-    (stop #~(make-kill-destructor))
-    ;; Depends on keybase.
-    (auto-start? #f)
-    (respawn? #t)))
-
 ;; kdeconnect-indicator must not be running when it it started
 (define %kdeconnect-user-service
   (shepherd-service
@@ -1309,9 +1277,6 @@ fi")))))
                        ;%dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
-
-                       ;%keybase-user-service
-                       ;%keybase-fuse-user-service
 
                        %kdeconnect-user-service))))
 
