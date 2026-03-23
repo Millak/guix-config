@@ -358,6 +358,9 @@
     (if work-machine?
         ""
         #~(string-append "[gpg]\n"
+                         ;#$@(if (supported-package? (S "sequoia-chameleon-gnupg"))
+                         ;       #~("    program = " #$(file-append (S "sequoia-chameleon-gnupg") "/bin/gpg-sq") "\n")
+                         ;       #~("    program = " #$(file-append (S "gnupg") "/bin/gpg") "\n"))))
                          "    program = " #$(file-append (S "gnupg") "/bin/gpg") "\n"))
     "[imap]\n"
     "    folder = Drafts\n"
