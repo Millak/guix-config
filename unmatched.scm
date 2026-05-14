@@ -81,11 +81,7 @@
                       (package (specification->package "tailscale"))
                       (dev-net-tun? #f)))
 
-           (service openntpd-service-type
-                    (openntpd-configuration
-                      (listen-on '("127.0.0.1" "::1"))
-                      ;; Prevent moving to year 2116.
-                      (constraints-from '("https://www.google.com/"))))
+           (service ntp-service-type)
 
            (service dhcpcd-service-type)
 
