@@ -31,18 +31,13 @@
 (define %sway-keyboard-function-keys
   (mixed-text-file
     "keyboard-function-keys"
-    ;; bindsym XF86Tools
+    ;; Kinesys Freestyle 2
     "bindsym XF86AudioLowerVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
     "bindsym XF86AudioRaiseVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
     "bindsym XF86AudioMute exec " (S "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
-    ;; bindsym XF86AudioPrev
-    ;; bindsym XF86AudioNext
-    ;; bindsym XF86AudioPlay
-    ;; bindsym XF86AudioStop
-    ;; bindsym XF86HomePage
-    ;; bindsym XF86Mail
-    ;; bindsym XF86Explorer
-    ;; bindsym XF86Favorites
+    ;; bindsym XF86Calculator
+    ;; bindsym Num_Lock
+    ;; bindsym Scroll_Lock
     ))
 
 (operating-system
