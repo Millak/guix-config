@@ -221,7 +221,7 @@
                       (theme "guix-simplyblack-sddm")
                       ;; This is failing since the update to sddm-0.20.0
                       ;(display-server "wayland")
-                      ))
+                      (numlock "off")))
 
            (remove (lambda (service)
                      (let ((type (service-kind service)))
