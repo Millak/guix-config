@@ -141,7 +141,7 @@
                       (password-authentication? #t)))
            ;; guix system: error: symlink: File exists: "/etc/ssh"
            ;(simple-service 'ssh-known-hosts etc-service-type
-           ;                `(("ssh/ssh-known-hosts" ,(local-file "Extras/ssh-known-hosts"))))
+           ;                `(("ssh/ssh_known_hosts" ,(local-file "Extras/ssh-known-hosts"))))
 
            (service tailscaled-service-type
                     (tailscaled-configuration
