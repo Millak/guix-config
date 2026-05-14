@@ -691,6 +691,7 @@
     (string-join
       (list "startup_message off"
             "term screen-256color"
+            "truecolor on"
             "defscrollback 50000"
             "altscreen on"
             "termcapinfo xterm* ti@:te@"
