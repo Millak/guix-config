@@ -918,13 +918,13 @@
                     ;; TODO: Replace the custom ~/bin/openbsd-netcat with the line below:
                     ;(proxy-command (string-append (S "netcat-openbsd") "/bin/nc -X 5 -x localhost:9050 %h %p")))
                     (proxy-command (string-append (getenv "HOME") "/bin/openbsd-netcat -X 5 -x localhost:9050 %h %p")))
-                  (extra-content "  ControlPath ${XDG_RUNTIME_DIR}/%r@%k-%p\n"))
+                  (control-master 'auto)
+                  (control-file-name "${XDG_RUNTIME_DIR}/%r@%k-%p"))
     (openssh-host (name "*")
                   (user "efraim")
-                  (extra-content
-                    (string-append "  ControlMaster auto\n"
-                                   "  ControlPath ${XDG_RUNTIME_DIR}/%r@%h-%p\n"
-                                   "  ControlPersist 600\n")))))
+                  (control-master 'auto)
+                  (control-file-name "${XDG_RUNTIME_DIR}/%r@%h-%p")
+                  (control-persist "600"))))
 
 (define %home-sway-configuration
   (sway-configuration
