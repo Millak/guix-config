@@ -1242,13 +1242,7 @@ if [ -e ${XDG_CACHE_HOME:-~/.cache}/tofi-drun ]; then
     rm ${XDG_CACHE_HOME:-~/.cache}/tofi-drun
 fi")))))
 
-        (service home-shepherd-service-type
-                 (home-shepherd-configuration
-                   (services
-                     (list
-                       ;%vdirsyncer-user-service    ; error with 'match'
-                       ;%mbsync-user-service        ; error with 'match'
-                       ))))
+        (service home-shepherd-service-type)
 
         (service home-dbus-service-type)
 
