@@ -181,6 +181,7 @@
         "vim-gnupg"
         "vim-guix-vim"
         "wcalc"
+        "wcurl"
         "wget"
         "wgetpaste"
         "xdg-utils"))
