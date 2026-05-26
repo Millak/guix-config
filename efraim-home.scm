@@ -144,6 +144,7 @@
         "bash-completion"
         "codespell"
         "file"
+        "forgejo-cli"
         "git"
         "git:send-email"
         "glibc-locales"
