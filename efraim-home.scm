@@ -1130,24 +1130,6 @@
     (stop #~(make-kill-destructor))
     (respawn? #t)))
 
-;; kdeconnect-indicator must not be running when it it started
-(define %kdeconnect-user-service
-  (shepherd-service
-    (documentation "Run the KDEconnect daemon")
-    (provision '(kdeconnect))
-    (start #~(make-forkexec-constructor
-               (list #$(file-append (S "dbus") "/bin/dbus-launch")
-                     #$(file-append (S "kdeconnect") "/libexec/kdeconnectd")
-                     ;; KDE Connect was built without "offscreen" support
-                     ;; without this it fails to create wl_display
-                     ;; Is the second part still true?
-                     "-platform" "offscreen"
-                     )
-               #:log-file (string-append #$%logdir "/kdeconnect.log")))
-    ;; TODO: Enable autostart
-    (auto-start? #f)
-    (stop #~(make-kill-destructor))))
-
 ;;;
 
 (define guix-system-home-environment
@@ -1266,8 +1248,7 @@ fi")))))
                      (list
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
-
-                       %kdeconnect-user-service))))
+                       ))))
 
         (service home-dbus-service-type)
 
