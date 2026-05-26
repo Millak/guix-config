@@ -1070,23 +1070,6 @@
 
 ;;; Extra services.
 
-(define %dropbox-user-service
-  (shepherd-service
-    (documentation "Provide access to Dropbox™")
-    (provision '(dropbox dbxfs))
-    (start #~(make-forkexec-constructor
-               (list #$(file-append (S "dbxfs") "/bin/dbxfs")
-                     "--foreground"
-                     "--verbose"
-                     "--config-file" #$%dbxfs-config-json
-                     (string-append (getenv "HOME") "/Dropbox"))
-               #:log-file (string-append #$%logdir "/dbxfs.log")))
-    (stop #~(make-system-destructor
-              (string-append "fusermount -u " (getenv "HOME") "/Dropbox")))
-    ;; Needs gpg key to unlock.
-    (auto-start? #f)
-    (respawn? #f)))
-
 (define %onedrive-user-service
   (shepherd-service
     (documentation "Provide access to Onedrive™")
@@ -1281,7 +1264,6 @@ fi")))))
                  (home-shepherd-configuration
                    (services
                      (list
-                       ;%dropbox-user-service
                        ;%vdirsyncer-user-service    ; error with 'match'
                        ;%mbsync-user-service        ; error with 'match'
 
