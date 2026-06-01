@@ -74,6 +74,7 @@
         "gst-plugins-base"
         "gst-plugins-good"
         "gst-plugins-ugly"
+        "hunspell"      ; loads DICPATH environment variable
         "i3status"
         "icecat"
         "imv"
