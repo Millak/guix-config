@@ -726,14 +726,6 @@
     "default-stream 720p,720p60,1080p,best\n"
     "player=mpv\n"))
 
-(define %tig-config
-  (plain-file
-    "tig-config"
-    (string-join
-      (list "set main-view-id-display = yes")
-      ;; End with a newline.
-      "\n" 'suffix)))
-
 (define %wcalcrc
   (plain-file
     "dot-wcalcrc"
@@ -1349,7 +1341,6 @@ fi")))))
            ("qutebrowser/config.py" ,%qutebrowser-config-py)
            ("sequoia/sq/config.toml" ,%sq-config)
            ("streamlink/config" ,%streamlink-config)
-           ;("tig/config" ,%tig-config)
            ("user-dirs.dirs" ,%xdg-user-dirs)
            ("yt-dlp/config" ,%ytdlp-config)
            ("zathura/zathurarc" ,%zathurarc)))
