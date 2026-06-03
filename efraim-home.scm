@@ -1355,7 +1355,15 @@ fi")))))
            ("zathura/zathurarc" ,%zathurarc)))
 
         (service home-xdg-data-files-service-type
-         `(("flatpak/overrides/org.mozilla.firefox"
+         `(("flatpak/overrides/cc.arduino.IDE2"
+            ,(plain-file "flatpak-override-cc.arduino.IDE2"
+                         (string-join
+                           (list "[Context]"
+                                 "sockets=inherit-wayland-socket;session-bus;wayland"
+                                 "devices=usb"
+                                 "filesystems=host")
+                           "\n" 'suffix)))
+           ("flatpak/overrides/org.mozilla.firefox"
             ,(plain-file "flatpak-override-org.mozilla.firefox"
                          (string-join
                            (list "[Context]"
