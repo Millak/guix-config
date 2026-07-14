@@ -109,8 +109,8 @@
 
 (define %not-for-work
   (list "btrfs-progs"
-        "codeberg-cli"
         "ffmpeg"
+        "forgejo-cli"
         "git-annex"
         "isync"
         "khal"
