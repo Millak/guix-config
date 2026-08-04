@@ -732,8 +732,12 @@
 (define %wcalcrc
   (plain-file
     "dot-wcalcrc"
-    (string-append
-      "color=yes\n")))
+    (string-join
+      (list "color=yes"
+            "history_limit=no"
+            "show_equals=yes")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %wgetrc
   (plain-file
