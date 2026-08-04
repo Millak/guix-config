@@ -720,11 +720,14 @@
 
 
 (define %streamlink-config
-  (mixed-text-file
+  (plain-file
     "streamlink-config"
-    "verbose\n"
-    "default-stream 720p,720p60,1080p,best\n"
-    "player=mpv\n"))
+    (string-join
+      (list "verbose"
+            "default-stream 720p,720p60,1080p,best"
+            "player=mpv")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %wcalcrc
   (plain-file
