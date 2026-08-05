@@ -748,8 +748,11 @@
 (define %wgetrc
   (plain-file
     "dot-wgetrc"
-    (string-append
-      "continue=yes\n")))
+    (string-join
+      (list "compression=auto"
+            "continue=yes")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %wgetpaste.conf
   (plain-file
