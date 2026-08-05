@@ -304,8 +304,14 @@
 (define %curlrc
   (plain-file
     "curlrc"
-    (string-append
-      "compressed\n")))
+    (string-join
+      (list "compressed"        ; http
+            "compressed-ssh"    ; scp, sftp
+            ;"continue-at -"    ; breaks wcurl https://github.com/curl/wcurl/issues/88
+            "mptcp"
+            "parallel")
+      ;; End with a newline.
+      "\n" 'suffix)))
 
 (define %cvsrc
   (plain-file
