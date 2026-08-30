@@ -2,6 +2,7 @@
 (use-modules
   (gnu)
   (gnu system locale)
+  (nongnu packages linux)
   (guix transformations)
   (config filesystems)
   (config guix-daemon)
@@ -57,6 +58,12 @@
       (bootloader grub-efi-bootloader)
       (targets '("/boot/efi"))
       (keyboard-layout keyboard-layout)))
+
+  (kernel linux)
+  (firmware
+    (list i915-firmware
+          ;; r8169 0000:04:00.0: Unable to load firmware rtl_nic/rtl8125b-2.fw (-2)
+          ))
 
   (file-systems
     (cons* (file-system
