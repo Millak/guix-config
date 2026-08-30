@@ -61,9 +61,9 @@
 
   (kernel linux)
   (firmware
-    (list i915-firmware
-          ;; r8169 0000:04:00.0: Unable to load firmware rtl_nic/rtl8125b-2.fw (-2)
-          ))
+    (list amd-microcode
+          i915-firmware
+          realtek-firmware))
 
   (file-systems
     (cons* (file-system
@@ -252,3 +252,5 @@
 
   ;; Allow resolution of '.local' host names with mDNS.
   (name-service-switch %mdns-host-lookup-nss))
+
+;; time guix system build --no-grafts -L ~/workspace/my-guix/ -L ~/workspace/guix-config/ -L ~/workspace/nonguix/ ~/workspace/guix-config/3900XT.scm
