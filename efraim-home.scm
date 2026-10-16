@@ -167,7 +167,7 @@
         "parallel"
         "qrencode"
         "rsync"
-        "sequoia"
+        "sequoia-sq"
         "sequoia-chameleon-gnupg"
         "screen"
         "tig"
