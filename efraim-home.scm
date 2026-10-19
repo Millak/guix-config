@@ -983,13 +983,14 @@
                              "/share/backgrounds/guix/guix-checkered-16-9.svg"))))
       (cond
         ((string=? (gethostname) "3900XT")
+         ;; swaymsg -t get_outputs
          (list (sway-output
-                 (identifier "DVI-I-1")
+                 (identifier "HDMI-A-2")
                  (resolution "1920x1080")
                  (position (point (x 0)
                                   (y 0))))
                (sway-output
-                 (identifier "HDMI-A-1")
+                 (identifier "HDMI-A-3")
                  (resolution "1920x1080")
                  (position (point (x 1920)
                                   (y 0))))))
