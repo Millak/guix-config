@@ -29,9 +29,9 @@
   (mixed-text-file
     "keyboard-function-keys"
     ;; Kinesys Freestyle 2
+    "bindsym XF86AudioMute exec " (S "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
     "bindsym XF86AudioLowerVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ -5%\n"
     "bindsym XF86AudioRaiseVolume exec " (S "pulseaudio") "/bin/pactl set-sink-volume @DEFAULT_SINK@ +5%\n"
-    "bindsym XF86AudioMute exec " (S "pulseaudio") "/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle\n"
     ;; bindsym XF86Calculator
     ;; bindsym Num_Lock
     ;; bindsym Scroll_Lock
