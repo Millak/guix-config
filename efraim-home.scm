@@ -1039,7 +1039,7 @@
         "for_window [app_id=\"imv\"] floating enable"
         "for_window [app_id=\"mpv\"] floating enable"
         "for_window [title = \"KeePassXC -  Access Request\"] floating enable"
-        "for_window [title = \"IceCat — Sharing Indicator\"] floating enable"
+        ;"for_window [title = \"IceCat — Sharing Indicator\"] floating enable"
         "for_window [title = \"Join Channel\"] floating enable"
         "include /run/current-system/profile/etc/sway/config.d/*"
         "include /etc/sway/config.d/*"
@@ -1271,8 +1271,8 @@ fi")))))
                  (home-gpg-agent-configuration
                    (pinentry-program
                      (if headless?
-                       (file-append (S "pinentry-tty") "/bin/pinentry-tty")
-                       (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
+                         (file-append (S "pinentry-tty") "/bin/pinentry-tty")
+                         (file-append (S "pinentry-qt") "/bin/pinentry-qt")))))
 
         (service home-inputrc-service-type
                  %home-inputrc-configuration)
