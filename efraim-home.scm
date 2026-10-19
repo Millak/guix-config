@@ -189,23 +189,11 @@
 
 ;;
 
-(define with-transformations
-  (options->transformation
-    (append
-      '()
-      (cond
-        ((string=? (gethostname) "3900XT")
-         `((tune . "znver2")))
-        ((string=? (gethostname) "X1")
-         `((tune . "cannonlake")))
-        (#t `())))))
-
 (define (S pkg)
-  (with-transformations (specification->package pkg)))
+  (specification->package pkg))
 
 (define package-list
-  (map with-transformations
-    (map specification->package+output
+  (map specification->package+output
        (filter (lambda (pkg)
                  (supported-package?
                    (specification->package+output pkg)))
@@ -220,7 +208,7 @@
                  (if guix-system?
                      '()
                      %guix-system-apps)
-                 %cli-apps)))))
+                 %cli-apps))))
 
 ;;; Helper programs.
 
@@ -1145,6 +1133,18 @@
 (define guix-system-home-environment
   (home-environment
     (packages package-list)
+    (transformation
+      (options->transformation
+        (append
+          '()
+          (cond
+            ((string=? (gethostname) "3900XT")
+             `((tune . "znver2")))
+            ((string=? (gethostname) "X1")
+             `((tune . "cannonlake")))
+            (#t `())))
+        #:warn? #f))
+
     (services
       (list
         (service home-bash-service-type
@@ -1260,7 +1260,6 @@ fi")))))
 
         (service home-dbxfs-service-type
                  (dbxfs-configuration
-                   (package (S "dbxfs"))
                    (config-json %dbxfs-config-json)
                    ;; Needs gpg key to unlock.
                    (autostart? #f)
