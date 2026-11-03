@@ -321,10 +321,7 @@
 
   ;; Use a modified list of setuid-programs.
   ;; Are there any we need? We run as root.
-  (privileged-programs
-    (list
-  ;    (setuid-program (program (file-append foo "/bin/foo")))
-    ))
+  (privileged-programs '())
 
   (services
    (append
